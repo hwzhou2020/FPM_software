@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>768</height>
+    <width>1286</width>
+    <height>760</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -338,7 +338,7 @@
       </rect>
      </property>
      <property name="text">
-      <string>(nm)</string>
+      <string>(um)</string>
      </property>
      <property name="alignment">
       <set>Qt::AlignmentFlag::AlignCenter</set>
@@ -389,7 +389,7 @@
      </rect>
     </property>
     <property name="currentIndex">
-     <number>4</number>
+     <number>3</number>
     </property>
     <widget class="QWidget" name="GS">
      <attribute name="title">
@@ -433,6 +433,11 @@
     <widget class="QWidget" name="Gauss_Newton">
      <attribute name="title">
       <string>Gauss-Newton</string>
+     </attribute>
+    </widget>
+    <widget class="QWidget" name="KK">
+     <attribute name="title">
+      <string>KK</string>
      </attribute>
     </widget>
     <widget class="QWidget" name="APIC">
@@ -699,8 +704,22 @@ https://hwzhou2020.github.io/</string>
     </property>
     <property name="plainText">
      <string>Designed by Haowen Zhou.
+https://hwzhou2020.github.io/
 Caltech Biophotonics Lab
-https://hwzhou2020.github.io/</string>
+</string>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="ClrMsgBox">
+    <property name="geometry">
+     <rect>
+      <x>840</x>
+      <y>540</y>
+      <width>191</width>
+      <height>24</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Clear MessageBox</string>
     </property>
    </widget>
    <zorder>MsgBox_label</zorder>
@@ -711,13 +730,14 @@ https://hwzhou2020.github.io/</string>
    <zorder>groupBox</zorder>
    <zorder>Help</zorder>
    <zorder>Acknowledge</zorder>
+   <zorder>ClrMsgBox</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1280</width>
+     <width>1286</width>
      <height>33</height>
     </rect>
    </property>

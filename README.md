@@ -4,8 +4,9 @@
 
 ## Dependency
 ```
-pip install scipy
-pip install pyside6
-pip install mat73
-pip install os
+scipy
+pyside6
+mat73
+os
+numpy
 ```

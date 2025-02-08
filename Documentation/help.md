@@ -16,18 +16,24 @@ Ensure you have:
 
 ## 1. Project Structure
 
-```plaintext
-FPM software/
-│── my_package/           # Package directory
-│   ├── __init__.py       # Package initializer
-│   ├── module1.py        # First module
-│── tests/                # Tests directory
-│   ├── test_module1.py   # Test file
-│── setup.py              # Packaging instructions
-│── README.md             # Documentation
-│── requirements.txt      # Dependencies (optional)
-│── LICENSE               # License file (optional)
+```
+FPM_software/
+│── main.py
+│── File_ui.py
+│── File.ui
+│── Utilities/
+│   │── __init__.py
+│   │── file_handling.py       # Handles file loading & dialogs
+│   │── logging_utils.py       # Manages message logging
+│   │── image_display.py       # Image rendering & display functions
+│   │── interactive_view.py    # Custom graphics view for zooming & panning
+│   │── scalable_text.py       # Manages dynamic text scaling
+│   │── data_handler.py        # UI field updates for .mat file variables
+│── Documentation/
+│   |── HELP.md
+|── ReadMe.md
 │── .gitignore            # Ignore unnecessary files
+│── .gitattributes
 ```
 
 ## 2. Data Format

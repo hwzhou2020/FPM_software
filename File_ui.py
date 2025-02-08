@@ -24,7 +24,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1280, 768)
+        MainWindow.resize(1286, 760)
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         self.SystemPara = QGroupBox(self.centralwidget)
@@ -129,6 +129,9 @@ class Ui_MainWindow(object):
         self.Gauss_Newton = QWidget()
         self.Gauss_Newton.setObjectName(u"Gauss_Newton")
         self.Algorithm.addTab(self.Gauss_Newton, "")
+        self.KK = QWidget()
+        self.KK.setObjectName(u"KK")
+        self.Algorithm.addTab(self.KK, "")
         self.APIC = QWidget()
         self.APIC.setObjectName(u"APIC")
         self.Algorithm.addTab(self.APIC, "")
@@ -195,6 +198,9 @@ class Ui_MainWindow(object):
         self.Acknowledge.setObjectName(u"Acknowledge")
         self.Acknowledge.setGeometry(QRect(1070, 650, 191, 41))
         self.Acknowledge.setReadOnly(True)
+        self.ClrMsgBox = QPushButton(self.centralwidget)
+        self.ClrMsgBox.setObjectName(u"ClrMsgBox")
+        self.ClrMsgBox.setGeometry(QRect(840, 540, 191, 24))
         MainWindow.setCentralWidget(self.centralwidget)
         self.MsgBox_label.raise_()
         self.DisplayImage.raise_()
@@ -204,9 +210,10 @@ class Ui_MainWindow(object):
         self.groupBox.raise_()
         self.Help.raise_()
         self.Acknowledge.raise_()
+        self.ClrMsgBox.raise_()
         self.menubar = QMenuBar(MainWindow)
         self.menubar.setObjectName(u"menubar")
-        self.menubar.setGeometry(QRect(0, 0, 1280, 33))
+        self.menubar.setGeometry(QRect(0, 0, 1286, 33))
         MainWindow.setMenuBar(self.menubar)
         self.statusbar = QStatusBar(MainWindow)
         self.statusbar.setObjectName(u"statusbar")
@@ -214,7 +221,7 @@ class Ui_MainWindow(object):
 
         self.retranslateUi(MainWindow)
 
-        self.Algorithm.setCurrentIndex(4)
+        self.Algorithm.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(MainWindow)
@@ -261,7 +268,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.Wavelength.setText(QCoreApplication.translate("MainWindow", u"Wavelength", None))
         self.Lambda.setText(QCoreApplication.translate("MainWindow", u"optional", None))
-        self.lambda_unit.setText(QCoreApplication.translate("MainWindow", u"(nm)", None))
+        self.lambda_unit.setText(QCoreApplication.translate("MainWindow", u"(um)", None))
         self.MsgBox.setDocumentTitle("")
         self.MsgBox.setPlainText(QCoreApplication.translate("MainWindow", u"Welcome to Fourier Ptychographic Microscopy reconstruction algorithm software!", None))
 #if QT_CONFIG(tooltip)
@@ -272,6 +279,7 @@ class Ui_MainWindow(object):
         self.Algorithm.setTabText(self.Algorithm.indexOf(self.GS), QCoreApplication.translate("MainWindow", u"Gerchberg-Saxton", None))
         self.Algorithm.setTabText(self.Algorithm.indexOf(self.EPRY), QCoreApplication.translate("MainWindow", u"EPRY ", None))
         self.Algorithm.setTabText(self.Algorithm.indexOf(self.Gauss_Newton), QCoreApplication.translate("MainWindow", u"Gauss-Newton", None))
+        self.Algorithm.setTabText(self.Algorithm.indexOf(self.KK), QCoreApplication.translate("MainWindow", u"KK", None))
         self.Algorithm.setTabText(self.Algorithm.indexOf(self.APIC), QCoreApplication.translate("MainWindow", u"APIC", None))
         self.JoinBox.setText(QCoreApplication.translate("MainWindow", u"More algorithms to be included.", None))
         self.JoinBox2.setPlainText(QCoreApplication.translate("MainWindow", u"If you are interested in contributing to this software. \n"
@@ -294,7 +302,9 @@ class Ui_MainWindow(object):
         self.MsgBox_label.setTitle(QCoreApplication.translate("MainWindow", u"Message Box", None))
         self.Help.setText(QCoreApplication.translate("MainWindow", u"Help", None))
         self.Acknowledge.setPlainText(QCoreApplication.translate("MainWindow", u"Designed by Haowen Zhou.\n"
+"https://hwzhou2020.github.io/\n"
 "Caltech Biophotonics Lab\n"
-"https://hwzhou2020.github.io/", None))
+"", None))
+        self.ClrMsgBox.setText(QCoreApplication.translate("MainWindow", u"Clear MessageBox", None))
     # retranslateUi
 

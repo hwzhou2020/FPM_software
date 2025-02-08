@@ -1,13 +1,9 @@
 import os
-from PySide6.QtWidgets import QFileDialog
-from PySide6.QtGui import QPixmap, QImage
-from PySide6.QtWidgets import QGraphicsScene
 import scipy.io
 import mat73
-
-def log_message(ui, message):
-    """Append messages to MsgBox."""
-    ui.MsgBox.appendPlainText(message)  # Append new messages to MsgBox
+import numpy as np
+from .logging_utils import log_message
+from PySide6.QtWidgets import QFileDialog
 
 
 def open_file_dialog(main_window):
@@ -30,20 +26,36 @@ def load_mat_file(main_window):
         log_message(main_window.ui, "Error: File not found! Please select a valid .mat file.")
         return None
 
-    file_name = os.path.basename(file_path)  # Extract filename from path
-    log_message(main_window.ui, f"Start loading .mat data: {file_name}")  # Show filename in log
+    file_name = os.path.basename(file_path)
+    log_message(main_window.ui, f"Start loading .mat data: {file_name}")
 
     try:
-        # Try loading with scipy.io (supports all versions except v7.3)
         data = scipy.io.loadmat(file_path)
         log_message(main_window.ui, f"MAT file '{file_name}' loaded successfully (scipy.io).")
     except NotImplementedError:
         try:
-            # If scipy.io fails, try loading with mat73 (for v7.3 files)
             data = mat73.loadmat(file_path)
             log_message(main_window.ui, f"MAT file '{file_name}' loaded successfully (mat73).")
         except Exception as e:
             log_message(main_window.ui, f"Error: Failed to load MAT file '{file_name}': {str(e)}")
             return None
 
-    return data  # Return the loaded .mat data dictionary
+    required_keys = ['mag', 'NA', 'NA_list', 'lambda', 'dpix_c', 'imlow']
+    missing_keys = [key for key in required_keys if key not in data]
+
+    if missing_keys:
+        log_message(main_window.ui, f"Error: Missing keys in MAT file: {', '.join(missing_keys)}")
+        return None
+
+    mag = float(data['mag'].item()) if isinstance(data['mag'], np.ndarray) else data['mag']
+    NA = float(data['NA'].item()) if isinstance(data['NA'], np.ndarray) else data['NA']
+    lambda_ = float(data['lambda'].item()) if isinstance(data['lambda'], np.ndarray) else data['lambda']
+    dpix_c = float(data['dpix_c'].item()) if isinstance(data['dpix_c'], np.ndarray) else data['dpix_c']
+    NA_list = data['NA_list']
+    imlow = data['imlow']
+
+    if not isinstance(imlow, np.ndarray) or imlow.ndim != 3:
+        log_message(main_window.ui, "Error: 'imlow' should be a 3D NumPy array.")
+        return None
+
+    return data, mag, NA, lambda_, dpix_c, NA_list, imlow
