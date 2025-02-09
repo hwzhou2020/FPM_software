@@ -321,7 +321,7 @@
       <set>Qt::AlignmentFlag::AlignCenter</set>
      </property>
     </widget>
-    <widget class="QComboBox" name="comboBox">
+    <widget class="QComboBox" name="AlgcomboBox">
      <property name="geometry">
       <rect>
        <x>340</x>
@@ -407,7 +407,7 @@
      <number>2</number>
     </property>
    </widget>
-   <widget class="QTabWidget" name="Algorithm">
+   <widget class="QTabWidget" name="AlgorithmTab">
     <property name="geometry">
      <rect>
       <x>470</x>
@@ -732,9 +732,9 @@ Caltech Biophotonics Lab
     <widget class="QLineEdit" name="ROI">
      <property name="geometry">
       <rect>
-       <x>80</x>
+       <x>52</x>
        <y>80</y>
-       <width>113</width>
+       <width>141</width>
        <height>21</height>
       </rect>
      </property>
@@ -887,7 +887,7 @@ setting ROI or set values below.</string>
    <zorder>DisplayImage</zorder>
    <zorder>SystemPara</zorder>
    <zorder>MsgBox</zorder>
-   <zorder>Algorithm</zorder>
+   <zorder>AlgorithmTab</zorder>
    <zorder>DataLoadingBox</zorder>
    <zorder>Help</zorder>
    <zorder>Acknowledge</zorder>

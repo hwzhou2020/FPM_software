@@ -23,15 +23,21 @@ FPM_software/
 │── File.ui
 │── Utilities/
 │   │── __init__.py
+│   │── data_handler.py        # UI field updates for .mat file variables
 │   │── file_handling.py       # Handles file loading & dialogs
-│   │── logging_utils.py       # Manages message logging
 │   │── image_display.py       # Image rendering & display functions
 │   │── interactive_view.py    # Custom graphics view for zooming & panning
+|   │── logging_utils.py       # Manages message logging
+│   │── roi_display.py         # Handles ROI selection & movement 
 │   │── scalable_text.py       # Manages dynamic text scaling
-│   │── data_handler.py        # UI field updates for .mat file variables
-│   │── roi_display.py         # Handles ROI selection & movement ✅
 │── Documentation/
 │   |── HELP.md
+│── Algorithms/                # Contains all different algorithm modules
+│   |── APIC Angular Pychographic Imaging with Closed-form method/
+│   |── EPRY Embedded pupil function recovery/
+│   |── Gauss-Newton/
+│   |── Gerchberg-Saxton/
+│   |── KK Kramers-Kronig/
 |── ReadMe.md
 │── .gitignore            # Ignore unnecessary files
 │── .gitattributes
