@@ -69,7 +69,7 @@ def display_image_with_roi(main_window):
 
     # Create a moveable ROI box at (50,50) initially
     roi_size = main_window.roi_size
-    roi_box = MovableROI(50, 50, roi_size, main_window)  # ✅ Pass main_window
+    roi_box = MovableROI(50, 50, roi_size, main_window) 
     scene.addItem(roi_box)
 
     # Set scene to graphicsView

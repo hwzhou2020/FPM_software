@@ -366,7 +366,7 @@
       </rect>
      </property>
      <property name="toolTip">
-      <string>Illumination angle list</string>
+      <string>Algorithm selection</string>
      </property>
      <property name="text">
       <string>Algorithm</string>
@@ -433,7 +433,7 @@
        </rect>
       </property>
       <property name="toolTip">
-       <string>System magnifications</string>
+       <string>Step size</string>
       </property>
       <property name="text">
        <string>alpha</string>
