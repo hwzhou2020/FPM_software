@@ -773,7 +773,7 @@ setting ROI or set values below.</string>
      </rect>
     </property>
     <property name="title">
-     <string>Display Results'</string>
+     <string>Display Results</string>
     </property>
     <widget class="QPushButton" name="DisplayAmp">
      <property name="geometry">

@@ -357,7 +357,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(tooltip)
         self.ROI_hint.setText(QCoreApplication.translate("MainWindow", u"Hint: Double click yellow box for\n"
 "setting ROI or set values below.", None))
-        self.DisplayResGroup.setTitle(QCoreApplication.translate("MainWindow", u"Display Results'", None))
+        self.DisplayResGroup.setTitle(QCoreApplication.translate("MainWindow", u"Display Results", None))
         self.DisplayAmp.setText(QCoreApplication.translate("MainWindow", u"Image Amplitude ", None))
         self.DisplayPupil.setText(QCoreApplication.translate("MainWindow", u"Pupil Amplitude", None))
         self.DisplayPhase.setText(QCoreApplication.translate("MainWindow", u"Image Phase", None))

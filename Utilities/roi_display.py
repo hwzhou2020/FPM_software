@@ -10,22 +10,24 @@ class MovableROI(QGraphicsRectItem):
     def __init__(self, x, y, size, main_window):
         super().__init__(x, y, size, size)
         self.main_window = main_window  # Store reference to MainWindow
-        self.setBrush(QBrush(QColor(255, 255, 153, 100)))  # Light yellow
+        self.setBrush(QBrush(QColor(255, 255, 153, 100)))  # Light yellow fill
         self.setPen(QPen(Qt.yellow, 2))  # Yellow border
         self.setFlags(QGraphicsRectItem.ItemIsMovable | QGraphicsRectItem.ItemIsSelectable)
 
     def mouseDoubleClickEvent(self, event):
         """On double-click, store the final ROI position and update UI."""
-        x, y = int(self.x()), int(self.y())
-        size = int(self.rect().width())
+        # Get absolute scene position
+        scene_pos = self.sceneBoundingRect().topLeft()  
+        x, y = int(scene_pos.x()), int(scene_pos.y())  
 
         # Ensure ROI stays within bounds
-        max_x = self.main_window.imlow.shape[1] - size
-        max_y = self.main_window.imlow.shape[0] - size
+        max_x = self.main_window.imlow.shape[1] - int(self.rect().width())
+        max_y = self.main_window.imlow.shape[0] - int(self.rect().height())
         x = max(0, min(x, max_x))
         y = max(0, min(y, max_y))
 
-        self.main_window.update_roi_input(x, y, size, size) 
+        # Update UI field and log
+        self.main_window.update_roi_input(x, y, int(self.rect().width()), int(self.rect().height()))
 
 
 def set_roi_size(main_window):
@@ -67,9 +69,12 @@ def display_image_with_roi(main_window):
     pixmap = QPixmap.fromImage(q_image)
     pixmap_item = scene.addPixmap(pixmap)  # Add image to scene
 
-    # Create a moveable ROI box at (50,50) initially
+    # Define safe initial position (50,50) or centered if possible
     roi_size = main_window.roi_size
-    roi_box = MovableROI(50, 50, roi_size, main_window) 
+    init_x = max(0, min(50, width - roi_size))  # Ensure within bounds
+    init_y = max(0, min(50, height - roi_size))
+
+    roi_box = MovableROI(init_x, init_y, roi_size, main_window)  # ✅ Fix initial positioning
     scene.addItem(roi_box)
 
     # Set scene to graphicsView
@@ -79,6 +84,7 @@ def display_image_with_roi(main_window):
 
     # Store reference to ROI box
     main_window.roi_box = roi_box
+
 
 
 def update_roi_input(main_window, x, y, width, height):
