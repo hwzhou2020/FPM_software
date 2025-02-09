@@ -52,13 +52,13 @@ def display_single_raw_image(main_window):
 
     frame, ok = QInputDialog.getInt(
         main_window, "Select Frame",
-        f"Enter frame number (0 to {num_frames - 1}):",
-        0, 0, num_frames - 1, 1  # Default value, min value, max value, step
+        f"Enter frame number (1 to {num_frames}):",
+        1, 1, num_frames, 1  # Default value, min value, max value, step
     )
 
     if ok:
-        log_message(main_window.ui, f"Displaying frame {frame + 1} of {num_frames}.")
-        display_image(main_window.ui, main_window.imlow[:, :, frame], frame_number=frame, total_frames=num_frames)
+        log_message(main_window.ui, f"Displaying frame {frame} of {num_frames}.")
+        display_image(main_window.ui, main_window.imlow[:, :, frame-1], frame_number=frame, total_frames=num_frames)
 
 
 

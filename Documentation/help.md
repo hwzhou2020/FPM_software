@@ -29,6 +29,7 @@ FPM_software/
 │   │── interactive_view.py    # Custom graphics view for zooming & panning
 │   │── scalable_text.py       # Manages dynamic text scaling
 │   │── data_handler.py        # UI field updates for .mat file variables
+│   │── roi_display.py         # Handles ROI selection & movement ✅
 │── Documentation/
 │   |── HELP.md
 |── ReadMe.md
