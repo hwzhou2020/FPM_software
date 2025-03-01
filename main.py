@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtGui import QColor
+from PySide6.QtGui import QColor, QAction
 from Main_ui import Ui_FPMSoftware
 from Utilities.data_handler import load_mat_file
 from Utilities.display_handler import (
@@ -11,6 +11,7 @@ from Utilities.display_handler import (
     display_all_roi_images,
 )
 from Utilities.message_handler import export_messages, clear_messages
+from Utilities.logging_utils import log_message
 from Utilities.interactive_view import ZoomableGraphicsView
 from Utilities.roi_handler import select_roi_size
 from Utilities.system_specs_window import SystemSpecsWindow  # Import the System Specs window
@@ -27,6 +28,17 @@ class MainWindow(QMainWindow):
 
         # **ROI parameters (Default ROI: [X-offset, Y-offset, ROI_size, ROI_size])**
         self.roi_params = {"x_offset": 1, "y_offset": 1, "roi_size": 256}
+
+
+        # Define available algorithms (Easily expandable)
+        self.algorithms = [
+            "Gerchberg-Saxton",
+            "EPRY Embedded pupil function recovery",
+            "Gauss-Newton",
+            "KK Kramers-Kronig relation",
+            "APIC Angular Ptychographic Imaging with Closed-form method"
+        ]
+
 
         # Replace default QGraphicsView with interactive view
         self.ui.display_window = ZoomableGraphicsView(self.ui.centralwidget)
@@ -59,12 +71,9 @@ class MainWindow(QMainWindow):
         self.ui.actionKramers_Kronig.setCheckable(True)
         self.ui.actionAPIC.setCheckable(True)
 
-        # Connect algorithm selection menu items
-        self.ui.actionGerchberg_Saxton.triggered.connect(lambda: self.select_algorithm("Gerchberg-Saxton"))
-        self.ui.actionEPRY.triggered.connect(lambda: self.select_algorithm("EPRY Embedded pupil function recovery"))
-        self.ui.actionGauss_Newton.triggered.connect(lambda: self.select_algorithm("Gauss-Newton"))
-        self.ui.actionKramers_Kronig.triggered.connect(lambda: self.select_algorithm("KK Kramers-Kronig relation"))
-        self.ui.actionAPIC.triggered.connect(lambda: self.select_algorithm("APIC Angular Ptychographic Imaging with Closed-form method"))
+        # Dynamically populate the algorithm menu
+        self.algorithm_actions = {}
+        self.populate_algorithm_menu()
 
     def load_data(self):
         """Loads a .mat file and updates System Specs UI fields."""
@@ -126,30 +135,55 @@ class MainWindow(QMainWindow):
         self.system_specs_window.show()
 
 
+    def populate_algorithm_menu(self):
+        """Dynamically populate the algorithm selection menu."""
+        menu_algorithms = self.ui.menuAlgorithm_specs
+        menu_algorithms.clear()  # Clear existing menu items
+
+        for algorithm in self.algorithms:
+            action = QAction(algorithm, self)
+            action.setCheckable(True)
+            action.triggered.connect(lambda checked, alg=algorithm: self.select_algorithm(alg))
+            self.algorithm_actions[algorithm] = action
+            menu_algorithms.addAction(action)
+
+        # Default selection
+        self.selected_algorithm = self.algorithms[0]
+        self.algorithm_actions[self.selected_algorithm].setChecked(True)
+
     def select_algorithm(self, algorithm_name):
         """Updates the selected algorithm and sets a tick in the menu bar."""
         self.selected_algorithm = algorithm_name
 
         # Clear all previous checks
-        self.ui.actionGerchberg_Saxton.setChecked(False)
-        self.ui.actionEPRY.setChecked(False)
-        self.ui.actionGauss_Newton.setChecked(False)
-        self.ui.actionKramers_Kronig.setChecked(False)
-        self.ui.actionAPIC.setChecked(False)
+        for action in self.algorithm_actions.values():
+            action.setChecked(False)
 
         # Set the tick for the selected algorithm
-        if algorithm_name == "Gerchberg-Saxton":
-            self.ui.actionGerchberg_Saxton.setChecked(True)
-        elif algorithm_name == "EPRY Embedded pupil function recovery":
-            self.ui.actionEPRY.setChecked(True)
-        elif algorithm_name == "Gauss-Newton":
-            self.ui.actionGauss_Newton.setChecked(True)
-        elif algorithm_name == "KK Kramers-Kronig relation":
-            self.ui.actionKramers_Kronig.setChecked(True)
-        elif algorithm_name == "APIC Angular Ptychographic Imaging with Closed-form method":
-            self.ui.actionAPIC.setChecked(True)
+        if algorithm_name in self.algorithm_actions:
+            self.algorithm_actions[algorithm_name].setChecked(True)
 
         self.ui.Msg_window.appendPlainText(f"Algorithm selected: {algorithm_name}")
+
+        # Update algorithm selection in system specs window if open
+        if self.system_specs_window:
+            self.system_specs_window.update_algorithm_selection(algorithm_name)
+
+    def show_system_specs(self):
+        """Opens the System Specs window and updates values."""
+        if self.system_specs_window is None:
+            self.system_specs_window = SystemSpecsWindow(self)
+
+        # Update System Specs UI with current ROI values
+        if hasattr(self, "roi_params"):
+            roi_text = str(self.roi_params)
+            self.system_specs_window.update_roi_field(roi_text)
+
+        # Update algorithms dynamically
+        self.system_specs_window.populate_algorithm_list(self.algorithms)
+
+        self.system_specs_window.load_system_specs()
+        self.system_specs_window.show()
 
 if __name__ == "__main__":
     import sys  # Ensure sys is imported

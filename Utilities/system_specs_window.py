@@ -25,6 +25,7 @@ class SystemSpecsWindow(QWidget):
 
         # Connect the confirm button to update data
         self.ui.Cfm_sys_butt.clicked.connect(self.confirm_specs)
+        
 
     def load_system_specs(self):
         """Update System Specs UI fields from loaded .mat file data."""
@@ -39,11 +40,8 @@ class SystemSpecsWindow(QWidget):
         self.ui.pix_size.setText(format_scalar(mat_data.get("dpix_c", "optional")))
         self.ui.Lambda.setText(format_scalar(mat_data.get("lambda", "optional")))
 
-        # Get selected algorithm from main window, fallback to default
-        algorithm = getattr(self.main_window, "selected_algorithm", "Gerchberg-Saxton")
-        index = self.ui.AlgcomboBox.findText(algorithm)
-        if index >= 0:
-            self.ui.AlgcomboBox.setCurrentIndex(index)
+        # Populate algorithm list dynamically
+        self.populate_algorithm_list(self.main_window.algorithms)
 
         # Validate NA_list and imlow consistency
         if "imlow" not in mat_data or not isinstance(mat_data["imlow"], np.ndarray):
@@ -70,9 +68,26 @@ class SystemSpecsWindow(QWidget):
         else:
             self.ui.ROIsltbox.setText("[1,1,256,256]")
 
+    def populate_algorithm_list(self, algorithms):
+        """Dynamically populate the algorithm combo box."""
+        self.ui.AlgcomboBox.clear()
+        self.ui.AlgcomboBox.addItems(algorithms)
+
+        # Set the currently selected algorithm from main window
+        if hasattr(self.main_window, "selected_algorithm"):
+            index = self.ui.AlgcomboBox.findText(self.main_window.selected_algorithm)
+            if index >= 0:
+                self.ui.AlgcomboBox.setCurrentIndex(index)
+
+    def update_algorithm_selection(self, algorithm_name):
+        """Update algorithm selection in the combo box."""
+        index = self.ui.AlgcomboBox.findText(algorithm_name)
+        if index >= 0:
+            self.ui.AlgcomboBox.setCurrentIndex(index)
+
     def update_roi_field(self, roi_text):
         """Updates the ROI selection field when the ROI is changed."""
-        self.ui.ROIsltbox.setText(roi_text) 
+        self.ui.ROIsltbox.setText(roi_text)
 
     def confirm_specs(self):
         """Update loaded .mat file data with values from UI fields and update menu tick."""
@@ -80,26 +95,24 @@ class SystemSpecsWindow(QWidget):
             log_message(self.main_window.ui, "Error: No data to update.")
             return
 
-        # Update mat_data with new values
+        # Update system specifications in `mat_data`
         self.main_window.mat_data["magnification"] = self.ui.mag.text()
         self.main_window.mat_data["NA"] = self.ui.NA.text()
         self.main_window.mat_data["pixel_size"] = self.ui.pix_size.text()
         self.main_window.mat_data["wavelength"] = self.ui.Lambda.text()
 
-        # Update algorithm selection in mat_data
+        # Update selected algorithm
         selected_algorithm = self.ui.AlgcomboBox.currentText()
         self.main_window.mat_data["algorithm"] = selected_algorithm
+        self.main_window.select_algorithm(selected_algorithm)  # Update Main UI tick
 
-        # Call the function in main.py to update the tick in the menu
-        self.main_window.select_algorithm(selected_algorithm)
-
-        # Update ROI selection
+        # Update ROI selection using `roi_params`
         try:
             roi_values = [int(i) for i in self.ui.ROIsltbox.text().strip("[]").split(",")]
             if len(roi_values) == 4:
-                self.main_window.roi_handler.offset_x = roi_values[0]
-                self.main_window.roi_handler.offset_y = roi_values[1]
-                self.main_window.roi_handler.roi_size = roi_values[2]
+                self.main_window.roi_params["x_offset"] = roi_values[0]
+                self.main_window.roi_params["y_offset"] = roi_values[1]
+                self.main_window.roi_params["roi_size"] = roi_values[2]
                 log_message(self.main_window.ui, f"Updated ROI to {roi_values}")
             else:
                 log_message(self.main_window.ui, "Error: Invalid ROI format.")
@@ -108,3 +121,4 @@ class SystemSpecsWindow(QWidget):
 
         log_message(self.main_window.ui, "System specifications updated.")
         self.close()  # Close window after confirmation
+
