@@ -1,0 +1,333 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>FPMSoftware</class>
+ <widget class="QMainWindow" name="FPMSoftware">
+  <property name="enabled">
+   <bool>true</bool>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1190</width>
+    <height>720</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Minimum" vsizetype="Minimum">
+    <horstretch>3</horstretch>
+    <verstretch>3</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>1190</width>
+    <height>720</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>1</horstretch>
+     <verstretch>1</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>1100</width>
+     <height>600</height>
+    </size>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,12" columnstretch="0">
+    <item row="0" column="0">
+     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,1,1,1,5,2">
+      <item>
+       <widget class="QPushButton" name="load_butt">
+        <property name="text">
+         <string>Load</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="roi_butt">
+        <property name="text">
+         <string>ROI</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="run_butt">
+        <property name="text">
+         <string>Run</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="save_butt">
+        <property name="text">
+         <string>Save</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_3">
+        <property name="orientation">
+         <enum>Qt::Orientation::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPlainTextEdit" name="acknowledge_text">
+        <property name="plainText">
+         <string>Designed by Haowen Zhou.
+https://hwzhou2020.github.io/
+Caltech Biophotonics Lab</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item row="1" column="0">
+     <layout class="QGridLayout" name="gridLayout_3" rowstretch="0" columnstretch="9,7">
+      <item row="0" column="1">
+       <widget class="QPlainTextEdit" name="Msg_window">
+        <property name="plainText">
+         <string>Welcome to Fourier Ptychographic Microscopy reconstruction algorithm software!</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
+       <widget class="QGraphicsView" name="display_window">
+        <property name="autoFillBackground">
+         <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1190</width>
+     <height>33</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionLoad_Data"/>
+    <addaction name="actionSystem_Spec"/>
+    <addaction name="separator"/>
+    <addaction name="actionSave_Reults"/>
+    <addaction name="actionLoad_Results"/>
+   </widget>
+   <widget class="QMenu" name="menuDisplay">
+    <property name="title">
+     <string>Display</string>
+    </property>
+    <addaction name="actionShow_single_raw_frame"/>
+    <addaction name="actionShow_all_raw_frames"/>
+    <addaction name="actionSingle_raw_spectrum"/>
+    <addaction name="actionAll_raw_spectrum"/>
+    <addaction name="separator"/>
+    <addaction name="actionSIngle_ROI"/>
+    <addaction name="actionAll_ROI_images"/>
+    <addaction name="separator"/>
+    <addaction name="actionAmplitude_result"/>
+    <addaction name="actionPhase_result"/>
+    <addaction name="actionPupil_function"/>
+    <addaction name="actionAll_results"/>
+   </widget>
+   <widget class="QMenu" name="menuSpecs">
+    <property name="title">
+     <string>Specs</string>
+    </property>
+    <widget class="QMenu" name="menuAlgorithm_specs">
+     <property name="title">
+      <string>Algorithm specs</string>
+     </property>
+     <addaction name="actionGerchberg_Saxton"/>
+     <addaction name="actionEPRY"/>
+     <addaction name="actionGauss_Newton"/>
+     <addaction name="actionKramers_Kronig"/>
+     <addaction name="actionAPIC"/>
+    </widget>
+    <addaction name="actionCheck_systerm_specs"/>
+    <addaction name="actionSystem_specs"/>
+    <addaction name="menuAlgorithm_specs"/>
+    <addaction name="actionSave_Specs"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionSoftware_Guide"/>
+    <addaction name="actionReferences"/>
+   </widget>
+   <widget class="QMenu" name="menuMessageBox">
+    <property name="title">
+     <string>MessageBox</string>
+    </property>
+    <addaction name="actionSave_Messgaes"/>
+    <addaction name="actionClear_Messages"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuSpecs"/>
+   <addaction name="menuDisplay"/>
+   <addaction name="menuMessageBox"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionLoad_Data">
+   <property name="text">
+    <string>Load Data</string>
+   </property>
+  </action>
+  <action name="actionSystem_Spec">
+   <property name="text">
+    <string>Load Data Batch</string>
+   </property>
+  </action>
+  <action name="actionAlgorithm_Spec">
+   <property name="text">
+    <string>Default Setting</string>
+   </property>
+  </action>
+  <action name="actionSave_Reults">
+   <property name="text">
+    <string>Save Reults</string>
+   </property>
+  </action>
+  <action name="actionLoad_Results">
+   <property name="text">
+    <string>Load Results</string>
+   </property>
+  </action>
+  <action name="actionShow_single_raw_frame">
+   <property name="text">
+    <string>Single raw frame</string>
+   </property>
+  </action>
+  <action name="actionShow_all_raw_frames">
+   <property name="text">
+    <string>All raw frames</string>
+   </property>
+  </action>
+  <action name="actionSingle_raw_spectrum">
+   <property name="text">
+    <string>Single raw spectrum</string>
+   </property>
+  </action>
+  <action name="actionAll_raw_spectrum">
+   <property name="text">
+    <string>All raw spectra</string>
+   </property>
+  </action>
+  <action name="actionAmplitude_result">
+   <property name="text">
+    <string>Amplitude result</string>
+   </property>
+  </action>
+  <action name="actionPhase_result">
+   <property name="text">
+    <string>Phase result</string>
+   </property>
+  </action>
+  <action name="actionPupil_function">
+   <property name="text">
+    <string>Pupil function</string>
+   </property>
+  </action>
+  <action name="actionAll_results">
+   <property name="text">
+    <string>All results</string>
+   </property>
+  </action>
+  <action name="actionCheck_systerm_specs">
+   <property name="text">
+    <string>Load Specs</string>
+   </property>
+  </action>
+  <action name="actionSystem_specs">
+   <property name="text">
+    <string>System specs</string>
+   </property>
+  </action>
+  <action name="actionGerchberg_Saxton">
+   <property name="text">
+    <string>Gerchberg-Saxton</string>
+   </property>
+  </action>
+  <action name="actionEPRY">
+   <property name="text">
+    <string>EPRY</string>
+   </property>
+  </action>
+  <action name="actionGauss_Newton">
+   <property name="text">
+    <string>Gauss-Newton</string>
+   </property>
+  </action>
+  <action name="actionKramers_Kronig">
+   <property name="text">
+    <string>Kramers-Kronig</string>
+   </property>
+  </action>
+  <action name="actionAPIC">
+   <property name="text">
+    <string>APIC</string>
+   </property>
+  </action>
+  <action name="actionSoftware_Guide">
+   <property name="text">
+    <string>Software Guide</string>
+   </property>
+  </action>
+  <action name="actionReferences">
+   <property name="text">
+    <string>References</string>
+   </property>
+  </action>
+  <action name="actionSave_Messgaes">
+   <property name="text">
+    <string>Export Messgaes</string>
+   </property>
+  </action>
+  <action name="actionClear_Messages">
+   <property name="text">
+    <string>Clear Messages</string>
+   </property>
+  </action>
+  <action name="actionSave_Specs">
+   <property name="text">
+    <string>Save Specs</string>
+   </property>
+  </action>
+  <action name="actionSIngle_ROI">
+   <property name="text">
+    <string>SIngle ROI image</string>
+   </property>
+  </action>
+  <action name="actionAll_ROI_images">
+   <property name="text">
+    <string>All ROI images</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -1,3 +1,3 @@
 def log_message(ui, message):
     """Append messages to MsgBox."""
-    ui.MsgBox.appendPlainText(message)
+    ui.Msg_window.appendPlainText(message)

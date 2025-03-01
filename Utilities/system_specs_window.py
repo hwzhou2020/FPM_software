@@ -1,0 +1,110 @@
+import numpy as np
+from PySide6.QtWidgets import QWidget
+from WindowUI.SystemSpecsWindow_ui import Ui_SystemSpecsWindow
+from Utilities.logging_utils import log_message
+
+
+def format_scalar(value):
+    """Convert single-element arrays/lists to scalars for display."""
+    if isinstance(value, np.ndarray) and value.size == 1:
+        return str(value.item())  # Convert array to scalar
+    elif isinstance(value, list) and len(value) == 1:
+        return str(value[0])  # Convert list to scalar
+    elif isinstance(value, (int, float)):
+        return str(value)  # Already a scalar
+    else:
+        return "Invalid Data"
+
+
+class SystemSpecsWindow(QWidget):
+    def __init__(self, main_window):
+        super().__init__()
+        self.ui = Ui_SystemSpecsWindow()
+        self.ui.setupUi(self)
+        self.main_window = main_window  # Reference to the main window
+
+        # Connect the confirm button to update data
+        self.ui.Cfm_sys_butt.clicked.connect(self.confirm_specs)
+
+    def load_system_specs(self):
+        """Update System Specs UI fields from loaded .mat file data."""
+        if self.main_window.mat_data is None:
+            log_message(self.main_window.ui, "Error: No data loaded.")
+            return
+
+        # Extract values from mat_data safely
+        mat_data = self.main_window.mat_data
+        self.ui.mag.setText(format_scalar(mat_data.get("mag", "optional")))
+        self.ui.NA.setText(format_scalar(mat_data.get("NA", "optional")))
+        self.ui.pix_size.setText(format_scalar(mat_data.get("dpix_c", "optional")))
+        self.ui.Lambda.setText(format_scalar(mat_data.get("lambda", "optional")))
+
+        # Get selected algorithm from main window, fallback to default
+        algorithm = getattr(self.main_window, "selected_algorithm", "Gerchberg-Saxton")
+        index = self.ui.AlgcomboBox.findText(algorithm)
+        if index >= 0:
+            self.ui.AlgcomboBox.setCurrentIndex(index)
+
+        # Validate NA_list and imlow consistency
+        if "imlow" not in mat_data or not isinstance(mat_data["imlow"], np.ndarray):
+            log_message(self.main_window.ui, "Error: imlow data is missing or corrupted.")
+            self.ui.NA_list.setText("Error: imlow missing")
+            return
+
+        imlow = mat_data["imlow"]
+        na_list = mat_data.get("NA_list", None)
+
+        if isinstance(na_list, np.ndarray) and na_list.shape[0] == imlow.shape[2]:
+            self.ui.NA_list.setText("loaded")
+            log_message(self.main_window.ui, "NA_list is loaded correctly.")
+        else:
+            self.ui.NA_list.setText("Error: NA_list is not loaded correctly")
+            log_message(self.main_window.ui, "Error: NA_list does not match the number of raw images.")
+
+        # Load ROI values from roi_handler (default to [1,1,256,256] if not set)
+        if hasattr(self.main_window, "roi_handler"):
+            roi_x = self.main_window.roi_handler.offset_x
+            roi_y = self.main_window.roi_handler.offset_y
+            roi_size = self.main_window.roi_handler.roi_size
+            self.ui.ROIsltbox.setText(f"[{roi_x}, {roi_y}, {roi_size}, {roi_size}]")
+        else:
+            self.ui.ROIsltbox.setText("[1,1,256,256]")
+
+    def update_roi_field(self, roi_text):
+        """Updates the ROI selection field when the ROI is changed."""
+        self.ui.ROIsltbox.setText(roi_text) 
+
+    def confirm_specs(self):
+        """Update loaded .mat file data with values from UI fields and update menu tick."""
+        if self.main_window.mat_data is None:
+            log_message(self.main_window.ui, "Error: No data to update.")
+            return
+
+        # Update mat_data with new values
+        self.main_window.mat_data["magnification"] = self.ui.mag.text()
+        self.main_window.mat_data["NA"] = self.ui.NA.text()
+        self.main_window.mat_data["pixel_size"] = self.ui.pix_size.text()
+        self.main_window.mat_data["wavelength"] = self.ui.Lambda.text()
+
+        # Update algorithm selection in mat_data
+        selected_algorithm = self.ui.AlgcomboBox.currentText()
+        self.main_window.mat_data["algorithm"] = selected_algorithm
+
+        # Call the function in main.py to update the tick in the menu
+        self.main_window.select_algorithm(selected_algorithm)
+
+        # Update ROI selection
+        try:
+            roi_values = [int(i) for i in self.ui.ROIsltbox.text().strip("[]").split(",")]
+            if len(roi_values) == 4:
+                self.main_window.roi_handler.offset_x = roi_values[0]
+                self.main_window.roi_handler.offset_y = roi_values[1]
+                self.main_window.roi_handler.roi_size = roi_values[2]
+                log_message(self.main_window.ui, f"Updated ROI to {roi_values}")
+            else:
+                log_message(self.main_window.ui, "Error: Invalid ROI format.")
+        except ValueError:
+            log_message(self.main_window.ui, "Error: Invalid ROI input.")
+
+        log_message(self.main_window.ui, "System specifications updated.")
+        self.close()  # Close window after confirmation
