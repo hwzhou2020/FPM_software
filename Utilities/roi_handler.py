@@ -180,8 +180,12 @@ def modify_roi_dialog(main_window, roi_box, x_offset, y_offset, size):
 
 def apply_roi_changes(main_window, roi_box, x_offset, y_offset, size, dialog):
     """Apply changes, update ROI parameters, System Specs UI, and display the first frame."""
-    # Update ROI parameters in main_window
-    main_window.roi_params = [x_offset, y_offset, size, size]  # Store in MainWindow
+    # Update ROI parameters in main_window as a dictionary
+    main_window.roi_params = {
+        "x_offset": x_offset,
+        "y_offset": y_offset,
+        "roi_size": size
+    }
 
     # Log the update
     roi_text = f"[{x_offset}, {y_offset}, {size}, {size}]"
@@ -195,6 +199,7 @@ def apply_roi_changes(main_window, roi_box, x_offset, y_offset, size, dialog):
     # Display the first frame with the new ROI
     display_first_roi_frame(main_window, x_offset, y_offset, size)
     dialog.accept()
+
 
 
 

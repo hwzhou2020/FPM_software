@@ -59,14 +59,16 @@ class SystemSpecsWindow(QWidget):
             self.ui.NA_list.setText("Error: NA_list is not loaded correctly")
             log_message(self.main_window.ui, "Error: NA_list does not match the number of raw images.")
 
-        # Load ROI values from roi_handler (default to [1,1,256,256] if not set)
-        if hasattr(self.main_window, "roi_handler"):
-            roi_x = self.main_window.roi_handler.offset_x
-            roi_y = self.main_window.roi_handler.offset_y
-            roi_size = self.main_window.roi_handler.roi_size
+        # Load ROI values from `roi_params` (Updated Approach)
+        if hasattr(self.main_window, "roi_params"):
+            roi_x = self.main_window.roi_params.get("x_offset", 1)
+            roi_y = self.main_window.roi_params.get("y_offset", 1)
+            roi_size = self.main_window.roi_params.get("roi_size", 256)
             self.ui.ROIsltbox.setText(f"[{roi_x}, {roi_y}, {roi_size}, {roi_size}]")
         else:
-            self.ui.ROIsltbox.setText("[1,1,256,256]")
+            self.ui.ROIsltbox.setText("[1,1,256,256]")  # Default if no ROI is set
+
+     
 
     def populate_algorithm_list(self, algorithms):
         """Dynamically populate the algorithm combo box."""
@@ -106,6 +108,10 @@ class SystemSpecsWindow(QWidget):
         self.main_window.mat_data["algorithm"] = selected_algorithm
         self.main_window.select_algorithm(selected_algorithm)  # Update Main UI tick
 
+        # Ensure `roi_params` is a dictionary before updating
+        if not isinstance(self.main_window.roi_params, dict):
+            self.main_window.roi_params = {"x_offset": 1, "y_offset": 1, "roi_size": 256}
+
         # Update ROI selection using `roi_params`
         try:
             roi_values = [int(i) for i in self.ui.ROIsltbox.text().strip("[]").split(",")]
@@ -121,4 +127,3 @@ class SystemSpecsWindow(QWidget):
 
         log_message(self.main_window.ui, "System specifications updated.")
         self.close()  # Close window after confirmation
-

@@ -1,7 +1,7 @@
 import time
 import numpy as np
 from PySide6.QtGui import QImage, QPixmap, QColor, QFont
-from PySide6.QtWidgets import QGraphicsScene, QGraphicsSimpleTextItem, QInputDialog, QApplication, QGraphicsView
+from PySide6.QtWidgets import QGraphicsScene, QGraphicsSimpleTextItem, QInputDialog, QApplication, QGraphicsView, QGraphicsTextItem
 from PySide6.QtCore import Qt
 from Utilities.logging_utils import log_message
 
@@ -23,7 +23,7 @@ def compute_spectrum(image):
 
 
 def display_image(ui, image, frame_number=None, total_frames=None):
-    """Display an image in `display_window` with dynamic scaling and frame number overlay."""
+    """Display an image in `display_window` with dynamic scaling and fixed-size frame number overlay."""
     scene = QGraphicsScene()
     height, width = image.shape
 
@@ -36,11 +36,18 @@ def display_image(ui, image, frame_number=None, total_frames=None):
     pixmap = QPixmap.fromImage(q_image)
     pixmap_item = scene.addPixmap(pixmap)
 
-    # Add frame number overlay
+    # Add frame number overlay with a fixed size
     if frame_number is not None:
-        text_item = QGraphicsSimpleTextItem(f"Frame {frame_number + 1}/{total_frames}")
-        text_item.setBrush(QColor("#F38181"))  # Soft coral color
-        text_item.setFont(QFont("Arial", 16))
+        text_item = QGraphicsTextItem(f"Frame {frame_number + 1}/{total_frames}")
+        text_item.setDefaultTextColor(QColor("#F38181"))  # Soft coral color
+        text_font = QFont("Arial", 16)
+        text_font.setBold(True)
+        text_item.setFont(text_font)
+
+        # Ensure text size remains fixed regardless of zoom level
+        text_item.setFlag(QGraphicsTextItem.ItemIgnoresTransformations, True)
+
+        # Add text to scene and position it in the top-left corner
         scene.addItem(text_item)
         text_item.setPos(10, 10)
 
@@ -152,7 +159,6 @@ def display_all_raw_spectra(main_window):
         time.sleep(0.1)  # Delay between frames
 
 
-
 def display_single_roi_image(main_window):
     """Displays a single ROI frame from the selected region."""
     if not main_window.mat_data or "imlow" not in main_window.mat_data:
@@ -162,16 +168,13 @@ def display_single_roi_image(main_window):
     imlow = main_window.mat_data["imlow"]
     num_frames = imlow.shape[2]  # Total frames
 
-    if not hasattr(main_window, "roi_params"):
+    if not hasattr(main_window, "roi_params") or not isinstance(main_window.roi_params, dict):
         log_message(main_window.ui, "Error: No ROI selected.")
         return
 
-    # Use list indexing: roi_params = [x_offset, y_offset, size, size]
-    roi_x, roi_y, roi_size = (
-        main_window.roi_params[0],  # X-offset
-        main_window.roi_params[1],  # Y-offset
-        main_window.roi_params[2]   # ROI Size
-    )
+    roi_x = main_window.roi_params.get("x_offset", 1)
+    roi_y = main_window.roi_params.get("y_offset", 1)
+    roi_size = main_window.roi_params.get("roi_size", 256)
 
     roi_image = imlow[roi_y:roi_y + roi_size, roi_x:roi_x + roi_size, 0]  # First frame
 
@@ -189,16 +192,13 @@ def display_all_roi_images(main_window):
     imlow = main_window.mat_data["imlow"]
     num_frames = imlow.shape[2]  # Total frames
 
-    if not hasattr(main_window, "roi_params"):
+    if not hasattr(main_window, "roi_params") or not isinstance(main_window.roi_params, dict):
         log_message(main_window.ui, "Error: No ROI selected.")
         return
 
-    # Use list indexing
-    roi_x, roi_y, roi_size = (
-        main_window.roi_params[0],  # X-offset
-        main_window.roi_params[1],  # Y-offset
-        main_window.roi_params[2]   # ROI Size
-    )
+    roi_x = main_window.roi_params.get("x_offset", 1)
+    roi_y = main_window.roi_params.get("y_offset", 1)
+    roi_size = main_window.roi_params.get("roi_size", 256)
 
     for i in range(num_frames):
         roi_image = imlow[roi_y:roi_y + roi_size, roi_x:roi_x + roi_size, i]
