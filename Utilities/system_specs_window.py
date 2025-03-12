@@ -1,3 +1,4 @@
+import os
 import numpy as np
 from PySide6.QtWidgets import QWidget
 from WindowUI.SystemSpecsWindow_ui import Ui_SystemSpecsWindow
@@ -40,8 +41,9 @@ class SystemSpecsWindow(QWidget):
         self.ui.pix_size.setText(format_scalar(mat_data.get("dpix_c", "optional")))
         self.ui.Lambda.setText(format_scalar(mat_data.get("lambda", "optional")))
 
-        # Populate algorithm list dynamically
-        self.populate_algorithm_list(self.main_window.algorithms)
+        # Detect algorithms dynamically from the "Algorithms" folder
+        detected_algorithms = self.detect_algorithms()
+        self.populate_algorithm_list(detected_algorithms)
 
         # Validate NA_list and imlow consistency
         if "imlow" not in mat_data or not isinstance(mat_data["imlow"], np.ndarray):
@@ -59,16 +61,28 @@ class SystemSpecsWindow(QWidget):
             self.ui.NA_list.setText("Error: NA_list is not loaded correctly")
             log_message(self.main_window.ui, "Error: NA_list does not match the number of raw images.")
 
-        # Load ROI values from `roi_params` (Updated Approach)
+        # Load ROI values from `roi_params`
         if hasattr(self.main_window, "roi_params"):
             roi_x = self.main_window.roi_params.get("x_offset", 1)
             roi_y = self.main_window.roi_params.get("y_offset", 1)
             roi_size = self.main_window.roi_params.get("roi_size", 256)
             self.ui.ROIsltbox.setText(f"[{roi_x}, {roi_y}, {roi_size}, {roi_size}]")
         else:
-            self.ui.ROIsltbox.setText("[1,1,256,256]")  # Default if no ROI is set
+            self.ui.ROIsltbox.setText("[1,1,256,256]")  # Default if no ROI is set  
 
-     
+    def detect_algorithms(self):
+        """Scans the 'Algorithms' directory for subfolders and returns a sorted list of names."""
+        algorithm_directory = "Algorithms"  # Path to the algorithm folder
+
+        if not os.path.exists(algorithm_directory):
+            return []
+        
+        return sorted(
+            [
+                folder for folder in os.listdir(algorithm_directory)
+                if os.path.isdir(os.path.join(algorithm_directory, folder))
+            ]
+        )
 
     def populate_algorithm_list(self, algorithms):
         """Dynamically populate the algorithm combo box."""

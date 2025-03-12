@@ -1,3 +1,4 @@
+import os
 from PySide6.QtWidgets import QApplication, QMainWindow
 from PySide6.QtGui import QColor, QAction
 from Main_ui import Ui_FPMSoftware
@@ -30,14 +31,9 @@ class MainWindow(QMainWindow):
         self.roi_params = {"x_offset": 1, "y_offset": 1, "roi_size": 256}
 
 
-        # Define available algorithms (Easily expandable)
-        self.algorithms = [
-            "Gerchberg-Saxton",
-            "EPRY Embedded pupil function recovery",
-            "Gauss-Newton",
-            "KK Kramers-Kronig relation",
-            "APIC Angular Ptychographic Imaging with Closed-form method"
-        ]
+        # **Scan for algorithm subfolders dynamically**
+        self.algorithm_directory = "Algorithms"  # Directory where algorithms are stored
+        self.algorithms = self.detect_algorithms()  # Automatically fetch algorithms
 
 
         # Replace default QGraphicsView with interactive view
@@ -134,22 +130,35 @@ class MainWindow(QMainWindow):
         self.system_specs_window.load_system_specs()
         self.system_specs_window.show()
 
+    def detect_algorithms(self):
+        """Scans the 'Algorithms' directory for subfolders and returns a sorted list of names."""
+        if not os.path.exists(self.algorithm_directory):
+            return []
+        
+        return sorted(
+            [
+                folder for folder in os.listdir(self.algorithm_directory)
+                if os.path.isdir(os.path.join(self.algorithm_directory, folder))
+            ]
+        )
 
     def populate_algorithm_menu(self):
-        """Dynamically populate the algorithm selection menu."""
+        """Dynamically populate the 'Specs -> Algorithm specs' menu."""
         menu_algorithms = self.ui.menuAlgorithm_specs
         menu_algorithms.clear()  # Clear existing menu items
 
         for algorithm in self.algorithms:
-            action = QAction(algorithm, self)
+            shortened_name = algorithm.split(" ")[0]  # Shorten name for menu display
+            action = QAction(shortened_name, self)
             action.setCheckable(True)
             action.triggered.connect(lambda checked, alg=algorithm: self.select_algorithm(alg))
             self.algorithm_actions[algorithm] = action
             menu_algorithms.addAction(action)
 
         # Default selection
-        self.selected_algorithm = self.algorithms[0]
-        self.algorithm_actions[self.selected_algorithm].setChecked(True)
+        if self.algorithms:
+            self.selected_algorithm = self.algorithms[0]
+            self.algorithm_actions[self.selected_algorithm].setChecked(True)
 
     def select_algorithm(self, algorithm_name):
         """Updates the selected algorithm and sets a tick in the menu bar."""
