@@ -43,7 +43,7 @@
    </property>
    <layout class="QGridLayout" name="gridLayout_2" rowstretch="1,12" columnstretch="0">
     <item row="0" column="0">
-     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,1,1,1,5,2">
+     <layout class="QHBoxLayout" name="horizontalLayout_5" stretch="1,1,0,1,1,5,2">
       <item>
        <widget class="QPushButton" name="load_butt">
         <property name="text">
@@ -55,6 +55,13 @@
        <widget class="QPushButton" name="roi_butt">
         <property name="text">
          <string>ROI</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="display_butt">
+        <property name="text">
+         <string>Display</string>
         </property>
        </widget>
       </item>
@@ -137,20 +144,8 @@ Caltech Biophotonics Lab</string>
    </widget>
    <widget class="QMenu" name="menuDisplay">
     <property name="title">
-     <string>Display</string>
+     <string>\</string>
     </property>
-    <addaction name="actionShow_single_raw_frame"/>
-    <addaction name="actionShow_all_raw_frames"/>
-    <addaction name="actionSingle_raw_spectrum"/>
-    <addaction name="actionAll_raw_spectrum"/>
-    <addaction name="separator"/>
-    <addaction name="actionSIngle_ROI"/>
-    <addaction name="actionAll_ROI_images"/>
-    <addaction name="separator"/>
-    <addaction name="actionAmplitude_result"/>
-    <addaction name="actionPhase_result"/>
-    <addaction name="actionPupil_function"/>
-    <addaction name="actionAll_results"/>
    </widget>
    <widget class="QMenu" name="menuSpecs">
     <property name="title">
@@ -187,9 +182,9 @@ Caltech Biophotonics Lab</string>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSpecs"/>
-   <addaction name="menuDisplay"/>
    <addaction name="menuMessageBox"/>
    <addaction name="menuHelp"/>
+   <addaction name="menuDisplay"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionLoad_Data">

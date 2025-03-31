@@ -109,6 +109,11 @@ class Ui_FPMSoftware(object):
 
         self.horizontalLayout_5.addWidget(self.roi_butt)
 
+        self.display_butt = QPushButton(self.centralwidget)
+        self.display_butt.setObjectName(u"display_butt")
+
+        self.horizontalLayout_5.addWidget(self.display_butt)
+
         self.run_butt = QPushButton(self.centralwidget)
         self.run_butt.setObjectName(u"run_butt")
 
@@ -130,10 +135,10 @@ class Ui_FPMSoftware(object):
 
         self.horizontalLayout_5.setStretch(0, 1)
         self.horizontalLayout_5.setStretch(1, 1)
-        self.horizontalLayout_5.setStretch(2, 1)
         self.horizontalLayout_5.setStretch(3, 1)
-        self.horizontalLayout_5.setStretch(4, 5)
-        self.horizontalLayout_5.setStretch(5, 2)
+        self.horizontalLayout_5.setStretch(4, 1)
+        self.horizontalLayout_5.setStretch(5, 5)
+        self.horizontalLayout_5.setStretch(6, 2)
 
         self.gridLayout_2.addLayout(self.horizontalLayout_5, 0, 0, 1, 1)
 
@@ -180,26 +185,14 @@ class Ui_FPMSoftware(object):
 
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuSpecs.menuAction())
-        self.menubar.addAction(self.menuDisplay.menuAction())
         self.menubar.addAction(self.menuMessageBox.menuAction())
         self.menubar.addAction(self.menuHelp.menuAction())
+        self.menubar.addAction(self.menuDisplay.menuAction())
         self.menuFile.addAction(self.actionLoad_Data)
         self.menuFile.addAction(self.actionSystem_Spec)
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionSave_Reults)
         self.menuFile.addAction(self.actionLoad_Results)
-        self.menuDisplay.addAction(self.actionShow_single_raw_frame)
-        self.menuDisplay.addAction(self.actionShow_all_raw_frames)
-        self.menuDisplay.addAction(self.actionSingle_raw_spectrum)
-        self.menuDisplay.addAction(self.actionAll_raw_spectrum)
-        self.menuDisplay.addSeparator()
-        self.menuDisplay.addAction(self.actionSIngle_ROI)
-        self.menuDisplay.addAction(self.actionAll_ROI_images)
-        self.menuDisplay.addSeparator()
-        self.menuDisplay.addAction(self.actionAmplitude_result)
-        self.menuDisplay.addAction(self.actionPhase_result)
-        self.menuDisplay.addAction(self.actionPupil_function)
-        self.menuDisplay.addAction(self.actionAll_results)
         self.menuSpecs.addAction(self.actionCheck_systerm_specs)
         self.menuSpecs.addAction(self.actionSystem_specs)
         self.menuSpecs.addAction(self.menuAlgorithm_specs.menuAction())
@@ -250,6 +243,7 @@ class Ui_FPMSoftware(object):
         self.actionAll_ROI_images.setText(QCoreApplication.translate("FPMSoftware", u"All ROI images", None))
         self.load_butt.setText(QCoreApplication.translate("FPMSoftware", u"Load", None))
         self.roi_butt.setText(QCoreApplication.translate("FPMSoftware", u"ROI", None))
+        self.display_butt.setText(QCoreApplication.translate("FPMSoftware", u"Display", None))
         self.run_butt.setText(QCoreApplication.translate("FPMSoftware", u"Run", None))
         self.save_butt.setText(QCoreApplication.translate("FPMSoftware", u"Save", None))
         self.acknowledge_text.setPlainText(QCoreApplication.translate("FPMSoftware", u"Designed by Haowen Zhou.\n"
@@ -257,7 +251,7 @@ class Ui_FPMSoftware(object):
 "Caltech Biophotonics Lab", None))
         self.Msg_window.setPlainText(QCoreApplication.translate("FPMSoftware", u"Welcome to Fourier Ptychographic Microscopy reconstruction algorithm software!", None))
         self.menuFile.setTitle(QCoreApplication.translate("FPMSoftware", u"File", None))
-        self.menuDisplay.setTitle(QCoreApplication.translate("FPMSoftware", u"Display", None))
+        self.menuDisplay.setTitle(QCoreApplication.translate("FPMSoftware", u"\\", None))
         self.menuSpecs.setTitle(QCoreApplication.translate("FPMSoftware", u"Specs", None))
         self.menuAlgorithm_specs.setTitle(QCoreApplication.translate("FPMSoftware", u"Algorithm specs", None))
         self.menuHelp.setTitle(QCoreApplication.translate("FPMSoftware", u"Help", None))

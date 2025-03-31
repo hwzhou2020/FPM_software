@@ -27,4 +27,8 @@ pyside6
 mat73
 os
 numpy
+pyyaml
 ```
+
+```
+GS - torch

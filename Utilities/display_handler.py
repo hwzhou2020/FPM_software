@@ -6,7 +6,6 @@ from PySide6.QtCore import Qt
 from Utilities.logging_utils import log_message
 
 
-
 def mat2gray(image):
     """Normalize image to range [0, 255] for display."""
     image = image - np.min(image)
@@ -208,3 +207,56 @@ def display_all_roi_images(main_window):
 
         QApplication.processEvents()
         time.sleep(0.1)
+
+
+
+def display_result_image(main_window, result_type="amplitude"):
+
+    if not hasattr(main_window, "reconstruction_result"):
+        log_message(main_window.ui, "Error: No reconstruction results available.")
+        return
+
+    image = main_window.reconstruction_result.get(result_type)
+    if image is None:
+        log_message(main_window.ui, f"Error: {result_type} result not found.")
+        return
+
+    # Convert pupil to phase for display
+    if result_type == "pupil":
+        image = np.angle(image)
+
+    # if it is all zeros, just display zeros to avoid division by zero
+    if np.all(image == 0):
+        log_message(main_window.ui, "Warning: Result image is all zeros. Displaying zero image.")
+        image_uint8 = np.zeros_like(image)
+    else:
+        # Normalize and convert to 8-bit image
+        image = (image - np.min(image)) / (np.max(image) - np.min(image) + 1e-8) * 255
+        image_uint8 = image.astype(np.uint8)
+        image_uint8 = np.ascontiguousarray(image_uint8)  # Ensure memory layout
+
+    display_image(main_window.ui, image_uint8, frame_number=None, total_frames=None)
+    # h, w = image.shape
+    # q_image = QImage(image_uint8.data, w, h, w, QImage.Format_Grayscale8)
+    # pixmap = QPixmap.fromImage(q_image)
+
+    # # Create scene and add image
+    # scene = QGraphicsScene()
+    # pixmap_item = scene.addPixmap(pixmap)
+
+    # # Add title overlay
+    # # title = result_type.capitalize() + " result"
+    # # text_item = QGraphicsSimpleTextItem(title)
+    # # text_item.setBrush(QColor("#4A90E2"))
+    # # text_item.setFont(QFont("Arial", 16))
+    # # text_item.setPos(10, 10)
+    # # scene.addItem(text_item)
+
+    # # Display
+    # main_window.ui.display_window.setScene(scene)
+    # main_window.ui.display_window.setSceneRect(scene.itemsBoundingRect())
+    # main_window.ui.display_window.fitInView(pixmap_item, Qt.KeepAspectRatio)
+    # main_window.ui.display_window.setDragMode(QGraphicsView.ScrollHandDrag)
+    # main_window.ui.display_window.setTransformationAnchor(main_window.ui.display_window.AnchorUnderMouse)
+
+    # log_message(main_window.ui, f"Displayed {title}.")

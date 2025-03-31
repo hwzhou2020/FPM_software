@@ -1,0 +1,37 @@
+# Algorithms/Gerchberg-Saxton/config.yml
+
+name: Gerchberg-Saxton
+description: Traditional phase retrieval using iterative updates.
+parameters:
+  upsample:
+    type: int
+    default: 3
+    label: Upsampling factor
+  num_iters:
+    type: int
+    default: 25
+    label: Number of iterations
+  tol:
+    type: float
+    default: 0.03
+    label: NA Tolerance (brightfield threshold)
+  alpha:
+    type: float
+    default: 25
+    label: Amplitude update regularization
+  beta:
+    type: float
+    default: 1.0
+    label: Pupil update regularization
+  mode:
+    type: str
+    default: "bright"
+    label: Imaging mode (bright/dark/all)
+
+help:
+  mode: "Choose from bright, dark, or all."
+  upsample: "Upsampling factor used during reconstruction."
+  num_iters: "Number of iterations for convergence."
+  tol: "Tolerance for NA thresholding (for brightfield selection)."
+  alpha: "Update strength for the amplitude update."
+  beta: "Update strength for pupil correction."
