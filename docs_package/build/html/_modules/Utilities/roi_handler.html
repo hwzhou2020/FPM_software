@@ -1,0 +1,334 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Utilities.roi_handler &mdash; Fourier Ptychographic Microscopy Software 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Fourier Ptychographic Microscopy Software
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation_and_usage.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Fourier Ptychographic Microscopy Software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">Utilities.roi_handler</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Utilities.roi_handler</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">QGraphicsScene</span><span class="p">,</span> <span class="n">QInputDialog</span><span class="p">,</span> <span class="n">QGraphicsRectItem</span><span class="p">,</span> <span class="n">QDialog</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QSpinBox</span><span class="p">,</span> <span class="n">QPushButton</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QPen</span><span class="p">,</span> <span class="n">QBrush</span><span class="p">,</span> <span class="n">QImage</span><span class="p">,</span> <span class="n">QPixmap</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.logging_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_message</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.display_handler</span><span class="w"> </span><span class="kn">import</span> <span class="n">display_image</span>
+
+
+<div class="viewcode-block" id="MovableROI">
+<a class="viewcode-back" href="../../roi_handler.html#Utilities.roi_handler.MovableROI">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MovableROI</span><span class="p">(</span><span class="n">QGraphicsRectItem</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;A moveable ROI box that aligns with the displayed image&#39;s top-left corner.&quot;&quot;&quot;</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">main_window</span><span class="p">,</span> <span class="n">scale_factor</span><span class="p">,</span> <span class="n">image_scene_x</span><span class="p">,</span> <span class="n">image_scene_y</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale_factor</span> <span class="o">+</span> <span class="n">image_scene_x</span><span class="p">,</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">scale_factor</span> <span class="o">+</span> <span class="n">image_scene_y</span><span class="p">,</span> 
+                         <span class="n">size</span> <span class="o">*</span> <span class="n">scale_factor</span><span class="p">,</span> <span class="n">size</span> <span class="o">*</span> <span class="n">scale_factor</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span> <span class="o">=</span> <span class="n">main_window</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale_factor</span> <span class="o">=</span> <span class="n">scale_factor</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_scene_x</span> <span class="o">=</span> <span class="n">image_scene_x</span>  <span class="c1"># Top-left corner of image in scene</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">image_scene_y</span> <span class="o">=</span> <span class="n">image_scene_y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setBrush</span><span class="p">(</span><span class="n">QBrush</span><span class="p">(</span><span class="n">QColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">153</span><span class="p">,</span> <span class="mi">100</span><span class="p">)))</span>  <span class="c1"># Light yellow fill</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setPen</span><span class="p">(</span><span class="n">QPen</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">yellow</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>  <span class="c1"># Yellow border</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setFlags</span><span class="p">(</span><span class="n">QGraphicsRectItem</span><span class="o">.</span><span class="n">ItemIsMovable</span> <span class="o">|</span> <span class="n">QGraphicsRectItem</span><span class="o">.</span><span class="n">ItemIsSelectable</span><span class="p">)</span>
+
+<div class="viewcode-block" id="MovableROI.mouseDoubleClickEvent">
+<a class="viewcode-back" href="../../roi_handler.html#Utilities.roi_handler.MovableROI.mouseDoubleClickEvent">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">mouseDoubleClickEvent</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;On double-click, open ROI modification dialog with correct scaling.&quot;&quot;&quot;</span>
+        <span class="n">scene_pos</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sceneBoundingRect</span><span class="p">()</span><span class="o">.</span><span class="n">topLeft</span><span class="p">()</span>
+        <span class="n">x_offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">scene_pos</span><span class="o">.</span><span class="n">x</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_scene_x</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">y_offset</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="n">scene_pos</span><span class="o">.</span><span class="n">y</span><span class="p">()</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">image_scene_y</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+
+        <span class="n">modify_roi_dialog</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="p">,</span> <span class="bp">self</span><span class="p">,</span> <span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rect</span><span class="p">()</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale_factor</span><span class="p">))</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="select_roi_size">
+<a class="viewcode-back" href="../../roi_handler.html#Utilities.roi_handler.select_roi_size">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">select_roi_size</span><span class="p">(</span><span class="n">main_window</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Prompt user for ROI size selection.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span> <span class="ow">or</span> <span class="s2">&quot;imlow&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">:</span>
+        <span class="n">log_message</span><span class="p">(</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;Error: No data loaded.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">imlow</span> <span class="o">=</span> <span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;imlow&quot;</span><span class="p">]</span>
+    <span class="n">max_size</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">imlow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">imlow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">size</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">QInputDialog</span><span class="o">.</span><span class="n">getInt</span><span class="p">(</span>
+        <span class="n">main_window</span><span class="p">,</span> <span class="s2">&quot;Set ROI Size&quot;</span><span class="p">,</span>
+        <span class="sa">f</span><span class="s2">&quot;Enter ROI size (64 to </span><span class="si">{</span><span class="n">max_size</span><span class="si">}</span><span class="s2"> pixels):&quot;</span><span class="p">,</span>
+        <span class="mi">64</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="n">max_size</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">ok</span><span class="p">:</span>
+        <span class="n">main_window</span><span class="o">.</span><span class="n">roi_size</span> <span class="o">=</span> <span class="n">size</span>
+        <span class="n">log_message</span><span class="p">(</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ROI size set to </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2"> pixels.&quot;</span><span class="p">)</span>
+        <span class="n">display_image_with_roi</span><span class="p">(</span><span class="n">main_window</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="display_image_with_roi">
+<a class="viewcode-back" href="../../roi_handler.html#Utilities.roi_handler.display_image_with_roi">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_image_with_roi</span><span class="p">(</span><span class="n">main_window</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Display the first frame and overlay a moveable ROI box aligned to the displayed image.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span> <span class="ow">or</span> <span class="s2">&quot;imlow&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">:</span>
+        <span class="n">log_message</span><span class="p">(</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;Error: Set ROI size first.&quot;</span><span class="p">)</span>
+        <span class="k">return</span>
+
+    <span class="n">imlow</span> <span class="o">=</span> <span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;imlow&quot;</span><span class="p">]</span>
+    <span class="n">scene</span> <span class="o">=</span> <span class="n">QGraphicsScene</span><span class="p">()</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">imlow</span><span class="p">[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">]</span>  <span class="c1"># First frame</span>
+
+    <span class="c1"># Normalize and convert image</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="p">(</span><span class="n">image</span> <span class="o">-</span> <span class="n">image</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">-</span> <span class="n">image</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="o">*</span> <span class="mi">255</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">uint8</span><span class="p">)</span>
+    <span class="n">image</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ascontiguousarray</span><span class="p">(</span><span class="n">image</span><span class="p">)</span>
+
+    <span class="n">height</span><span class="p">,</span> <span class="n">width</span> <span class="o">=</span> <span class="n">image</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">q_image</span> <span class="o">=</span> <span class="n">QImage</span><span class="p">(</span><span class="n">image</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">height</span><span class="p">,</span> <span class="n">width</span><span class="p">,</span> <span class="n">QImage</span><span class="o">.</span><span class="n">Format_Grayscale8</span><span class="p">)</span>
+    <span class="n">pixmap</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="o">.</span><span class="n">fromImage</span><span class="p">(</span><span class="n">q_image</span><span class="p">)</span>
+    <span class="n">pixmap_item</span> <span class="o">=</span> <span class="n">scene</span><span class="o">.</span><span class="n">addPixmap</span><span class="p">(</span><span class="n">pixmap</span><span class="p">)</span>
+
+    <span class="c1"># Get the displayed image&#39;s bounding box inside the scene</span>
+    <span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">display_window</span><span class="o">.</span><span class="n">setScene</span><span class="p">(</span><span class="n">scene</span><span class="p">)</span>
+    <span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">display_window</span><span class="o">.</span><span class="n">fitInView</span><span class="p">(</span><span class="n">pixmap_item</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeepAspectRatio</span><span class="p">)</span>
+    <span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">display_window</span><span class="o">.</span><span class="n">setSceneRect</span><span class="p">(</span><span class="n">scene</span><span class="o">.</span><span class="n">itemsBoundingRect</span><span class="p">())</span>
+
+    <span class="n">image_scene_rect</span> <span class="o">=</span> <span class="n">pixmap_item</span><span class="o">.</span><span class="n">sceneBoundingRect</span><span class="p">()</span>
+    <span class="n">image_scene_x</span><span class="p">,</span> <span class="n">image_scene_y</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">image_scene_rect</span><span class="o">.</span><span class="n">x</span><span class="p">()),</span> <span class="nb">int</span><span class="p">(</span><span class="n">image_scene_rect</span><span class="o">.</span><span class="n">y</span><span class="p">())</span>
+
+    <span class="c1"># Scaling factor to match displayed image size</span>
+    <span class="n">scale_factor</span> <span class="o">=</span> <span class="n">image_scene_rect</span><span class="o">.</span><span class="n">width</span><span class="p">()</span> <span class="o">/</span> <span class="n">width</span>  <span class="c1"># Ensure correct scaling</span>
+
+    <span class="n">roi_size</span> <span class="o">=</span> <span class="n">main_window</span><span class="o">.</span><span class="n">roi_size</span>
+    <span class="n">init_x</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">width</span> <span class="o">-</span> <span class="n">roi_size</span><span class="p">))</span>  <span class="c1"># Ensure valid range</span>
+    <span class="n">init_y</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">50</span><span class="p">,</span> <span class="n">height</span> <span class="o">-</span> <span class="n">roi_size</span><span class="p">))</span>
+
+    <span class="n">roi_box</span> <span class="o">=</span> <span class="n">MovableROI</span><span class="p">(</span><span class="n">init_x</span><span class="p">,</span> <span class="n">init_y</span><span class="p">,</span> <span class="n">roi_size</span><span class="p">,</span> <span class="n">main_window</span><span class="p">,</span> <span class="n">scale_factor</span><span class="p">,</span> <span class="n">image_scene_x</span><span class="p">,</span> <span class="n">image_scene_y</span><span class="p">)</span>
+    <span class="n">scene</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="n">roi_box</span><span class="p">)</span>
+
+    <span class="n">main_window</span><span class="o">.</span><span class="n">roi_box</span> <span class="o">=</span> <span class="n">roi_box</span>
+    <span class="n">main_window</span><span class="o">.</span><span class="n">roi_scale_factor</span> <span class="o">=</span> <span class="n">scale_factor</span>
+    <span class="n">main_window</span><span class="o">.</span><span class="n">image_scene_x</span> <span class="o">=</span> <span class="n">image_scene_x</span>
+    <span class="n">main_window</span><span class="o">.</span><span class="n">image_scene_y</span> <span class="o">=</span> <span class="n">image_scene_y</span></div>
+
+
+
+<div class="viewcode-block" id="modify_roi_dialog">
+<a class="viewcode-back" href="../../roi_handler.html#Utilities.roi_handler.modify_roi_dialog">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">modify_roi_dialog</span><span class="p">(</span><span class="n">main_window</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">,</span> <span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Dialog to modify ROI parameters and update position dynamically.&quot;&quot;&quot;</span>
+    <span class="n">imlow</span> <span class="o">=</span> <span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;imlow&quot;</span><span class="p">]</span>
+    <span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span> <span class="o">=</span> <span class="n">imlow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">imlow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="n">dialog</span> <span class="o">=</span> <span class="n">QDialog</span><span class="p">(</span><span class="n">main_window</span><span class="p">)</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Modify ROI Parameters&quot;</span><span class="p">)</span>
+
+    <span class="n">layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+
+    <span class="c1"># ROI Controls</span>
+    <span class="n">controls_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+    <span class="n">x_label</span><span class="p">,</span> <span class="n">y_label</span><span class="p">,</span> <span class="n">size_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;X-Offset (px):&quot;</span><span class="p">),</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;Y-Offset (px):&quot;</span><span class="p">),</span> <span class="n">QLabel</span><span class="p">(</span><span class="s2">&quot;ROI Size (px):&quot;</span><span class="p">)</span>
+    <span class="n">x_spin</span><span class="p">,</span> <span class="n">y_spin</span><span class="p">,</span> <span class="n">size_spin</span> <span class="o">=</span> <span class="n">QSpinBox</span><span class="p">(),</span> <span class="n">QSpinBox</span><span class="p">(),</span> <span class="n">QSpinBox</span><span class="p">()</span>
+
+    <span class="c1"># Set limits</span>
+    <span class="n">size_spin</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="mi">64</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">max_x</span><span class="p">,</span> <span class="n">max_y</span><span class="p">))</span>
+    <span class="n">x_spin</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_x</span> <span class="o">-</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">y_spin</span><span class="o">.</span><span class="n">setRange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">max_y</span> <span class="o">-</span> <span class="n">size</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">x_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">x_offset</span><span class="p">)</span>
+    <span class="n">y_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">y_offset</span><span class="p">)</span>
+    <span class="n">size_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="n">confirm_btn</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Confirm&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Instructional Image</span>
+    <span class="n">img_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">()</span>
+    <span class="n">img_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">getcwd</span><span class="p">(),</span> <span class="s2">&quot;icons&quot;</span><span class="p">,</span> <span class="s2">&quot;ROI_instruct.jpg&quot;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">img_path</span><span class="p">):</span>
+        <span class="n">img</span> <span class="o">=</span> <span class="n">QPixmap</span><span class="p">(</span><span class="n">img_path</span><span class="p">)</span><span class="o">.</span><span class="n">scaled</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">200</span><span class="p">,</span> <span class="n">Qt</span><span class="o">.</span><span class="n">KeepAspectRatio</span><span class="p">)</span>
+        <span class="n">img_label</span><span class="o">.</span><span class="n">setPixmap</span><span class="p">(</span><span class="n">img</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">img_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Image not found&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Update ROI dynamically</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_roi</span><span class="p">():</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the position of the yellow ROI box dynamically.&quot;&quot;&quot;</span>
+        <span class="n">new_x_offset</span> <span class="o">=</span> <span class="n">x_spin</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="n">new_y_offset</span> <span class="o">=</span> <span class="n">y_spin</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+        <span class="n">new_size</span> <span class="o">=</span> <span class="n">size_spin</span><span class="o">.</span><span class="n">value</span><span class="p">()</span>
+
+        <span class="c1"># Ensure ROI stays within bounds</span>
+        <span class="n">max_x_offset</span> <span class="o">=</span> <span class="n">max_x</span> <span class="o">-</span> <span class="n">new_size</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">max_y_offset</span> <span class="o">=</span> <span class="n">max_y</span> <span class="o">-</span> <span class="n">new_size</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">new_x_offset</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">new_x_offset</span><span class="p">),</span> <span class="n">max_x_offset</span><span class="p">)</span>
+        <span class="n">new_y_offset</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">new_y_offset</span><span class="p">),</span> <span class="n">max_y_offset</span><span class="p">)</span>
+
+        <span class="n">x_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">new_x_offset</span><span class="p">)</span>
+        <span class="n">y_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">new_y_offset</span><span class="p">)</span>
+        <span class="n">size_spin</span><span class="o">.</span><span class="n">setValue</span><span class="p">(</span><span class="n">new_size</span><span class="p">)</span>
+
+        <span class="n">roi_box</span><span class="o">.</span><span class="n">setRect</span><span class="p">((</span><span class="n">new_x_offset</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">main_window</span><span class="o">.</span><span class="n">roi_scale_factor</span> <span class="o">+</span> <span class="n">main_window</span><span class="o">.</span><span class="n">image_scene_x</span><span class="p">,</span> 
+                        <span class="p">(</span><span class="n">new_y_offset</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">main_window</span><span class="o">.</span><span class="n">roi_scale_factor</span> <span class="o">+</span> <span class="n">main_window</span><span class="o">.</span><span class="n">image_scene_y</span><span class="p">,</span> 
+                        <span class="n">new_size</span> <span class="o">*</span> <span class="n">main_window</span><span class="o">.</span><span class="n">roi_scale_factor</span><span class="p">,</span> 
+                        <span class="n">new_size</span> <span class="o">*</span> <span class="n">main_window</span><span class="o">.</span><span class="n">roi_scale_factor</span><span class="p">)</span>
+
+        <span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">display_window</span><span class="o">.</span><span class="n">scene</span><span class="p">()</span><span class="o">.</span><span class="n">update</span><span class="p">()</span>
+
+    <span class="n">x_spin</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">update_roi</span><span class="p">)</span>
+    <span class="n">y_spin</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">update_roi</span><span class="p">)</span>
+    <span class="n">size_spin</span><span class="o">.</span><span class="n">valueChanged</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="n">update_roi</span><span class="p">)</span>
+
+    <span class="n">confirm_btn</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">apply_roi_changes</span><span class="p">(</span><span class="n">main_window</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">,</span> <span class="n">x_spin</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span> <span class="n">y_spin</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span> <span class="n">size_spin</span><span class="o">.</span><span class="n">value</span><span class="p">(),</span> <span class="n">dialog</span><span class="p">))</span>
+
+    <span class="n">controls_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">x_label</span><span class="p">)</span>
+    <span class="n">controls_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">x_spin</span><span class="p">)</span>
+    <span class="n">controls_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">y_label</span><span class="p">)</span>
+    <span class="n">controls_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">y_spin</span><span class="p">)</span>
+    <span class="n">controls_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">size_label</span><span class="p">)</span>
+    <span class="n">controls_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">size_spin</span><span class="p">)</span>
+    <span class="n">controls_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">confirm_btn</span><span class="p">)</span>
+
+    <span class="n">layout</span><span class="o">.</span><span class="n">addLayout</span><span class="p">(</span><span class="n">controls_layout</span><span class="p">)</span>
+    <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="n">img_label</span><span class="p">)</span>
+    
+    <span class="n">dialog</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">layout</span><span class="p">)</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">exec</span><span class="p">()</span></div>
+
+
+
+
+<div class="viewcode-block" id="apply_roi_changes">
+<a class="viewcode-back" href="../../roi_handler.html#Utilities.roi_handler.apply_roi_changes">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">apply_roi_changes</span><span class="p">(</span><span class="n">main_window</span><span class="p">,</span> <span class="n">roi_box</span><span class="p">,</span> <span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">dialog</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Apply changes, update ROI parameters, System Specs UI, and display the first frame.&quot;&quot;&quot;</span>
+    <span class="c1"># Update ROI parameters in main_window as a dictionary</span>
+    <span class="n">main_window</span><span class="o">.</span><span class="n">roi_params</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;x_offset&quot;</span><span class="p">:</span> <span class="n">x_offset</span><span class="p">,</span>
+        <span class="s2">&quot;y_offset&quot;</span><span class="p">:</span> <span class="n">y_offset</span><span class="p">,</span>
+        <span class="s2">&quot;roi_size&quot;</span><span class="p">:</span> <span class="n">size</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Log the update</span>
+    <span class="n">roi_text</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">x_offset</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">y_offset</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">size</span><span class="si">}</span><span class="s2">]&quot;</span>
+    <span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">Msg_window</span><span class="o">.</span><span class="n">appendPlainText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ROI modified: </span><span class="si">{</span><span class="n">roi_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="n">log_message</span><span class="p">(</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;ROI modified: </span><span class="si">{</span><span class="n">roi_text</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="c1"># If System Specs window is open, update ROI display field</span>
+    <span class="k">if</span> <span class="n">main_window</span><span class="o">.</span><span class="n">system_specs_window</span><span class="p">:</span>
+        <span class="n">main_window</span><span class="o">.</span><span class="n">system_specs_window</span><span class="o">.</span><span class="n">update_roi_field</span><span class="p">(</span><span class="n">roi_text</span><span class="p">)</span>  <span class="c1"># Call update function</span>
+
+    <span class="c1"># Display the first frame with the new ROI</span>
+    <span class="n">display_first_roi_frame</span><span class="p">(</span><span class="n">main_window</span><span class="p">,</span> <span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">size</span><span class="p">)</span>
+    <span class="n">dialog</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="display_first_roi_frame">
+<a class="viewcode-back" href="../../roi_handler.html#Utilities.roi_handler.display_first_roi_frame">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">display_first_roi_frame</span><span class="p">(</span><span class="n">main_window</span><span class="p">,</span> <span class="n">x_offset</span><span class="p">,</span> <span class="n">y_offset</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Extract and display the first frame of the ROI.&quot;&quot;&quot;</span>
+    <span class="n">imlow</span> <span class="o">=</span> <span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;imlow&quot;</span><span class="p">]</span>
+    <span class="n">roi_image</span> <span class="o">=</span> <span class="n">imlow</span><span class="p">[</span><span class="n">y_offset</span><span class="p">:</span><span class="n">y_offset</span> <span class="o">+</span> <span class="n">size</span><span class="p">,</span> <span class="n">x_offset</span><span class="p">:</span><span class="n">x_offset</span> <span class="o">+</span> <span class="n">size</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+    <span class="n">display_image</span><span class="p">(</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="n">roi_image</span><span class="p">,</span> <span class="n">frame_number</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">total_frames</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

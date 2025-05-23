@@ -9,7 +9,7 @@ parameters:
     label: Upsampling factor
   num_iters:
     type: int
-    default: 25
+    default: 50
     label: Number of iterations
   tol:
     type: float
@@ -17,11 +17,11 @@ parameters:
     label: NA Tolerance (brightfield threshold)
   alpha:
     type: float
-    default: 25
+    default: 2
     label: Amplitude update regularization
   beta:
     type: float
-    default: 1.0
+    default: 0.1
     label: Pupil update regularization
   mode:
     type: str

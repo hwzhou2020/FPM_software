@@ -3,7 +3,7 @@ from scipy.ndimage import zoom
 import torch
 import os
 
-def run_algorithm(system_params, roi_params, mat_data, log_callback=None):
+def run_algorithm(system_params, roi_params, mat_data, log_callback=None, progress_callback=None):
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
     # Extract raw intensity images
@@ -96,6 +96,8 @@ def run_algorithm(system_params, roi_params, mat_data, log_callback=None):
     error_bef = 1e10
 
     for iter in range(num_iters):
+        if progress_callback:
+            progress_callback(int(100 * iter / num_iters))
         error_now = 0
 
         if log_callback:

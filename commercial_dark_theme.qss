@@ -1,0 +1,92 @@
+/* Base */
+* {
+    font-family: 'Segoe UI', 'Helvetica', sans-serif;
+    font-size: 10pt;
+}
+
+/* Main window */
+QMainWindow {
+    background-color: #2b2b2b;
+    color: #dddddd;
+}
+
+/* Menu bar */
+QMenuBar {
+    background-color: #2b2b2b;
+    color: #dddddd;
+    border-bottom: 1px solid #444;
+}
+
+QMenuBar::item {
+    background: transparent;
+    padding: 6px 15px;
+}
+
+QMenuBar::item:selected {
+    background: #444;
+}
+
+/* Menus */
+QMenu {
+    background-color: #2b2b2b;
+    color: #dddddd;
+    border: 1px solid #555;
+}
+
+QMenu::item:selected {
+    background-color: #505050;
+}
+
+/* Buttons */
+QPushButton {
+    background-color: #3c3c3c;
+    color: #ffffff;
+    border: 1px solid #555;
+    border-radius: 5px;
+    padding: 6px 12px;
+}
+
+QPushButton:hover {
+    background-color: #505050;
+    border: 1px solid #888;
+}
+
+QPushButton:pressed {
+    background-color: #2e2e2e;
+}
+
+/* Group boxes */
+QGroupBox {
+    border: 1px solid #555;
+    border-radius: 4px;
+    margin-top: 10px;
+    font-weight: bold;
+    color: #cccccc;
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 3px;
+}
+
+/* Text display */
+QPlainTextEdit, QTextEdit {
+    background-color: #1e1e1e;
+    color: #dddddd;
+    border: 1px solid #444;
+    font-family: Consolas, monospace;
+    font-size: 10pt;
+}
+
+/* Status bar */
+QStatusBar {
+    background-color: #222;
+    color: #bbbbbb;
+    border-top: 1px solid #444;
+}
+
+/* Image display area */
+QGraphicsView {
+    background-color: black;
+    border: 1px solid #555;
+}

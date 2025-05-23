@@ -1,0 +1,7 @@
+main copy
+=========
+
+.. automodule:: main copy
+    :members:
+    :undoc-members:
+    :show-inheritance:

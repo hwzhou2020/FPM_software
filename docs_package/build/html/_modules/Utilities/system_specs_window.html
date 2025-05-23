@@ -1,0 +1,270 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Utilities.system_specs_window &mdash; Fourier Ptychographic Microscopy Software 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Fourier Ptychographic Microscopy Software
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation_and_usage.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Fourier Ptychographic Microscopy Software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">Utilities.system_specs_window</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for Utilities.system_specs_window</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">numpy</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">np</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QWidget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">WindowUI.SystemSpecsWindow_ui</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ui_SystemSpecsWindow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.logging_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_message</span>
+
+
+<div class="viewcode-block" id="format_scalar">
+<a class="viewcode-back" href="../../system_specs_window.html#Utilities.system_specs_window.format_scalar">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">format_scalar</span><span class="p">(</span><span class="n">value</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert single-element arrays/lists to scalars for display.&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">value</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="o">.</span><span class="n">item</span><span class="p">())</span>  <span class="c1"># Convert array to scalar</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">list</span><span class="p">)</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">value</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1"># Convert list to scalar</span>
+    <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="nb">float</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>  <span class="c1"># Already a scalar</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Invalid Data&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="SystemSpecsWindow">
+<a class="viewcode-back" href="../../system_specs_window.html#Utilities.system_specs_window.SystemSpecsWindow">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">SystemSpecsWindow</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">main_window</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_SystemSpecsWindow</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span> <span class="o">=</span> <span class="n">main_window</span>  <span class="c1"># Reference to the main window</span>
+
+        <span class="c1"># Connect the confirm button to update data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">Cfm_sys_butt</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">confirm_specs</span><span class="p">)</span>
+        
+
+<div class="viewcode-block" id="SystemSpecsWindow.load_system_specs">
+<a class="viewcode-back" href="../../system_specs_window.html#Utilities.system_specs_window.SystemSpecsWindow.load_system_specs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_system_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update System Specs UI fields from loaded .mat file data.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;Error: No data loaded.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Extract values from mat_data safely</span>
+        <span class="n">mat_data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">mag</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">format_scalar</span><span class="p">(</span><span class="n">mat_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;mag&quot;</span><span class="p">,</span> <span class="s2">&quot;optional&quot;</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">NA</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">format_scalar</span><span class="p">(</span><span class="n">mat_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NA&quot;</span><span class="p">,</span> <span class="s2">&quot;optional&quot;</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">pix_size</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">format_scalar</span><span class="p">(</span><span class="n">mat_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;dpix_c&quot;</span><span class="p">,</span> <span class="s2">&quot;optional&quot;</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">Lambda</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">format_scalar</span><span class="p">(</span><span class="n">mat_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;lambda&quot;</span><span class="p">,</span> <span class="s2">&quot;optional&quot;</span><span class="p">)))</span>
+
+        <span class="c1"># Detect algorithms dynamically from the &quot;Algorithms&quot; folder</span>
+        <span class="n">detected_algorithms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">detect_algorithms</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">populate_algorithm_list</span><span class="p">(</span><span class="n">detected_algorithms</span><span class="p">)</span>
+
+        <span class="c1"># Validate NA_list and imlow consistency</span>
+        <span class="k">if</span> <span class="s2">&quot;imlow&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">mat_data</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;imlow&quot;</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+            <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;Error: imlow data is missing or corrupted.&quot;</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">NA_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Error: imlow missing&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="n">imlow</span> <span class="o">=</span> <span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;imlow&quot;</span><span class="p">]</span>
+        <span class="n">na_list</span> <span class="o">=</span> <span class="n">mat_data</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;NA_list&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">na_list</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">)</span> <span class="ow">and</span> <span class="n">na_list</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">imlow</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">2</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">NA_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;loaded&quot;</span><span class="p">)</span>
+            <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;NA_list is loaded correctly.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">NA_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;Error: NA_list is not loaded correctly&quot;</span><span class="p">)</span>
+            <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;Error: NA_list does not match the number of raw images.&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Load ROI values from `roi_params`</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="p">,</span> <span class="s2">&quot;roi_params&quot;</span><span class="p">):</span>
+            <span class="n">roi_x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">roi_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;x_offset&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">roi_y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">roi_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;y_offset&quot;</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="n">roi_size</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">roi_params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;roi_size&quot;</span><span class="p">,</span> <span class="mi">256</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ROIsltbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">roi_x</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">roi_y</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">roi_size</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">roi_size</span><span class="si">}</span><span class="s2">]&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ROIsltbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="s2">&quot;[1,1,256,256]&quot;</span><span class="p">)</span>  <span class="c1"># Default if no ROI is set  </span></div>
+
+
+<div class="viewcode-block" id="SystemSpecsWindow.detect_algorithms">
+<a class="viewcode-back" href="../../system_specs_window.html#Utilities.system_specs_window.SystemSpecsWindow.detect_algorithms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect_algorithms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Scans the &#39;Algorithms&#39; directory for subfolders and returns a sorted list of names.&quot;&quot;&quot;</span>
+        <span class="n">algorithm_directory</span> <span class="o">=</span> <span class="s2">&quot;Algorithms&quot;</span>  <span class="c1"># Path to the algorithm folder</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">algorithm_directory</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">(</span>
+            <span class="p">[</span>
+                <span class="n">folder</span> <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="n">algorithm_directory</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">algorithm_directory</span><span class="p">,</span> <span class="n">folder</span><span class="p">))</span>
+            <span class="p">]</span>
+        <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SystemSpecsWindow.populate_algorithm_list">
+<a class="viewcode-back" href="../../system_specs_window.html#Utilities.system_specs_window.SystemSpecsWindow.populate_algorithm_list">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">populate_algorithm_list</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithms</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Dynamically populate the algorithm combo box.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">addItems</span><span class="p">(</span><span class="n">algorithms</span><span class="p">)</span>
+
+        <span class="c1"># Set the currently selected algorithm from main window</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="p">,</span> <span class="s2">&quot;selected_algorithm&quot;</span><span class="p">):</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">selected_algorithm</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SystemSpecsWindow.update_algorithm_selection">
+<a class="viewcode-back" href="../../system_specs_window.html#Utilities.system_specs_window.SystemSpecsWindow.update_algorithm_selection">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_algorithm_selection</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update algorithm selection in the combo box.&quot;&quot;&quot;</span>
+        <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">findText</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">index</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">setCurrentIndex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SystemSpecsWindow.update_roi_field">
+<a class="viewcode-back" href="../../system_specs_window.html#Utilities.system_specs_window.SystemSpecsWindow.update_roi_field">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_roi_field</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">roi_text</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Updates the ROI selection field when the ROI is changed.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ROIsltbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">roi_text</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="SystemSpecsWindow.confirm_specs">
+<a class="viewcode-back" href="../../system_specs_window.html#Utilities.system_specs_window.SystemSpecsWindow.confirm_specs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">confirm_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update loaded .mat file data with values from UI fields and update menu tick.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;Error: No data to update.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+
+        <span class="c1"># Update system specifications in `mat_data`</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;magnification&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">mag</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;NA&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">NA</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;pixel_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">pix_size</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;wavelength&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">Lambda</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+
+        <span class="c1"># Update selected algorithm</span>
+        <span class="n">selected_algorithm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">currentText</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">mat_data</span><span class="p">[</span><span class="s2">&quot;algorithm&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">selected_algorithm</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">select_algorithm</span><span class="p">(</span><span class="n">selected_algorithm</span><span class="p">)</span>  <span class="c1"># Update Main UI tick</span>
+
+        <span class="c1"># Ensure `roi_params` is a dictionary before updating</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">roi_params</span><span class="p">,</span> <span class="nb">dict</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">roi_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x_offset&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;y_offset&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;roi_size&quot;</span><span class="p">:</span> <span class="mi">256</span><span class="p">}</span>
+
+        <span class="c1"># Update ROI selection using `roi_params`</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">roi_values</span> <span class="o">=</span> <span class="p">[</span><span class="nb">int</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">ROIsltbox</span><span class="o">.</span><span class="n">text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">(</span><span class="s2">&quot;[]&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot;,&quot;</span><span class="p">)]</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">roi_values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">4</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">roi_params</span><span class="p">[</span><span class="s2">&quot;x_offset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roi_values</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">roi_params</span><span class="p">[</span><span class="s2">&quot;y_offset&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roi_values</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">roi_params</span><span class="p">[</span><span class="s2">&quot;roi_size&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">roi_values</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+                <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Updated ROI to </span><span class="si">{</span><span class="n">roi_values</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;Error: Invalid ROI format.&quot;</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;Error: Invalid ROI input.&quot;</span><span class="p">)</span>
+
+        <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">main_window</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;System specifications updated.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>  <span class="c1"># Close window after confirmation</span></div>
+</div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

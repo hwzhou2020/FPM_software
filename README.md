@@ -18,7 +18,7 @@
 
 
 
-
+## How to install
 
 ## Dependency
 ```
@@ -28,6 +28,9 @@ mat73
 os
 numpy
 pyyaml
+sphinx_rtd_theme
+pip install numpy scipy matplotlib h5py torch torch-dct
+
 ```
 
 ```

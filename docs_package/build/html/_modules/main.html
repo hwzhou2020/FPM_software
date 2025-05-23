@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>main &mdash; Fourier Ptychographic Microscopy Software 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Fourier Ptychographic Microscopy Software
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../installation_and_usage.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../modules.html">Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Fourier Ptychographic Microscopy Software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="index.html">Module code</a></li>
+      <li class="breadcrumb-item active">main</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for main</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QApplication</span><span class="p">,</span> <span class="n">QMainWindow</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QAction</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Main_ui</span><span class="w"> </span><span class="kn">import</span> <span class="n">Ui_FPMSoftware</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.data_handler</span><span class="w"> </span><span class="kn">import</span> <span class="n">load_mat_file</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.display_handler</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">display_single_raw_frame</span><span class="p">,</span>
+    <span class="n">display_all_raw_frames</span><span class="p">,</span>
+    <span class="n">display_single_raw_spectrum</span><span class="p">,</span>
+    <span class="n">display_all_raw_spectra</span><span class="p">,</span>
+    <span class="n">display_single_roi_image</span><span class="p">,</span>
+    <span class="n">display_all_roi_images</span><span class="p">,</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.message_handler</span><span class="w"> </span><span class="kn">import</span> <span class="n">export_messages</span><span class="p">,</span> <span class="n">clear_messages</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.logging_utils</span><span class="w"> </span><span class="kn">import</span> <span class="n">log_message</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.interactive_view</span><span class="w"> </span><span class="kn">import</span> <span class="n">ZoomableGraphicsView</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.roi_handler</span><span class="w"> </span><span class="kn">import</span> <span class="n">select_roi_size</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.system_specs_window</span><span class="w"> </span><span class="kn">import</span> <span class="n">SystemSpecsWindow</span>  
+<span class="kn">from</span><span class="w"> </span><span class="nn">Utilities.parameter_dialog</span><span class="w"> </span><span class="kn">import</span> <span class="n">ParameterDialog</span>  
+<span class="kn">from</span><span class="w"> </span><span class="nn">WindowUI.DisplayOptionsWindow</span><span class="w"> </span><span class="kn">import</span> <span class="n">DisplayOptionsWindow</span>
+
+
+<div class="viewcode-block" id="MainWindow">
+<a class="viewcode-back" href="../main.html#main.MainWindow">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span> <span class="o">=</span> <span class="n">Ui_FPMSoftware</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mat_data</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Initialize data storage</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span> <span class="o">=</span> <span class="kc">None</span>  <span class="c1"># Initialize system specs window</span>
+
+        <span class="c1"># **ROI parameters (Default ROI: [X-offset, Y-offset, ROI_size, ROI_size])**</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">roi_params</span> <span class="o">=</span> <span class="p">{</span><span class="s2">&quot;x_offset&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;y_offset&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;roi_size&quot;</span><span class="p">:</span> <span class="mi">256</span><span class="p">}</span>
+
+        <span class="c1"># **Scan for algorithm subfolders dynamically**</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithm_directory</span> <span class="o">=</span> <span class="s2">&quot;Algorithms&quot;</span>  <span class="c1"># Directory where algorithms are stored</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">detect_algorithms</span><span class="p">()</span>  <span class="c1"># Automatically fetch algorithms</span>
+
+        <span class="c1"># Replace default QGraphicsView with interactive view</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">display_window</span> <span class="o">=</span> <span class="n">ZoomableGraphicsView</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">centralwidget</span><span class="p">)</span>
+        <span class="n">border_color</span> <span class="o">=</span> <span class="n">QColor</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">,</span> <span class="mi">255</span><span class="p">)</span>  <span class="c1"># White border</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">display_window</span><span class="o">.</span><span class="n">setStyleSheet</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;border: 1px solid rgb(</span><span class="si">{</span><span class="n">border_color</span><span class="o">.</span><span class="n">red</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">border_color</span><span class="o">.</span><span class="n">green</span><span class="p">()</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">border_color</span><span class="o">.</span><span class="n">blue</span><span class="p">()</span><span class="si">}</span><span class="s2">);&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">display_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">gridLayout_3</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">display_window</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="c1"># Connect buttons and menu actions to functions</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">load_butt</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionLoad_Data</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">load_data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionSave_Messgaes</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">export_messages</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionClear_Messages</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">clear_messages</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionSystem_specs</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_system_specs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionSIngle_ROI</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_single_roi_image</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionAll_ROI_images</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_all_roi_images</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">run_butt</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">run_selected_algorithm</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">display_butt</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">show_display_options</span><span class="p">)</span>
+
+        <span class="c1"># Connect ROI selection button</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">roi_butt</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span><span class="p">:</span> <span class="n">select_roi_size</span><span class="p">(</span><span class="bp">self</span><span class="p">))</span>
+
+        <span class="c1"># Ensure algorithm menu items are checkable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionGerchberg_Saxton</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionEPRY</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionGauss_Newton</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionKramers_Kronig</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">actionAPIC</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+
+        <span class="c1"># Dynamically populate the algorithm menu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">algorithm_actions</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">populate_algorithm_menu</span><span class="p">()</span>
+
+<div class="viewcode-block" id="MainWindow.show_display_options">
+<a class="viewcode-back" href="../main.html#main.MainWindow.show_display_options">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_display_options</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_options_window</span> <span class="o">=</span> <span class="n">DisplayOptionsWindow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">display_options_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.load_data">
+<a class="viewcode-back" href="../main.html#main.MainWindow.load_data">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_data</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">new_data</span> <span class="o">=</span> <span class="n">load_mat_file</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">new_data</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mat_data</span> <span class="o">=</span> <span class="n">new_data</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">Msg_window</span><span class="o">.</span><span class="n">appendPlainText</span><span class="p">(</span><span class="s2">&quot;New data loaded successfully.&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span><span class="o">.</span><span class="n">load_system_specs</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">Msg_window</span><span class="o">.</span><span class="n">appendPlainText</span><span class="p">(</span><span class="s2">&quot;No new data loaded. Retaining previous data.&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.show_single_raw_frame">
+<a class="viewcode-back" href="../main.html#main.MainWindow.show_single_raw_frame">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_single_raw_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">display_single_raw_frame</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.show_all_raw_frames">
+<a class="viewcode-back" href="../main.html#main.MainWindow.show_all_raw_frames">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_all_raw_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">display_all_raw_frames</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.show_single_raw_spectrum">
+<a class="viewcode-back" href="../main.html#main.MainWindow.show_single_raw_spectrum">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_single_raw_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">display_single_raw_spectrum</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.show_all_raw_spectra">
+<a class="viewcode-back" href="../main.html#main.MainWindow.show_all_raw_spectra">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_all_raw_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">display_all_raw_spectra</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.show_single_roi_image">
+<a class="viewcode-back" href="../main.html#main.MainWindow.show_single_roi_image">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_single_roi_image</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">display_single_roi_image</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.show_all_roi_images">
+<a class="viewcode-back" href="../main.html#main.MainWindow.show_all_roi_images">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_all_roi_images</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">display_all_roi_images</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.export_messages">
+<a class="viewcode-back" href="../main.html#main.MainWindow.export_messages">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">export_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">export_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.clear_messages">
+<a class="viewcode-back" href="../main.html#main.MainWindow.clear_messages">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">clear_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">clear_messages</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.show_system_specs">
+<a class="viewcode-back" href="../main.html#main.MainWindow.show_system_specs">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_system_specs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span> <span class="o">=</span> <span class="n">SystemSpecsWindow</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;roi_params&quot;</span><span class="p">):</span>
+            <span class="n">roi_text</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">roi_params</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span><span class="o">.</span><span class="n">update_roi_field</span><span class="p">(</span><span class="n">roi_text</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span><span class="o">.</span><span class="n">populate_algorithm_list</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithms</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span><span class="o">.</span><span class="n">load_system_specs</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.detect_algorithms">
+<a class="viewcode-back" href="../main.html#main.MainWindow.detect_algorithms">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">detect_algorithms</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithm_directory</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">[]</span>
+        <span class="k">return</span> <span class="nb">sorted</span><span class="p">([</span>
+            <span class="n">folder</span> <span class="k">for</span> <span class="n">folder</span> <span class="ow">in</span> <span class="n">os</span><span class="o">.</span><span class="n">listdir</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithm_directory</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">isdir</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithm_directory</span><span class="p">,</span> <span class="n">folder</span><span class="p">))</span>
+        <span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.populate_algorithm_menu">
+<a class="viewcode-back" href="../main.html#main.MainWindow.populate_algorithm_menu">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">populate_algorithm_menu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">menu_algorithms</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">menuAlgorithm_specs</span>
+        <span class="n">menu_algorithms</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">algorithm</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithms</span><span class="p">:</span>
+            <span class="n">shortened_name</span> <span class="o">=</span> <span class="n">algorithm</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">action</span> <span class="o">=</span> <span class="n">QAction</span><span class="p">(</span><span class="n">shortened_name</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="k">lambda</span> <span class="n">checked</span><span class="p">,</span> <span class="n">alg</span><span class="o">=</span><span class="n">algorithm</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">select_algorithm</span><span class="p">(</span><span class="n">alg</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">algorithm_actions</span><span class="p">[</span><span class="n">algorithm</span><span class="p">]</span> <span class="o">=</span> <span class="n">action</span>
+            <span class="n">menu_algorithms</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="n">action</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithms</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">selected_algorithm</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithms</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">algorithm_actions</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_algorithm</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.select_algorithm">
+<a class="viewcode-back" href="../main.html#main.MainWindow.select_algorithm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">select_algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm_name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selected_algorithm</span> <span class="o">=</span> <span class="n">algorithm_name</span>
+        <span class="k">for</span> <span class="n">action</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm_actions</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="n">action</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">algorithm_name</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">algorithm_actions</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">algorithm_actions</span><span class="p">[</span><span class="n">algorithm_name</span><span class="p">]</span><span class="o">.</span><span class="n">setChecked</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">Msg_window</span><span class="o">.</span><span class="n">appendPlainText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Algorithm selected: </span><span class="si">{</span><span class="n">algorithm_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">system_specs_window</span><span class="o">.</span><span class="n">update_algorithm_selection</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">)</span>
+        <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;Algorithms&quot;</span><span class="p">,</span> <span class="n">algorithm_name</span><span class="p">,</span> <span class="s2">&quot;config.yml&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+            <span class="n">dialog</span> <span class="o">=</span> <span class="n">ParameterDialog</span><span class="p">(</span><span class="n">algorithm_name</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>
+            <span class="n">dialog</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.load_algorithm_config">
+<a class="viewcode-back" href="../main.html#main.MainWindow.load_algorithm_config">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_algorithm_config</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">algorithm_name</span><span class="p">):</span>
+        <span class="n">config_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s2">&quot;Algorithms&quot;</span><span class="p">,</span> <span class="n">algorithm_name</span><span class="p">,</span> <span class="s2">&quot;config.yml&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">config_path</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">config_path</span><span class="p">,</span> <span class="s2">&quot;r&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.run_selected_algorithm">
+<a class="viewcode-back" href="../main.html#main.MainWindow.run_selected_algorithm">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">run_selected_algorithm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_algorithm</span><span class="p">:</span>
+            <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="s2">&quot;No algorithm selected.&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">module_path</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;Algorithms.</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_algorithm</span><span class="si">}</span><span class="s2">.main_alg&quot;</span>
+            <span class="n">run_module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="n">module_path</span><span class="p">,</span> <span class="n">fromlist</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;run_algorithm&quot;</span><span class="p">])</span>
+            <span class="n">run_algorithm</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">run_module</span><span class="p">,</span> <span class="s2">&quot;run_algorithm&quot;</span><span class="p">)</span>
+            <span class="n">Amp</span><span class="p">,</span> <span class="n">Phase</span><span class="p">,</span> <span class="n">Pupil</span> <span class="o">=</span> <span class="n">run_algorithm</span><span class="p">(</span>
+                <span class="n">system_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">algorithm_parameters</span><span class="p">,</span>
+                <span class="n">roi_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">roi_params</span><span class="p">,</span>
+                <span class="n">mat_data</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">mat_data</span><span class="p">,</span>
+                <span class="n">log_callback</span><span class="o">=</span><span class="k">lambda</span> <span class="n">msg</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="o">.</span><span class="n">Msg_window</span><span class="o">.</span><span class="n">appendPlainText</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_algorithm</span><span class="si">}</span><span class="s2"> executed successfully.&quot;</span><span class="p">)</span>
+            <span class="c1"># Store results for display</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">reconstruction_result</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s2">&quot;amplitude&quot;</span><span class="p">:</span> <span class="n">Amp</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Amp</span><span class="p">,</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">Amp</span><span class="p">,</span>
+                <span class="s2">&quot;phase&quot;</span><span class="p">:</span> <span class="n">Phase</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Phase</span><span class="p">,</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">Phase</span><span class="p">,</span>
+                <span class="s2">&quot;pupil&quot;</span><span class="p">:</span> <span class="n">Pupil</span><span class="o">.</span><span class="n">cpu</span><span class="p">()</span><span class="o">.</span><span class="n">numpy</span><span class="p">()</span> <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">Pupil</span><span class="p">,</span> <span class="s2">&quot;cpu&quot;</span><span class="p">)</span> <span class="k">else</span> <span class="n">Pupil</span><span class="p">,</span>
+            <span class="p">}</span>
+
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="n">log_message</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ui</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Algorithm run failed: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+    <span class="n">app</span> <span class="o">=</span> <span class="n">QApplication</span><span class="p">(</span><span class="n">sys</span><span class="o">.</span><span class="n">argv</span><span class="p">)</span>
+    <span class="n">window</span> <span class="o">=</span> <span class="n">MainWindow</span><span class="p">()</span>
+    <span class="n">window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+    <span class="n">sys</span><span class="o">.</span><span class="n">exit</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">exec</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

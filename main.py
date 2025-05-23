@@ -1,7 +1,8 @@
 import os
 import yaml
+import webbrowser
 from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtGui import QColor, QAction
+from PySide6.QtGui import QColor, QAction, QIcon
 from Main_ui import Ui_FPMSoftware
 from Utilities.data_handler import load_mat_file
 from Utilities.display_handler import (
@@ -20,12 +21,16 @@ from Utilities.system_specs_window import SystemSpecsWindow
 from Utilities.parameter_dialog import ParameterDialog  
 from WindowUI.DisplayOptionsWindow import DisplayOptionsWindow
 
-
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = Ui_FPMSoftware()
         self.ui.setupUi(self)
+        self.setWindowTitle("FPM Software")
+        self.setWindowIcon(QIcon("icons/FPM_icon.png"))
+        doc_path = os.path.abspath("docs_package/build/html/index.html")
+        self.ui.actionSoftware_Guide.triggered.connect(lambda: webbrowser.open(f"file://{doc_path}"))
+
 
         self.mat_data = None  # Initialize data storage
         self.system_specs_window = None  # Initialize system specs window
@@ -55,6 +60,9 @@ class MainWindow(QMainWindow):
         self.ui.actionAll_ROI_images.triggered.connect(self.show_all_roi_images)
         self.ui.run_butt.clicked.connect(self.run_selected_algorithm)
         self.ui.display_butt.clicked.connect(self.show_display_options)
+        self.ui.actionSoftware_Guide = QAction("Software Guide", self)
+        self.ui.menuHelp.addAction(self.ui.actionSoftware_Guide)
+
 
         # Connect ROI selection button
         self.ui.roi_butt.clicked.connect(lambda: select_roi_size(self))
@@ -190,6 +198,8 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
+    with open("fancy_dark_theme.qss", "r") as f:
+        app.setStyleSheet(f.read())
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

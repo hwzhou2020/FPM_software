@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WindowUI.SystemSpecsWindow_ui &mdash; Fourier Ptychographic Microscopy Software 1.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=f2a433a1"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Fourier Ptychographic Microscopy Software
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../installation_and_usage.html">Installation and Usage</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../overview.html">Overview</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../modules.html">Modules</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Fourier Ptychographic Microscopy Software</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">WindowUI.SystemSpecsWindow_ui</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for WindowUI.SystemSpecsWindow_ui</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="c1">################################################################################</span>
+<span class="c1">## Form generated from reading UI file &#39;SystemSpecsWindow.ui&#39;</span>
+<span class="c1">##</span>
+<span class="c1">## Created by: Qt User Interface Compiler version 6.8.2</span>
+<span class="c1">##</span>
+<span class="c1">## WARNING! All changes made in this file will be lost when recompiling UI file!</span>
+<span class="c1">################################################################################</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">QCoreApplication</span><span class="p">,</span> <span class="n">QDate</span><span class="p">,</span> <span class="n">QDateTime</span><span class="p">,</span> <span class="n">QLocale</span><span class="p">,</span>
+    <span class="n">QMetaObject</span><span class="p">,</span> <span class="n">QObject</span><span class="p">,</span> <span class="n">QPoint</span><span class="p">,</span> <span class="n">QRect</span><span class="p">,</span>
+    <span class="n">QSize</span><span class="p">,</span> <span class="n">QTime</span><span class="p">,</span> <span class="n">QUrl</span><span class="p">,</span> <span class="n">Qt</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtGui</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">QBrush</span><span class="p">,</span> <span class="n">QColor</span><span class="p">,</span> <span class="n">QConicalGradient</span><span class="p">,</span> <span class="n">QCursor</span><span class="p">,</span>
+    <span class="n">QFont</span><span class="p">,</span> <span class="n">QFontDatabase</span><span class="p">,</span> <span class="n">QGradient</span><span class="p">,</span> <span class="n">QIcon</span><span class="p">,</span>
+    <span class="n">QImage</span><span class="p">,</span> <span class="n">QKeySequence</span><span class="p">,</span> <span class="n">QLinearGradient</span><span class="p">,</span> <span class="n">QPainter</span><span class="p">,</span>
+    <span class="n">QPalette</span><span class="p">,</span> <span class="n">QPixmap</span><span class="p">,</span> <span class="n">QRadialGradient</span><span class="p">,</span> <span class="n">QTransform</span><span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PySide6.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span><span class="n">QApplication</span><span class="p">,</span> <span class="n">QComboBox</span><span class="p">,</span> <span class="n">QGroupBox</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span>
+    <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QSizePolicy</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Ui_SystemSpecsWindow">
+<a class="viewcode-back" href="../../SystemSpecsWindow_ui.html#WindowUI.SystemSpecsWindow_ui.Ui_SystemSpecsWindow">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Ui_SystemSpecsWindow</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Ui_SystemSpecsWindow.setupUi">
+<a class="viewcode-back" href="../../SystemSpecsWindow_ui.html#WindowUI.SystemSpecsWindow_ui.Ui_SystemSpecsWindow.setupUi">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">setupUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SystemSpecsWindow</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">SystemSpecsWindow</span><span class="o">.</span><span class="n">objectName</span><span class="p">():</span>
+            <span class="n">SystemSpecsWindow</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">)</span>
+        <span class="n">SystemSpecsWindow</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">620</span><span class="p">,</span> <span class="mi">240</span><span class="p">)</span>
+        <span class="n">sizePolicy</span> <span class="o">=</span> <span class="n">QSizePolicy</span><span class="p">(</span><span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Policy</span><span class="o">.</span><span class="n">Fixed</span><span class="p">,</span> <span class="n">QSizePolicy</span><span class="o">.</span><span class="n">Policy</span><span class="o">.</span><span class="n">Fixed</span><span class="p">)</span>
+        <span class="n">sizePolicy</span><span class="o">.</span><span class="n">setHorizontalStretch</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">sizePolicy</span><span class="o">.</span><span class="n">setVerticalStretch</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">sizePolicy</span><span class="o">.</span><span class="n">setHeightForWidth</span><span class="p">(</span><span class="n">SystemSpecsWindow</span><span class="o">.</span><span class="n">sizePolicy</span><span class="p">()</span><span class="o">.</span><span class="n">hasHeightForWidth</span><span class="p">())</span>
+        <span class="n">SystemSpecsWindow</span><span class="o">.</span><span class="n">setSizePolicy</span><span class="p">(</span><span class="n">sizePolicy</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span> <span class="o">=</span> <span class="n">QGroupBox</span><span class="p">(</span><span class="n">SystemSpecsWindow</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;SystemPara&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">581</span><span class="p">,</span> <span class="mi">201</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="o">.</span><span class="n">setFlat</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mag_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mag_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;mag_label&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mag_label</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;NA_label&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_label</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_label</span><span class="o">.</span><span class="n">setToolTipDuration</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;pix_size_label&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size_label</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size_label</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignLeading</span><span class="o">|</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignLeft</span><span class="o">|</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignVCenter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsam_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsam_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;upsam_label&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsam_label</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_list_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_list_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;NA_list_label&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_list_label</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mag</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mag</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;mag&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mag</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">110</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;NA&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">110</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;pix_size&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">110</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsam</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsam</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;upsam&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsam</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">340</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_list</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_list</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;NA_list&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_list</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">340</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">111</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_list</span><span class="o">.</span><span class="n">setReadOnly</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GPU_ID_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GPU_ID_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;GPU_ID_label&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GPU_ID_label</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GPU_ID</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GPU_ID</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;GPU_ID&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GPU_ID</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">340</span><span class="p">,</span> <span class="mi">60</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size_unit</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size_unit</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;pix_size_unit&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size_unit</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size_unit</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Wavelength</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Wavelength</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Wavelength</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;Lambda&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">110</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">113</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_unit</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_unit</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;lambda_unit&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_unit</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">130</span><span class="p">,</span> <span class="mi">101</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_unit</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignmentFlag</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span> <span class="o">=</span> <span class="n">QComboBox</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">addItem</span><span class="p">(</span><span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;AlgcomboBox&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">340</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">221</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SltAlgorithm_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SltAlgorithm_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;SltAlgorithm_label&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SltAlgorithm_label</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">250</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Cfm_sys_butt</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Cfm_sys_butt</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;Cfm_sys_butt&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Cfm_sys_butt</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">500</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">75</span><span class="p">,</span> <span class="mi">24</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROI_slt_label</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROI_slt_label</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;ROI_slt_label&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROI_slt_label</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">91</span><span class="p">,</span> <span class="mi">16</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROIsltbox</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROIsltbox</span><span class="o">.</span><span class="n">setObjectName</span><span class="p">(</span><span class="sa">u</span><span class="s2">&quot;ROIsltbox&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROIsltbox</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROIsltbox</span><span class="o">.</span><span class="n">setGeometry</span><span class="p">(</span><span class="n">QRect</span><span class="p">(</span><span class="mi">110</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">231</span><span class="p">,</span> <span class="mi">21</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">retranslateUi</span><span class="p">(</span><span class="n">SystemSpecsWindow</span><span class="p">)</span>
+
+        <span class="n">QMetaObject</span><span class="o">.</span><span class="n">connectSlotsByName</span><span class="p">(</span><span class="n">SystemSpecsWindow</span><span class="p">)</span></div>
+
+    <span class="c1"># setupUi</span>
+
+<div class="viewcode-block" id="Ui_SystemSpecsWindow.retranslateUi">
+<a class="viewcode-back" href="../../SystemSpecsWindow_ui.html#WindowUI.SystemSpecsWindow_ui.Ui_SystemSpecsWindow.retranslateUi">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">retranslateUi</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">SystemSpecsWindow</span><span class="p">):</span>
+        <span class="n">SystemSpecsWindow</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Form&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SystemPara</span><span class="o">.</span><span class="n">setTitle</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;System parameters&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#if QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mag_label</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;System magnifications&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#endif // QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mag_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Magnification&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#if QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_label</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Numerical Aperture&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#endif // QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;NA&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Camera pixel size&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsam_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Upsample rate&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#if QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_list_label</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Illumination angle list&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#endif // QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_list_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Angle list&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mag</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;optional&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;optional&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;optional&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">upsam</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;3&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_list</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;(Read Only)&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#if QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GPU_ID_label</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;-1 for no GPU, otherwise 0,1,2,3 or ...&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#endif // QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GPU_ID_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;GPU ID&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">GPU_ID</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;-1&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pix_size_unit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;(um)&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#if QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Wavelength</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Illumination angle list&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#endif // QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Wavelength</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Wavelength&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Lambda</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;optional&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambda_unit</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;(um)&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">setItemText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Gerchberg-Saxton&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">setItemText</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;EPRY Embedded pupil function recovery&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">setItemText</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Gauss-Newton&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">setItemText</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;KK Kramers-Kronig relation&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">AlgcomboBox</span><span class="o">.</span><span class="n">setItemText</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;APIC Angular Pychographic Imaging with Closed-form method&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+
+<span class="c1">#if QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SltAlgorithm_label</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Algorithm selection&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#endif // QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">SltAlgorithm_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Algorithm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Cfm_sys_butt</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Confirm&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#if QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROI_slt_label</span><span class="o">.</span><span class="n">setToolTip</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;Algorithm selection&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+<span class="c1">#endif // QT_CONFIG(tooltip)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROI_slt_label</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;ROI selection&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ROIsltbox</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="n">QCoreApplication</span><span class="o">.</span><span class="n">translate</span><span class="p">(</span><span class="s2">&quot;SystemSpecsWindow&quot;</span><span class="p">,</span> <span class="sa">u</span><span class="s2">&quot;[1,1,256,256]&quot;</span><span class="p">,</span> <span class="kc">None</span><span class="p">))</span></div>
+</div>
+
+    <span class="c1"># retranslateUi</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright .</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
