@@ -170,8 +170,8 @@ Caltech Biophotonics Lab</string>
     <property name="title">
      <string>Help</string>
     </property>
-    <addaction name="actionSoftware_Guide"/>
     <addaction name="actionReferences"/>
+    <addaction name="actionSoftware_Guide"/>
    </widget>
    <widget class="QMenu" name="menuMessageBox">
     <property name="title">
@@ -289,7 +289,7 @@ Caltech Biophotonics Lab</string>
   </action>
   <action name="actionSoftware_Guide">
    <property name="text">
-    <string>Software Guide</string>
+    <string>Documentation</string>
    </property>
   </action>
   <action name="actionReferences">

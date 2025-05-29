@@ -61,7 +61,7 @@ class MainWindow(QMainWindow):
         self.ui.run_butt.clicked.connect(self.run_selected_algorithm)
         self.ui.display_butt.clicked.connect(self.show_display_options)
         self.ui.actionSoftware_Guide = QAction("Software Guide", self)
-        self.ui.menuHelp.addAction(self.ui.actionSoftware_Guide)
+        # self.ui.menuHelp.addAction(self.ui.actionSoftware_Guide)
 
 
         # Connect ROI selection button

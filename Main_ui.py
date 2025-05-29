@@ -202,8 +202,8 @@ class Ui_FPMSoftware(object):
         self.menuAlgorithm_specs.addAction(self.actionGauss_Newton)
         self.menuAlgorithm_specs.addAction(self.actionKramers_Kronig)
         self.menuAlgorithm_specs.addAction(self.actionAPIC)
-        self.menuHelp.addAction(self.actionSoftware_Guide)
         self.menuHelp.addAction(self.actionReferences)
+        self.menuHelp.addAction(self.actionSoftware_Guide)
         self.menuMessageBox.addAction(self.actionSave_Messgaes)
         self.menuMessageBox.addAction(self.actionClear_Messages)
 
@@ -234,7 +234,7 @@ class Ui_FPMSoftware(object):
         self.actionGauss_Newton.setText(QCoreApplication.translate("FPMSoftware", u"Gauss-Newton", None))
         self.actionKramers_Kronig.setText(QCoreApplication.translate("FPMSoftware", u"Kramers-Kronig", None))
         self.actionAPIC.setText(QCoreApplication.translate("FPMSoftware", u"APIC", None))
-        self.actionSoftware_Guide.setText(QCoreApplication.translate("FPMSoftware", u"Software Guide", None))
+        self.actionSoftware_Guide.setText(QCoreApplication.translate("FPMSoftware", u"Documentation", None))
         self.actionReferences.setText(QCoreApplication.translate("FPMSoftware", u"References", None))
         self.actionSave_Messgaes.setText(QCoreApplication.translate("FPMSoftware", u"Export Messgaes", None))
         self.actionClear_Messages.setText(QCoreApplication.translate("FPMSoftware", u"Clear Messages", None))
