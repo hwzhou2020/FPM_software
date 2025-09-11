@@ -166,7 +166,7 @@ class MainWindow(QMainWindow):
                 if self.validate_mat_data(new_data):
                     self.mat_data = new_data
                     self.add_to_recent_files(getattr(self, 'current_file_path', ''))
-                    self.ui.Msg_window.appendPlainText("✓ Data loaded successfully.")
+                    self.ui.Msg_window.appendPlainText("[OK] Data loaded successfully.")
                     self.update_ui_state()
                     
                     if self.system_specs_window:
@@ -277,7 +277,7 @@ class MainWindow(QMainWindow):
             action.setChecked(False)
         if algorithm_name in self.algorithm_actions:
             self.algorithm_actions[algorithm_name].setChecked(True)
-        self.ui.Msg_window.appendPlainText(f"✓ Algorithm selected: {algorithm_name}")
+        self.ui.Msg_window.appendPlainText(f"[OK] Algorithm selected: {algorithm_name}")
         self.update_ui_state()
         
         if self.system_specs_window:
@@ -343,25 +343,25 @@ class MainWindow(QMainWindow):
                 "pupil": Pupil.cpu().numpy() if hasattr(Pupil, "cpu") else Pupil,
             }
             
-            self.ui.Msg_window.appendPlainText(f"✓ {self.selected_algorithm} completed successfully.")
+            self.ui.Msg_window.appendPlainText(f"[OK] {self.selected_algorithm} completed successfully.")
             self.status_bar.showMessage("Algorithm completed")
             
             # Automatically display amplitude result
             self.display_amplitude_result()
             
         except ImportError as e:
-            self.ui.Msg_window.appendPlainText(f"✗ Algorithm module not found: {e}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Algorithm module not found: {e}")
         except MemoryError:
-            self.ui.Msg_window.appendPlainText("✗ Insufficient memory. Try smaller ROI or reduce upsampling.")
+            self.ui.Msg_window.appendPlainText("[ERROR] Insufficient memory. Try smaller ROI or reduce upsampling.")
         except ValueError as e:
-            self.ui.Msg_window.appendPlainText(f"✗ Invalid parameters: {e}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Invalid parameters: {e}")
         except Exception as e:
-            self.ui.Msg_window.appendPlainText(f"✗ Algorithm failed: {e}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Algorithm failed: {e}")
         finally:
             # Re-enable UI
             self.progress_bar.setVisible(False)
             self.ui.run_butt.setEnabled(True)
-            self.ui.run_butt.setText("▶ Run")
+            self.ui.run_butt.setText("[RUN] Run")
             self.update_ui_state()
 
     def display_amplitude_result(self):
@@ -369,22 +369,22 @@ class MainWindow(QMainWindow):
         try:
             from Utilities.display_handler import display_result_image
             display_result_image(self, "amplitude")
-            self.ui.Msg_window.appendPlainText("✓ Amplitude result displayed automatically.")
+            self.ui.Msg_window.appendPlainText("[OK] Amplitude result displayed automatically.")
         except Exception as e:
-            self.ui.Msg_window.appendPlainText(f"✗ Error displaying amplitude result: {e}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Error displaying amplitude result: {e}")
     
     def display_result(self, result_type):
         """Display a specific reconstruction result (amplitude, phase, or pupil)"""
         if not hasattr(self, 'reconstruction_result') or not self.reconstruction_result:
-            self.ui.Msg_window.appendPlainText("✗ No reconstruction results available. Run an algorithm first.")
+            self.ui.Msg_window.appendPlainText("[ERROR] No reconstruction results available. Run an algorithm first.")
             return
             
         try:
             from Utilities.display_handler import display_result_image
             display_result_image(self, result_type)
-            self.ui.Msg_window.appendPlainText(f"✓ {result_type.capitalize()} result displayed.")
+            self.ui.Msg_window.appendPlainText(f"[OK] {result_type.capitalize()} result displayed.")
         except Exception as e:
-            self.ui.Msg_window.appendPlainText(f"✗ Error displaying {result_type} result: {e}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Error displaying {result_type} result: {e}")
 
     def apply_professional_theme(self):
         """Apply the professional theme to the application"""
@@ -395,7 +395,7 @@ class MainWindow(QMainWindow):
                 with open(clean_theme_path, 'r', encoding='utf-8') as f:
                     style = f.read()
                 self.setStyleSheet(style)
-                self.ui.Msg_window.appendPlainText("✓ Professional theme applied successfully.")
+                self.ui.Msg_window.appendPlainText("[OK] Professional theme applied successfully.")
                 return
             
             # Fallback to original professional theme
@@ -404,7 +404,7 @@ class MainWindow(QMainWindow):
                 with open(theme_path, 'r', encoding='utf-8') as f:
                     style = f.read()
                 self.setStyleSheet(style)
-                self.ui.Msg_window.appendPlainText("✓ Professional theme applied (with CSS warnings).")
+                self.ui.Msg_window.appendPlainText("[OK] Professional theme applied (with CSS warnings).")
                 return
                 
             # Final fallback to existing theme
@@ -413,9 +413,9 @@ class MainWindow(QMainWindow):
                 with open(fallback_theme, 'r', encoding='utf-8') as f:
                     style = f.read()
                 self.setStyleSheet(style)
-                self.ui.Msg_window.appendPlainText("✓ Fallback theme applied.")
+                self.ui.Msg_window.appendPlainText("[OK] Fallback theme applied.")
         except Exception as e:
-            self.ui.Msg_window.appendPlainText(f"✗ Error applying theme: {e}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Error applying theme: {e}")
 
     def setup_professional_ui(self):
         """Set up professional UI enhancements"""
@@ -471,10 +471,10 @@ class MainWindow(QMainWindow):
             """
             self.ui.Msg_window.setPlainText(welcome_msg)
             
-            self.ui.Msg_window.appendPlainText("\n✓ Professional UI setup completed successfully.")
+            self.ui.Msg_window.appendPlainText("\n[OK] Professional UI setup completed successfully.")
             
         except Exception as e:
-            self.ui.Msg_window.appendPlainText(f"✗ Error setting up professional UI: {e}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Error setting up professional UI: {e}")
 
     def center_window(self):
         """Center the window on the screen"""
@@ -495,11 +495,11 @@ class MainWindow(QMainWindow):
             # For now, we'll use text-based indicators and enhanced styling
             
             # Enhanced button text with professional styling
-            self.ui.load_butt.setText("📁 Load Data")
-            self.ui.roi_butt.setText("🎯 ROI")
-            self.ui.display_butt.setText("👁 Display")
-            self.ui.run_butt.setText("▶ Run")
-            self.ui.save_butt.setText("💾 Save")
+            self.ui.load_butt.setText("[LOAD] Load Data")
+            self.ui.roi_butt.setText("[ROI] ROI")
+            self.ui.display_butt.setText("[VIEW] Display")
+            self.ui.run_butt.setText("[RUN] Run")
+            self.ui.save_butt.setText("[SAVE] Save")
             
             # Add tooltips for better user experience
             self.ui.load_butt.setToolTip("Load FPM data from .mat files")

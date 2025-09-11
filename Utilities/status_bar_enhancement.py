@@ -154,7 +154,7 @@ class ProfessionalStatusBar(QStatusBar):
             
     def show_success(self, message):
         """Show success message in green"""
-        self.status_label.setText(f"✓ {message}")
+        self.status_label.setText(f"[OK] {message}")
         self.status_label.setStyleSheet("color: #00ff88; font-weight: 600;")
         QTimer.singleShot(3000, self.reset_status_style)
         
