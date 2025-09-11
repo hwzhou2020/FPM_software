@@ -21,22 +21,34 @@ def compute_spectrum(image):
     return mat2gray(spectrum)
 
 
-def display_image(ui, image, frame_number=None, total_frames=None):
+def display_image(ui, image, frame_number=None, total_frames=None, title=None):
     """Display an image in `display_window` with dynamic scaling and fixed-size frame number overlay."""
     scene = QGraphicsScene()
     height, width = image.shape
 
-    # Normalize and convert image to 8-bit grayscale
-    image = (image - image.min()) / (image.max() - image.min()) * 255
-    image = image.astype(np.uint8)
-    image = np.ascontiguousarray(image)  # Ensure C-contiguous memory
+    # Handle empty or invalid images
+    if image.size == 0 or np.all(image == 0):
+        # Create a simple "No Image" placeholder
+        q_image = QImage(width if width > 0 else 100, height if height > 0 else 100, QImage.Format_Grayscale8)
+        q_image.fill(128)  # Gray background
+        pixmap = QPixmap.fromImage(q_image)
+    else:
+        # Normalize and convert image to 8-bit grayscale
+        image_min, image_max = image.min(), image.max()
+        if image_max > image_min:
+            image = (image - image_min) / (image_max - image_min) * 255
+        else:
+            image = np.zeros_like(image)
+        image = image.astype(np.uint8)
+        image = np.ascontiguousarray(image)  # Ensure C-contiguous memory
 
-    q_image = QImage(image.data, width, height, width, QImage.Format_Grayscale8)
-    pixmap = QPixmap.fromImage(q_image)
+        q_image = QImage(image.data, width, height, width, QImage.Format_Grayscale8)
+        pixmap = QPixmap.fromImage(q_image)
+    
     pixmap_item = scene.addPixmap(pixmap)
 
     # Add frame number overlay with a fixed size
-    if frame_number is not None:
+    if frame_number is not None and total_frames is not None:
         text_item = QGraphicsTextItem(f"Frame {frame_number + 1}/{total_frames}")
         text_item.setDefaultTextColor(QColor("#F38181"))  # Soft coral color
         text_font = QFont("Arial", 16)
@@ -49,6 +61,17 @@ def display_image(ui, image, frame_number=None, total_frames=None):
         # Add text to scene and position it in the top-left corner
         scene.addItem(text_item)
         text_item.setPos(10, 10)
+    
+    # Add title overlay if provided
+    if title:
+        title_item = QGraphicsTextItem(title)
+        title_item.setDefaultTextColor(QColor("#4A90E2"))  # Blue color
+        title_font = QFont("Arial", 14)
+        title_font.setBold(True)
+        title_item.setFont(title_font)
+        title_item.setFlag(QGraphicsTextItem.ItemIgnoresTransformations, True)
+        scene.addItem(title_item)
+        title_item.setPos(10, 50 if frame_number is not None else 10)
 
     # Update display window
     ui.display_window.setScene(scene)
@@ -225,17 +248,13 @@ def display_result_image(main_window, result_type="amplitude"):
     if result_type == "pupil":
         image = np.angle(image)
 
-    # if it is all zeros, just display zeros to avoid division by zero
-    if np.all(image == 0):
-        log_message(main_window.ui, "Warning: Result image is all zeros. Displaying zero image.")
-        image_uint8 = np.zeros_like(image)
-    else:
-        # Normalize and convert to 8-bit image
-        image = (image - np.min(image)) / (np.max(image) - np.min(image) + 1e-8) * 255
-        image_uint8 = image.astype(np.uint8)
-        image_uint8 = np.ascontiguousarray(image_uint8)  # Ensure memory layout
-
-    display_image(main_window.ui, image_uint8, frame_number=None, total_frames=None)
+    # Create title for the result
+    title = f"{result_type.capitalize()} Result"
+    
+    # Use the improved display_image function
+    display_image(main_window.ui, image, frame_number=None, total_frames=None, title=title)
+    
+    log_message(main_window.ui, f"Displayed {title}.")
     # h, w = image.shape
     # q_image = QImage(image_uint8.data, w, h, w, QImage.Format_Grayscale8)
     # pixmap = QPixmap.fromImage(q_image)

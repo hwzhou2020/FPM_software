@@ -13,7 +13,9 @@ def load_mat_file(parent):
         parent.ui.Msg_window.appendPlainText("No file selected.")
         return None
 
-    parent.ui.Msg_window.appendPlainText(f"Loading file: {file_path}")
+    # Store the file path for recent files
+    parent.current_file_path = file_path
+    parent.ui.Msg_window.appendPlainText(f"Loading file: {os.path.basename(file_path)}")
 
     try:
         # Attempt to read with scipy.io (works for v7 and older .mat files)

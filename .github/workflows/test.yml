@@ -1,0 +1,48 @@
+name: Test FPM Software
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        python-version: [3.8, 3.9, '3.10', '3.11']
+
+    steps:
+    - uses: actions/checkout@v3
+    
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v4
+      with:
+        python-version: ${{ matrix.python-version }}
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Test installation script
+      run: |
+        python install_fpm.py --test
+    
+    - name: Test imports
+      run: |
+        python -c "import main; print('✅ Main module imports successfully')"
+    
+    - name: Test GUI (headless)
+      run: |
+        python -c "
+        import sys
+        from PySide6.QtWidgets import QApplication
+        from PySide6.QtCore import Qt
+        app = QApplication(sys.argv)
+        app.setAttribute(Qt.AA_DisableWindowContextHelpButton)
+        print('✅ GUI components load successfully')
+        app.quit()
+        "

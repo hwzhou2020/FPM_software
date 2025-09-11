@@ -1,5 +1,0 @@
-useROI: true
-ROILength: 256
-ROIcenter: [512, 512]
-useAbeCorrection: false
-paddingHighRes: 2

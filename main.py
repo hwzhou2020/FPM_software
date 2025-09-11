@@ -1,8 +1,10 @@
 import os
 import yaml
 import webbrowser
-from PySide6.QtWidgets import QApplication, QMainWindow
-from PySide6.QtGui import QColor, QAction, QIcon
+import numpy as np
+from PySide6.QtWidgets import QApplication, QMainWindow, QStatusBar, QProgressBar
+from PySide6.QtGui import QColor, QAction, QIcon, QKeySequence, QShortcut
+from PySide6.QtCore import Qt, QTimer
 from Main_ui import Ui_FPMSoftware
 from Utilities.data_handler import load_mat_file
 from Utilities.display_handler import (
@@ -34,6 +36,8 @@ class MainWindow(QMainWindow):
 
         self.mat_data = None  # Initialize data storage
         self.system_specs_window = None  # Initialize system specs window
+        self.recent_files = []  # Store recent files
+        self.max_recent_files = 5
 
         # **ROI parameters (Default ROI: [X-offset, Y-offset, ROI_size, ROI_size])**
         self.roi_params = {"x_offset": 1, "y_offset": 1, "roi_size": 256}
@@ -60,6 +64,14 @@ class MainWindow(QMainWindow):
         self.ui.actionAll_ROI_images.triggered.connect(self.show_all_roi_images)
         self.ui.run_butt.clicked.connect(self.run_selected_algorithm)
         self.ui.display_butt.clicked.connect(self.show_display_options)
+        
+        # Connect result display actions (if they exist in the UI)
+        if hasattr(self.ui, 'actionAmplitude_result'):
+            self.ui.actionAmplitude_result.triggered.connect(lambda: self.display_result("amplitude"))
+        if hasattr(self.ui, 'actionPhase_result'):
+            self.ui.actionPhase_result.triggered.connect(lambda: self.display_result("phase"))
+        if hasattr(self.ui, 'actionPupil_function'):
+            self.ui.actionPupil_function.triggered.connect(lambda: self.display_result("pupil"))
         self.ui.actionSoftware_Guide = QAction("Software Guide", self)
         # self.ui.menuHelp.addAction(self.ui.actionSoftware_Guide)
 
@@ -77,20 +89,115 @@ class MainWindow(QMainWindow):
         # Dynamically populate the algorithm menu
         self.algorithm_actions = {}
         self.populate_algorithm_menu()
+        
+        # Setup keyboard shortcuts and status bar
+        self.setup_keyboard_shortcuts()
+        self.setup_status_bar()
+        self.update_ui_state()
 
     def show_display_options(self):
         self.display_options_window = DisplayOptionsWindow(self)
         self.display_options_window.show()
 
-    def load_data(self):
-        new_data = load_mat_file(self)
-        if new_data:
-            self.mat_data = new_data
-            self.ui.Msg_window.appendPlainText("New data loaded successfully.")
-            if self.system_specs_window:
-                self.system_specs_window.load_system_specs()
+    def setup_keyboard_shortcuts(self):
+        """Setup keyboard shortcuts for common actions"""
+        QShortcut(QKeySequence("Ctrl+O"), self, self.load_data)
+        QShortcut(QKeySequence("Ctrl+R"), self, self.run_selected_algorithm)
+        QShortcut(QKeySequence("F1"), self, self.show_help)
+        QShortcut(QKeySequence("Ctrl+Q"), self, self.close)
+        
+    def setup_status_bar(self):
+        """Setup status bar with progress indicator"""
+        self.status_bar = QStatusBar()
+        self.setStatusBar(self.status_bar)
+        self.progress_bar = QProgressBar()
+        self.progress_bar.setVisible(False)
+        self.status_bar.addPermanentWidget(self.progress_bar)
+        self.status_bar.showMessage("Ready")
+        
+    def update_ui_state(self):
+        """Update UI state based on current data and selections"""
+        has_data = self.mat_data is not None
+        has_algorithm = hasattr(self, 'selected_algorithm') and bool(self.selected_algorithm)
+        
+        # Enable/disable buttons based on state
+        self.ui.run_butt.setEnabled(has_data and has_algorithm)
+        self.ui.roi_butt.setEnabled(has_data)
+        self.ui.display_butt.setEnabled(has_data)
+        
+        # Update status
+        if has_data:
+            frames = self.mat_data.get('imlow', np.array([])).shape[2] if 'imlow' in self.mat_data else 0
+            self.status_bar.showMessage(f"Data loaded: {frames} frames")
         else:
-            self.ui.Msg_window.appendPlainText("No new data loaded. Retaining previous data.")
+            self.status_bar.showMessage("No data loaded")
+            
+    def show_help(self):
+        """Show help documentation"""
+        doc_path = os.path.abspath("docs_package/build/html/index.html")
+        webbrowser.open(f"file://{doc_path}")
+
+    def load_data(self):
+        """Load data with improved validation and feedback"""
+        try:
+            self.status_bar.showMessage("Loading data...")
+            self.progress_bar.setVisible(True)
+            self.progress_bar.setRange(0, 0)  # Indeterminate progress
+            
+            new_data = load_mat_file(self)
+            if new_data:
+                # Validate data structure
+                if self.validate_mat_data(new_data):
+                    self.mat_data = new_data
+                    self.add_to_recent_files(getattr(self, 'current_file_path', ''))
+                    self.ui.Msg_window.appendPlainText("✓ Data loaded successfully.")
+                    self.update_ui_state()
+                    
+                    if self.system_specs_window:
+                        self.system_specs_window.load_system_specs()
+                else:
+                    self.ui.Msg_window.appendPlainText("✗ Data validation failed.")
+            else:
+                self.ui.Msg_window.appendPlainText("No data loaded.")
+        except Exception as e:
+            self.ui.Msg_window.appendPlainText(f"✗ Error loading data: {e}")
+        finally:
+            self.progress_bar.setVisible(False)
+            self.status_bar.showMessage("Ready")
+            
+    def validate_mat_data(self, data):
+        """Validate .mat file structure"""
+        required_fields = ['imlow', 'NA_list']
+        optional_fields = ['NA', 'dpix_c', 'lambda', 'mag']
+        
+        # Check required fields
+        for field in required_fields:
+            if field not in data:
+                self.ui.Msg_window.appendPlainText(f"✗ Required field '{field}' missing")
+                return False
+                
+        # Validate data types and shapes
+        if not hasattr(data['imlow'], 'shape') or len(data['imlow'].shape) != 3:
+            self.ui.Msg_window.appendPlainText("✗ 'imlow' must be a 3D array")
+            return False
+            
+        if not hasattr(data['NA_list'], 'shape') or len(data['NA_list'].shape) != 2:
+            self.ui.Msg_window.appendPlainText("✗ 'NA_list' must be a 2D array")
+            return False
+            
+        # Show data summary
+        frames = data['imlow'].shape[2]
+        height, width = data['imlow'].shape[:2]
+        self.ui.Msg_window.appendPlainText(f"Data summary: {height}×{width} pixels, {frames} frames")
+        
+        return True
+        
+    def add_to_recent_files(self, file_path):
+        """Add file to recent files list"""
+        if file_path and file_path not in self.recent_files:
+            self.recent_files.insert(0, file_path)
+            if len(self.recent_files) > self.max_recent_files:
+                self.recent_files = self.recent_files[:self.max_recent_files]
 
     def show_single_raw_frame(self):
         display_single_raw_frame(self)
@@ -154,7 +261,9 @@ class MainWindow(QMainWindow):
             action.setChecked(False)
         if algorithm_name in self.algorithm_actions:
             self.algorithm_actions[algorithm_name].setChecked(True)
-        self.ui.Msg_window.appendPlainText(f"Algorithm selected: {algorithm_name}")
+        self.ui.Msg_window.appendPlainText(f"✓ Algorithm selected: {algorithm_name}")
+        self.update_ui_state()
+        
         if self.system_specs_window:
             self.system_specs_window.update_algorithm_selection(algorithm_name)
         config_path = os.path.join("Algorithms", algorithm_name, "config.yml")
@@ -170,29 +279,96 @@ class MainWindow(QMainWindow):
             return yaml.safe_load(f)
 
     def run_selected_algorithm(self):
-        if not self.selected_algorithm:
-            log_message(self.ui, "No algorithm selected.")
+        """Run selected algorithm with improved error handling and progress feedback"""
+        if not hasattr(self, 'selected_algorithm') or not self.selected_algorithm:
+            self.ui.Msg_window.appendPlainText("✗ No algorithm selected.")
             return
+            
+        if not self.mat_data:
+            self.ui.Msg_window.appendPlainText("✗ No data loaded.")
+            return
+            
         try:
+            self.status_bar.showMessage(f"Running {self.selected_algorithm}...")
+            self.progress_bar.setVisible(True)
+            self.progress_bar.setRange(0, 100)
+            self.progress_bar.setValue(0)
+            
+            # Disable run button during processing
+            self.ui.run_butt.setEnabled(False)
+            self.ui.run_butt.setText("Processing...")
+            
             module_path = f"Algorithms.{self.selected_algorithm}.main_alg"
             run_module = __import__(module_path, fromlist=["run_algorithm"])
             run_algorithm = getattr(run_module, "run_algorithm")
+            
+            # Progress callback
+            def progress_callback(progress):
+                self.progress_bar.setValue(progress)
+                QApplication.processEvents()
+                
+            # Log callback
+            def log_callback(msg):
+                self.ui.Msg_window.appendPlainText(f"[{self.selected_algorithm}] {msg}")
+                QApplication.processEvents()
+            
             Amp, Phase, Pupil = run_algorithm(
-                system_params=self.algorithm_parameters,
+                system_params=getattr(self, 'algorithm_parameters', {}),
                 roi_params=self.roi_params,
                 mat_data=self.mat_data,
-                log_callback=lambda msg: self.ui.Msg_window.appendPlainText(msg)
+                log_callback=log_callback,
+                progress_callback=progress_callback
             )
-            log_message(self.ui, f"{self.selected_algorithm} executed successfully.")
+            
             # Store results for display
             self.reconstruction_result = {
                 "amplitude": Amp.cpu().numpy() if hasattr(Amp, "cpu") else Amp,
                 "phase": Phase.cpu().numpy() if hasattr(Phase, "cpu") else Phase,
                 "pupil": Pupil.cpu().numpy() if hasattr(Pupil, "cpu") else Pupil,
             }
-
+            
+            self.ui.Msg_window.appendPlainText(f"✓ {self.selected_algorithm} completed successfully.")
+            self.status_bar.showMessage("Algorithm completed")
+            
+            # Automatically display amplitude result
+            self.display_amplitude_result()
+            
+        except ImportError as e:
+            self.ui.Msg_window.appendPlainText(f"✗ Algorithm module not found: {e}")
+        except MemoryError:
+            self.ui.Msg_window.appendPlainText("✗ Insufficient memory. Try smaller ROI or reduce upsampling.")
+        except ValueError as e:
+            self.ui.Msg_window.appendPlainText(f"✗ Invalid parameters: {e}")
         except Exception as e:
-            log_message(self.ui, f"Algorithm run failed: {e}")
+            self.ui.Msg_window.appendPlainText(f"✗ Algorithm failed: {e}")
+        finally:
+            # Re-enable UI
+            self.progress_bar.setVisible(False)
+            self.ui.run_butt.setEnabled(True)
+            self.ui.run_butt.setText("Run")
+            self.update_ui_state()
+
+    def display_amplitude_result(self):
+        """Automatically display the amplitude reconstruction result"""
+        try:
+            from Utilities.display_handler import display_result_image
+            display_result_image(self, "amplitude")
+            self.ui.Msg_window.appendPlainText("✓ Amplitude result displayed automatically.")
+        except Exception as e:
+            self.ui.Msg_window.appendPlainText(f"✗ Error displaying amplitude result: {e}")
+    
+    def display_result(self, result_type):
+        """Display a specific reconstruction result (amplitude, phase, or pupil)"""
+        if not hasattr(self, 'reconstruction_result') or not self.reconstruction_result:
+            self.ui.Msg_window.appendPlainText("✗ No reconstruction results available. Run an algorithm first.")
+            return
+            
+        try:
+            from Utilities.display_handler import display_result_image
+            display_result_image(self, result_type)
+            self.ui.Msg_window.appendPlainText(f"✓ {result_type.capitalize()} result displayed.")
+        except Exception as e:
+            self.ui.Msg_window.appendPlainText(f"✗ Error displaying {result_type} result: {e}")
 
 
 if __name__ == "__main__":
