@@ -361,7 +361,7 @@ class MainWindow(QMainWindow):
             # Re-enable UI
             self.progress_bar.setVisible(False)
             self.ui.run_butt.setEnabled(True)
-            self.ui.run_butt.setText("[RUN] Run")
+            self.ui.run_butt.setText("▶ Run")
             self.update_ui_state()
 
     def display_amplitude_result(self):
@@ -495,11 +495,11 @@ class MainWindow(QMainWindow):
             # For now, we'll use text-based indicators and enhanced styling
             
             # Enhanced button text with professional styling
-            self.ui.load_butt.setText("[LOAD] Load Data")
-            self.ui.roi_butt.setText("[ROI] ROI")
-            self.ui.display_butt.setText("[VIEW] Display")
-            self.ui.run_butt.setText("[RUN] Run")
-            self.ui.save_butt.setText("[SAVE] Save")
+            self.ui.load_butt.setText("📁 Load Data")
+            self.ui.roi_butt.setText("🎯 ROI")
+            self.ui.display_butt.setText("👁 Display")
+            self.ui.run_butt.setText("▶ Run")
+            self.ui.save_butt.setText("💾 Save")
             
             # Add tooltips for better user experience
             self.ui.load_butt.setToolTip("Load FPM data from .mat files")
