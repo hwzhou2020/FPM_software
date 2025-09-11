@@ -43,19 +43,26 @@ def install_requirements():
 
 def check_dependencies():
     """Check if all required packages are installed"""
-    required_packages = [
-        "numpy", "scipy", "PySide6", "PyYAML", "mat73", 
-        "torch", "matplotlib", "h5py"
-    ]
+    # Map package names to their import names
+    required_packages = {
+        "numpy": "numpy",
+        "scipy": "scipy", 
+        "PySide6": "PySide6",
+        "PyYAML": "yaml",  # PyYAML imports as 'yaml'
+        "mat73": "mat73",
+        "torch": "torch",
+        "matplotlib": "matplotlib",
+        "h5py": "h5py"
+    }
     
     missing_packages = []
-    for package in required_packages:
+    for package_name, import_name in required_packages.items():
         try:
-            __import__(package)
-            print(f"✅ {package}")
+            __import__(import_name)
+            print(f"✅ {package_name}")
         except ImportError:
-            print(f"❌ {package} - missing")
-            missing_packages.append(package)
+            print(f"❌ {package_name} - missing")
+            missing_packages.append(package_name)
     
     return len(missing_packages) == 0, missing_packages
 
@@ -84,8 +91,15 @@ def create_conda_env():
 
 def main():
     """Main installation process"""
+    import sys
+    
+    # Check for test mode
+    test_mode = "--test" in sys.argv
+    
     print("=" * 50)
     print("    FPM Software Auto-Installer")
+    if test_mode:
+        print("    (TEST MODE - No packages will be installed)")
     print("=" * 50)
     print()
     
@@ -97,36 +111,48 @@ def main():
     if not check_pip():
         return False
     
-    # Try to create conda environment
-    conda_available = create_conda_env()
-    
-    if conda_available:
-        print("\n🔄 Activating conda environment...")
-        print("   Please run: conda activate FPM_Application")
-        print("   Then run: python main.py")
+    if not test_mode:
+        # Try to create conda environment
+        conda_available = create_conda_env()
+        
+        if conda_available:
+            print("\n🔄 Activating conda environment...")
+            print("   Please run: conda activate FPM_Application")
+            print("   Then run: python main.py")
+        else:
+            # Install with pip
+            if not install_requirements():
+                return False
     else:
-        # Install with pip
-        if not install_requirements():
-            return False
+        print("\n🧪 Test mode: Skipping package installation")
+        conda_available = False
     
     # Check dependencies
     print("\n🔍 Checking dependencies...")
     all_installed, missing = check_dependencies()
     
     if not all_installed:
-        print(f"\n❌ Missing packages: {', '.join(missing)}")
-        print("   Please install them manually:")
-        print(f"   pip install {' '.join(missing)}")
-        return False
+        if test_mode:
+            print(f"\n⚠️  Test mode: {len(missing)} packages would need to be installed")
+            print(f"   Missing: {', '.join(missing)}")
+        else:
+            print(f"\n❌ Missing packages: {', '.join(missing)}")
+            print("   Please install them manually:")
+            print(f"   pip install {' '.join(missing)}")
+            return False
     
-    print("\n🎉 Installation completed successfully!")
-    print("\n📋 Next steps:")
-    if conda_available:
-        print("   1. Activate environment: conda activate FPM_Application")
-        print("   2. Run software: python main.py")
+    if test_mode:
+        print("\n✅ Test completed successfully!")
+        print("   All dependencies are available or can be installed.")
     else:
-        print("   1. Run software: python main.py")
-        print("   2. Or use launcher: run_fpm.bat (Windows) / run_fpm.sh (Linux/Mac)")
+        print("\n🎉 Installation completed successfully!")
+        print("\n📋 Next steps:")
+        if conda_available:
+            print("   1. Activate environment: conda activate FPM_Application")
+            print("   2. Run software: python main.py")
+        else:
+            print("   1. Run software: python main.py")
+            print("   2. Or use launcher: run_fpm.bat (Windows) / run_fpm.sh (Linux/Mac)")
     
     print("\n💡 For help, see INSTALL.md or press F1 in the application")
     return True
