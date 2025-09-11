@@ -33,7 +33,7 @@ jobs:
     
     - name: Test basic imports
       run: |
-        python -c "import numpy; import scipy; print('✅ Core scientific packages import successfully')"
+        python -c "import numpy; import scipy; print('[OK] Core scientific packages import successfully')"
     
     - name: Test main module structure
       run: |
@@ -46,14 +46,14 @@ jobs:
         with open('main.py', 'r') as f:
             code = f.read()
         compile(code, 'main.py', 'exec')
-        print('✅ Main module syntax is valid')
+        print('[OK] Main module syntax is valid')
         
         # Test that required files exist
         required_files = ['main.py', 'requirements.txt', 'README.md', 'LICENSE']
         for file in required_files:
             if os.path.exists(file):
-                print(f'✅ {file} exists')
+                print(f'[OK] {file} exists')
             else:
-                print(f'❌ {file} missing')
+                print(f'[MISSING] {file}')
                 sys.exit(1)
         "
