@@ -2,6 +2,9 @@
 """
 FPM Software Auto-Installer
 Automatically installs dependencies and sets up the environment
+
+NOTE: For the best experience with professional UI,
+      use: python launch_fpm_professional.py
 """
 
 import sys
@@ -147,12 +150,12 @@ def main():
     else:
         print("\n[SUCCESS] Installation completed successfully!")
         print("\n[INFO] Next steps:")
+        print("   RECOMMENDED: python launch_fpm_professional.py (Professional UI)")
         if conda_available:
-            print("   1. Activate environment: conda activate FPM_Application")
-            print("   2. Run software: python main.py")
+            print("   Alternative: conda activate FPM_Application && python main.py")
         else:
-            print("   1. Run software: python main.py")
-            print("   2. Or use launcher: run_fpm.bat (Windows) / run_fpm.sh (Linux/Mac)")
+            print("   Alternative: python main.py")
+            print("   Or use launcher: run_fpm.bat (Windows) / run_fpm.sh (Linux/Mac)")
     
     print("\n[INFO] For help, see INSTALL.md or press F1 in the application")
     return True

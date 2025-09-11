@@ -2,6 +2,9 @@
 """
 FPM Software Installation Test
 Run this script to verify your installation is working correctly.
+
+NOTE: For the best experience with professional UI,
+      use: python launch_fpm_professional.py
 """
 
 import sys
@@ -132,9 +135,10 @@ def main():
     if tests_passed == total_tests:
         print("[SUCCESS] All tests passed! Your FPM Software installation is ready.")
         print("\n[INFO] Next steps:")
-        print("   1. Run the software: python main.py")
-        print("   2. Or use launcher: run_fpm.bat (Windows) / run_fpm.sh (Linux/Mac)")
-        print("   3. Load demo data: data/Demo_data/FPM_SiemensStar_Demo.mat")
+        print("   RECOMMENDED: python launch_fpm_professional.py (Professional UI)")
+        print("   Alternative: python main.py")
+        print("   Or use launcher: run_fpm.bat (Windows) / run_fpm.sh (Linux/Mac)")
+        print("   Demo data: data/Demo_data/FPM_SiemensStar_Demo.mat")
         return True
     else:
         print("[ERROR] Some tests failed. Please check the issues above.")

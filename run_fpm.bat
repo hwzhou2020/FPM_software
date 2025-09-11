@@ -3,6 +3,9 @@ echo ========================================
 echo    FPM Software Launcher
 echo ========================================
 echo.
+echo NOTE: For the best experience with professional UI,
+echo       use: launch_fpm_professional.bat
+echo.
 
 REM Try to find Python in common locations
 set PYTHON_PATH=""

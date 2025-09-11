@@ -22,14 +22,23 @@ from Utilities.roi_handler import select_roi_size
 from Utilities.system_specs_window import SystemSpecsWindow  
 from Utilities.parameter_dialog import ParameterDialog  
 from WindowUI.DisplayOptionsWindow import DisplayOptionsWindow
+from Utilities.status_bar_enhancement import ProfessionalStatusBar
+from Utilities.about_dialog import show_about_dialog
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.ui = Ui_FPMSoftware()
         self.ui.setupUi(self)
-        self.setWindowTitle("FPM Software")
+        self.setWindowTitle("FPM Software - Fourier Ptychographic Microscopy")
         self.setWindowIcon(QIcon("icons/FPM_icon.png"))
+        
+        # Apply professional theme
+        self.apply_professional_theme()
+        
+        # Set up professional UI enhancements
+        self.setup_professional_ui()
+        
         doc_path = os.path.abspath("docs_package/build/html/index.html")
         self.ui.actionSoftware_Guide.triggered.connect(lambda: webbrowser.open(f"file://{doc_path}"))
 
@@ -72,8 +81,15 @@ class MainWindow(QMainWindow):
             self.ui.actionPhase_result.triggered.connect(lambda: self.display_result("phase"))
         if hasattr(self.ui, 'actionPupil_function'):
             self.ui.actionPupil_function.triggered.connect(lambda: self.display_result("pupil"))
-        self.ui.actionSoftware_Guide = QAction("Software Guide", self)
-        # self.ui.menuHelp.addAction(self.ui.actionSoftware_Guide)
+        
+        # Connect Help menu actions
+        self.ui.actionSoftware_Guide.triggered.connect(self.show_help)
+        self.ui.actionReferences.triggered.connect(self.show_about_dialog)
+        
+        # Add About action to Help menu
+        self.ui.actionAbout = QAction("About FPM Software", self)
+        self.ui.menuHelp.addAction(self.ui.actionAbout)
+        self.ui.actionAbout.triggered.connect(self.show_about_dialog)
 
 
         # Connect ROI selection button
@@ -345,7 +361,7 @@ class MainWindow(QMainWindow):
             # Re-enable UI
             self.progress_bar.setVisible(False)
             self.ui.run_butt.setEnabled(True)
-            self.ui.run_butt.setText("Run")
+            self.ui.run_butt.setText("▶ Run")
             self.update_ui_state()
 
     def display_amplitude_result(self):
@@ -370,12 +386,199 @@ class MainWindow(QMainWindow):
         except Exception as e:
             self.ui.Msg_window.appendPlainText(f"✗ Error displaying {result_type} result: {e}")
 
+    def apply_professional_theme(self):
+        """Apply the professional theme to the application"""
+        try:
+            # Try clean theme first (no CSS warnings)
+            clean_theme_path = os.path.join(os.path.dirname(__file__), "professional_theme_clean.qss")
+            if os.path.exists(clean_theme_path):
+                with open(clean_theme_path, 'r', encoding='utf-8') as f:
+                    style = f.read()
+                self.setStyleSheet(style)
+                self.ui.Msg_window.appendPlainText("✓ Professional theme applied successfully.")
+                return
+            
+            # Fallback to original professional theme
+            theme_path = os.path.join(os.path.dirname(__file__), "professional_theme.qss")
+            if os.path.exists(theme_path):
+                with open(theme_path, 'r', encoding='utf-8') as f:
+                    style = f.read()
+                self.setStyleSheet(style)
+                self.ui.Msg_window.appendPlainText("✓ Professional theme applied (with CSS warnings).")
+                return
+                
+            # Final fallback to existing theme
+            fallback_theme = os.path.join(os.path.dirname(__file__), "fancy_dark_theme.qss")
+            if os.path.exists(fallback_theme):
+                with open(fallback_theme, 'r', encoding='utf-8') as f:
+                    style = f.read()
+                self.setStyleSheet(style)
+                self.ui.Msg_window.appendPlainText("✓ Fallback theme applied.")
+        except Exception as e:
+            self.ui.Msg_window.appendPlainText(f"✗ Error applying theme: {e}")
+
+    def setup_professional_ui(self):
+        """Set up professional UI enhancements"""
+        try:
+            # Set window properties for professional appearance
+            self.setMinimumSize(1200, 800)
+            self.resize(1400, 900)
+            
+            # Center the window on screen
+            self.center_window()
+            
+            # Replace default status bar with professional one
+            self.setup_professional_status_bar()
+            
+            # Set up professional button styling
+            self.setup_button_icons()
+            
+            # Enhance the message window with professional styling
+            self.ui.Msg_window.setStyleSheet("""
+                QPlainTextEdit#Msg_window {
+                    background: #0f1419;
+                    color: #00ff88;
+                    border: 2px solid #2a4a3a;
+                    border-radius: 6px;
+                    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+                    font-size: 9pt;
+                    font-weight: 500;
+                    padding: 8px;
+                }
+            """)
+            
+            # Add professional welcome message
+            welcome_msg = """
+╔══════════════════════════════════════════════════════════════════════════════╗
+║                    FPM Software - Professional Edition                      ║
+║              Fourier Ptychographic Microscopy Reconstruction                ║
+╠══════════════════════════════════════════════════════════════════════════════╣
+║  Welcome to the professional FPM reconstruction software!                   ║
+║                                                                              ║
+║  Features:                                                                   ║
+║  • Advanced reconstruction algorithms (GS, EPRY, Gauss-Newton, KK, APIC)    ║
+║  • Interactive image display with zoom and pan                              ║
+║  • Professional user interface with modern styling                          ║
+║  • Comprehensive data analysis and visualization tools                      ║
+║                                                                              ║
+║  Getting Started:                                                            ║
+║  1. Load your FPM data using the 'Load' button                              ║
+║  2. Select an algorithm from the 'Specs' menu                               ║
+║  3. Click 'Run' to start reconstruction                                     ║
+║                                                                              ║
+║  For help and documentation, use the Help menu or press F1.                 ║
+╚══════════════════════════════════════════════════════════════════════════════╝
+            """
+            self.ui.Msg_window.setPlainText(welcome_msg)
+            
+            self.ui.Msg_window.appendPlainText("\n✓ Professional UI setup completed successfully.")
+            
+        except Exception as e:
+            self.ui.Msg_window.appendPlainText(f"✗ Error setting up professional UI: {e}")
+
+    def center_window(self):
+        """Center the window on the screen"""
+        try:
+            screen = QApplication.primaryScreen().geometry()
+            size = self.geometry()
+            x = (screen.width() - size.width()) // 2
+            y = (screen.height() - size.height()) // 2
+            self.move(x, y)
+        except Exception as e:
+            # If centering fails, just continue
+            pass
+
+    def setup_button_icons(self):
+        """Set up professional icons for buttons"""
+        try:
+            # Note: In a real implementation, you would add actual icon files
+            # For now, we'll use text-based indicators and enhanced styling
+            
+            # Enhanced button text with professional styling
+            self.ui.load_butt.setText("📁 Load Data")
+            self.ui.roi_butt.setText("🎯 ROI")
+            self.ui.display_butt.setText("👁 Display")
+            self.ui.run_butt.setText("▶ Run")
+            self.ui.save_butt.setText("💾 Save")
+            
+            # Add tooltips for better user experience
+            self.ui.load_butt.setToolTip("Load FPM data from .mat files")
+            self.ui.roi_butt.setToolTip("Select Region of Interest for processing")
+            self.ui.display_butt.setToolTip("Display loaded data and results")
+            self.ui.run_butt.setToolTip("Run the selected reconstruction algorithm")
+            self.ui.save_butt.setToolTip("Save reconstruction results")
+            
+        except Exception as e:
+            # If icon setup fails, continue with default text
+            pass
+
+    def setup_professional_status_bar(self):
+        """Set up the professional status bar"""
+        try:
+            # Replace the default status bar with our professional one
+            self.professional_status_bar = ProfessionalStatusBar(self)
+            self.setStatusBar(self.professional_status_bar)
+            
+            # Update the progress bar reference for compatibility
+            self.progress_bar = self.professional_status_bar.progress_bar
+            
+            self.professional_status_bar.show_success("Professional status bar initialized")
+            
+        except Exception as e:
+            self.ui.Msg_window.appendPlainText(f"✗ Error setting up professional status bar: {e}")
+
+    def show_about_dialog(self):
+        """Show the professional about dialog"""
+        try:
+            show_about_dialog(self)
+        except Exception as e:
+            self.ui.Msg_window.appendPlainText(f"✗ Error showing about dialog: {e}")
+
 
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
-    with open("fancy_dark_theme.qss", "r") as f:
-        app.setStyleSheet(f.read())
+    
+    # Set application properties for professional appearance
+    app.setApplicationName("FPM Software")
+    app.setApplicationVersion("2.0 Professional")
+    app.setOrganizationName("Caltech Biophotonics Lab")
+    
+    # Show professional splash screen
+    splash = None
+    try:
+        # Try the simple splash screen first (more reliable)
+        from Utilities.simple_splash_screen import show_simple_splash
+        splash = show_simple_splash()
+    except Exception as e:
+        print(f"Simple splash screen error: {e}")
+        try:
+            # Fallback to animated splash screen
+            from Utilities.splash_screen import ProfessionalSplashScreen
+            splash = ProfessionalSplashScreen()
+            splash.show()
+            QApplication.processEvents()
+            
+            # Simulate loading time
+            import time
+            start_time = time.time()
+            while time.time() - start_time < 2.0:  # Show for 2 seconds
+                QApplication.processEvents()
+                time.sleep(0.01)
+        except Exception as e2:
+            print(f"Animated splash screen error: {e2}")
+            # If both splash screens fail, continue without it
+            pass
+    
+    # Create and show the main window
     window = MainWindow()
     window.show()
+    
+    # Close splash screen if it's still open
+    try:
+        if splash and splash.isVisible():
+            splash.close()
+    except Exception:
+        pass
+        
     sys.exit(app.exec())

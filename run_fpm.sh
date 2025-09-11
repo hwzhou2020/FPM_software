@@ -4,6 +4,9 @@ echo "========================================"
 echo "    FPM Software Launcher"
 echo "========================================"
 echo
+echo "NOTE: For the best experience with professional UI,"
+echo "      use: python launch_fpm_professional.py"
+echo
 
 # Function to check if command exists
 command_exists() {

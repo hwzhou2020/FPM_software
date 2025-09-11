@@ -2,12 +2,18 @@
 
 ## 🚀 Quick Installation (Recommended)
 
-### Option 1: One-Click Auto-Installer
+### Option 1: Professional Launcher (Best Experience)
 ```bash
 # Clone the repository
 git clone https://github.com/hwzhou2020/FPM_software.git
 cd FPM_software
 
+# Run the professional launcher (handles dependencies + professional UI)
+python launch_fpm_professional.py
+```
+
+### Option 2: One-Click Auto-Installer
+```bash
 # Run the auto-installer (handles everything automatically)
 python install_fpm.py
 
@@ -15,10 +21,13 @@ python install_fpm.py
 python main.py
 ```
 
-### Option 2: Launcher Scripts (Easiest)
+### Option 3: Launcher Scripts (Easiest)
 **Windows:**
 ```bash
-# Just double-click this file or run in command prompt
+# Professional launcher (recommended)
+launch_fpm_professional.bat
+
+# Or standard launcher
 run_fpm.bat
 ```
 
@@ -29,7 +38,7 @@ chmod +x run_fpm.sh
 ./run_fpm.sh
 ```
 
-### Option 3: Using Conda (For Scientific Computing)
+### Option 4: Using Conda (For Scientific Computing)
 ```bash
 # Create environment from the provided environment file
 conda env create -f docs_package/environment.yml
@@ -39,7 +48,7 @@ conda activate fpm_env
 python main.py
 ```
 
-### Option 4: Manual pip Installation
+### Option 5: Manual pip Installation
 ```bash
 # Install dependencies
 pip install -r requirements.txt
