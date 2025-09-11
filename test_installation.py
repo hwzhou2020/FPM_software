@@ -11,10 +11,10 @@ def test_python_version():
     """Test Python version compatibility"""
     version = sys.version_info
     if version.major < 3 or (version.major == 3 and version.minor < 8):
-        print(f"❌ Python {version.major}.{version.minor}.{version.micro} is not supported")
+        print(f"[ERROR] Python {version.major}.{version.minor}.{version.micro} is not supported")
         print("   Python 3.8 or higher is required")
         return False
-    print(f"✅ Python {version.major}.{version.minor}.{version.micro} is compatible")
+    print(f"[OK] Python {version.major}.{version.minor}.{version.micro} is compatible")
     return True
 
 def test_imports():
@@ -30,22 +30,22 @@ def test_imports():
         "h5py": "h5py"
     }
     
-    print("\n🔍 Testing package imports...")
+    print("\n[INFO] Testing package imports...")
     failed_imports = []
     
     for package_name, import_name in required_packages.items():
         try:
             __import__(import_name)
-            print(f"✅ {package_name}")
+            print(f"[OK] {package_name}")
         except ImportError:
-            print(f"❌ {package_name} - not installed")
+            print(f"[MISSING] {package_name}")
             failed_imports.append(package_name)
     
     return len(failed_imports) == 0, failed_imports
 
 def test_file_structure():
     """Test that all required files exist"""
-    print("\n📁 Testing file structure...")
+    print("\n[INFO] Testing file structure...")
     required_files = [
         "main.py",
         "requirements.txt", 
@@ -59,38 +59,38 @@ def test_file_structure():
     missing_files = []
     for file in required_files:
         if os.path.exists(file):
-            print(f"✅ {file}")
+            print(f"[OK] {file}")
         else:
-            print(f"❌ {file} - missing")
+            print(f"[MISSING] {file}")
             missing_files.append(file)
     
     return len(missing_files) == 0, missing_files
 
 def test_main_module():
     """Test that main.py can be parsed"""
-    print("\n🐍 Testing main module...")
+    print("\n[INFO] Testing main module...")
     try:
         with open("main.py", "r") as f:
             code = f.read()
         compile(code, "main.py", "exec")
-        print("✅ main.py syntax is valid")
+        print("[OK] main.py syntax is valid")
         return True
     except SyntaxError as e:
-        print(f"❌ main.py has syntax errors: {e}")
+        print(f"[ERROR] main.py has syntax errors: {e}")
         return False
     except FileNotFoundError:
-        print("❌ main.py not found")
+        print("[ERROR] main.py not found")
         return False
 
 def test_demo_data():
     """Test that demo data exists"""
-    print("\n📊 Testing demo data...")
+    print("\n[INFO] Testing demo data...")
     demo_file = "data/Demo_data/FPM_SiemensStar_Demo.mat"
     if os.path.exists(demo_file):
-        print(f"✅ Demo data found: {demo_file}")
+        print(f"[OK] Demo data found: {demo_file}")
         return True
     else:
-        print(f"❌ Demo data missing: {demo_file}")
+        print(f"[MISSING] Demo data: {demo_file}")
         return False
 
 def main():
@@ -130,21 +130,21 @@ def main():
     print("=" * 60)
     
     if tests_passed == total_tests:
-        print("🎉 All tests passed! Your FPM Software installation is ready.")
-        print("\n📋 Next steps:")
+        print("[SUCCESS] All tests passed! Your FPM Software installation is ready.")
+        print("\n[INFO] Next steps:")
         print("   1. Run the software: python main.py")
         print("   2. Or use launcher: run_fpm.bat (Windows) / run_fpm.sh (Linux/Mac)")
         print("   3. Load demo data: data/Demo_data/FPM_SiemensStar_Demo.mat")
         return True
     else:
-        print("❌ Some tests failed. Please check the issues above.")
+        print("[ERROR] Some tests failed. Please check the issues above.")
         
         if failed_imports:
-            print(f"\n💡 To install missing packages:")
+            print(f"\n[INFO] To install missing packages:")
             print(f"   pip install {' '.join(failed_imports)}")
         
         if missing_files:
-            print(f"\n💡 Missing files: {', '.join(missing_files)}")
+            print(f"\n[INFO] Missing files: {', '.join(missing_files)}")
             print("   Make sure you're in the correct directory")
         
         return False
