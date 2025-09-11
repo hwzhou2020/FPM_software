@@ -40,6 +40,9 @@ chmod +x run_fpm.sh
 # Install dependencies
 pip install -r requirements.txt
 
+# Test your installation (optional)
+python test_installation.py
+
 # Run the software
 python main.py
 ```
@@ -141,6 +144,11 @@ The software expects .mat files containing:
 **Import errors:**
 ```bash
 pip install -r requirements.txt
+```
+
+**Test your installation:**
+```bash
+python test_installation.py
 ```
 
 **GUI not displaying:**
