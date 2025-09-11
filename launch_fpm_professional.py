@@ -49,14 +49,14 @@ def launch_application():
         window = MainWindow()
         window.show()
         
-        print("✓ FPM Software Professional Edition launched successfully!")
-        print("✓ Professional UI loaded with modern styling")
-        print("✓ All features are ready to use")
+        print("[OK] FPM Software Professional Edition launched successfully!")
+        print("[OK] Professional UI loaded with modern styling")
+        print("[OK] All features are ready to use")
         
         sys.exit(app.exec())
         
     except Exception as e:
-        print(f"✗ Error launching application: {e}")
+        print(f"[ERROR] Error launching application: {e}")
         return False
 
 def main():
@@ -72,13 +72,13 @@ def main():
     if missing:
         print(f"Missing packages: {', '.join(missing)}")
         if install_dependencies(missing):
-            print("✓ Dependencies installed successfully")
+            print("[OK] Dependencies installed successfully")
         else:
-            print("✗ Failed to install dependencies")
+            print("[ERROR] Failed to install dependencies")
             print("Please install manually: pip install " + " ".join(missing))
             return False
     else:
-        print("✓ All dependencies are available")
+        print("[OK] All dependencies are available")
     
     # Launch application
     print("Launching FPM Software...")
