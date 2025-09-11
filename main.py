@@ -172,11 +172,11 @@ class MainWindow(QMainWindow):
                     if self.system_specs_window:
                         self.system_specs_window.load_system_specs()
                 else:
-                    self.ui.Msg_window.appendPlainText("✗ Data validation failed.")
+                    self.ui.Msg_window.appendPlainText("[ERROR] Data validation failed.")
             else:
                 self.ui.Msg_window.appendPlainText("No data loaded.")
         except Exception as e:
-            self.ui.Msg_window.appendPlainText(f"✗ Error loading data: {e}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Error loading data: {e}")
         finally:
             self.progress_bar.setVisible(False)
             self.status_bar.showMessage("Ready")
@@ -189,22 +189,22 @@ class MainWindow(QMainWindow):
         # Check required fields
         for field in required_fields:
             if field not in data:
-                self.ui.Msg_window.appendPlainText(f"✗ Required field '{field}' missing")
+                self.ui.Msg_window.appendPlainText(f"[ERROR] Required field '{field}' missing")
                 return False
                 
         # Validate data types and shapes
         if not hasattr(data['imlow'], 'shape') or len(data['imlow'].shape) != 3:
-            self.ui.Msg_window.appendPlainText("✗ 'imlow' must be a 3D array")
+            self.ui.Msg_window.appendPlainText("[ERROR] 'imlow' must be a 3D array")
             return False
             
         if not hasattr(data['NA_list'], 'shape') or len(data['NA_list'].shape) != 2:
-            self.ui.Msg_window.appendPlainText("✗ 'NA_list' must be a 2D array")
+            self.ui.Msg_window.appendPlainText("[ERROR] 'NA_list' must be a 2D array")
             return False
             
         # Show data summary
         frames = data['imlow'].shape[2]
         height, width = data['imlow'].shape[:2]
-        self.ui.Msg_window.appendPlainText(f"Data summary: {height}×{width} pixels, {frames} frames")
+        self.ui.Msg_window.appendPlainText(f"Data summary: {height}x{width} pixels, {frames} frames")
         
         return True
         
@@ -297,11 +297,11 @@ class MainWindow(QMainWindow):
     def run_selected_algorithm(self):
         """Run selected algorithm with improved error handling and progress feedback"""
         if not hasattr(self, 'selected_algorithm') or not self.selected_algorithm:
-            self.ui.Msg_window.appendPlainText("✗ No algorithm selected.")
+            self.ui.Msg_window.appendPlainText("[ERROR] No algorithm selected.")
             return
             
         if not self.mat_data:
-            self.ui.Msg_window.appendPlainText("✗ No data loaded.")
+            self.ui.Msg_window.appendPlainText("[ERROR] No data loaded.")
             return
             
         try:
@@ -449,25 +449,25 @@ class MainWindow(QMainWindow):
             
             # Add professional welcome message
             welcome_msg = """
-╔══════════════════════════════════════════════════════════════════════════════╗
-║                    FPM Software - Professional Edition                      ║
-║              Fourier Ptychographic Microscopy Reconstruction                ║
-╠══════════════════════════════════════════════════════════════════════════════╣
-║  Welcome to the professional FPM reconstruction software!                   ║
-║                                                                              ║
-║  Features:                                                                   ║
-║  • Advanced reconstruction algorithms (GS, EPRY, Gauss-Newton, KK, APIC)    ║
-║  • Interactive image display with zoom and pan                              ║
-║  • Professional user interface with modern styling                          ║
-║  • Comprehensive data analysis and visualization tools                      ║
-║                                                                              ║
-║  Getting Started:                                                            ║
-║  1. Load your FPM data using the 'Load' button                              ║
-║  2. Select an algorithm from the 'Specs' menu                               ║
-║  3. Click 'Run' to start reconstruction                                     ║
-║                                                                              ║
-║  For help and documentation, use the Help menu or press F1.                 ║
-╚══════════════════════════════════════════════════════════════════════════════╝
+================================================================================
+                    FPM Software - Professional Edition                      
+              Fourier Ptychographic Microscopy Reconstruction                
+================================================================================
+  Welcome to the professional FPM reconstruction software!                   
+  
+  Features:                                                                   
+  - Advanced reconstruction algorithms (GS, EPRY, Gauss-Newton, KK, APIC)    
+  - Interactive image display with zoom and pan                              
+  - Professional user interface with modern styling                          
+  - Comprehensive data analysis and visualization tools                      
+                                                                              
+  Getting Started:                                                            
+  1. Load your FPM data using the 'Load' button                              
+  2. Select an algorithm from the 'Specs' menu                               
+  3. Click 'Run' to start reconstruction                                     
+                                                                              
+  For help and documentation, use the Help menu or press F1.                 
+================================================================================
             """
             self.ui.Msg_window.setPlainText(welcome_msg)
             
@@ -525,14 +525,14 @@ class MainWindow(QMainWindow):
             self.professional_status_bar.show_success("Professional status bar initialized")
             
         except Exception as e:
-            self.ui.Msg_window.appendPlainText(f"✗ Error setting up professional status bar: {e}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Error setting up professional status bar: {e}")
 
     def show_about_dialog(self):
         """Show the professional about dialog"""
         try:
             show_about_dialog(self)
         except Exception as e:
-            self.ui.Msg_window.appendPlainText(f"✗ Error showing about dialog: {e}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Error showing about dialog: {e}")
 
 
 if __name__ == "__main__":

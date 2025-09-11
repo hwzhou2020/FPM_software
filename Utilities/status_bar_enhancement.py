@@ -160,13 +160,13 @@ class ProfessionalStatusBar(QStatusBar):
         
     def show_error(self, message):
         """Show error message in red"""
-        self.status_label.setText(f"✗ {message}")
+        self.status_label.setText(f"[ERROR] {message}")
         self.status_label.setStyleSheet("color: #dc3545; font-weight: 600;")
         QTimer.singleShot(5000, self.reset_status_style)
         
     def show_warning(self, message):
         """Show warning message in yellow"""
-        self.status_label.setText(f"⚠ {message}")
+        self.status_label.setText(f"[WARNING] {message}")
         self.status_label.setStyleSheet("color: #ffc107; font-weight: 600;")
         QTimer.singleShot(4000, self.reset_status_style)
         
