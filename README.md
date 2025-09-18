@@ -7,6 +7,10 @@
 
 A comprehensive software package for Fourier Ptychographic Microscopy (FPM) reconstruction algorithms with a **professional, modern graphical user interface**.
 
+## Preface
+TODO
+
+
 ## 🚀 Quick Start
 
 ### Option 1: Professional Launcher (Recommended)
