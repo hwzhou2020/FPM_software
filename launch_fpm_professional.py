@@ -11,7 +11,7 @@ import time
 
 def check_dependencies():
     """Check if required dependencies are available"""
-    required_packages = ['PySide6', 'numpy', 'scipy', 'psutil']
+    required_packages = ['PySide6', 'numpy', 'scipy', 'psutil', 'PyYAML', 'mat73', 'torch']
     missing_packages = []
     
     for package in required_packages:
@@ -25,11 +25,22 @@ def check_dependencies():
 def install_dependencies(packages):
     """Install missing dependencies"""
     print(f"Installing missing packages: {', '.join(packages)}")
-    try:
-        subprocess.check_call([sys.executable, '-m', 'pip', 'install'] + packages)
-        return True
-    except subprocess.CalledProcessError:
-        return False
+    success = True
+    for package in packages:
+        cmd = [sys.executable, '-m', 'pip', 'install', package]
+        if package == 'torch':
+            import platform
+            system = platform.system().lower()
+            machine = platform.machine().lower()
+            if system == 'darwin':
+                index_url = 'https://download.pytorch.org/whl/metal' if machine in ('arm64', 'arm64e') else 'https://download.pytorch.org/whl/cpu'
+                cmd.extend(['--index-url', index_url])
+        try:
+            subprocess.check_call(cmd)
+        except subprocess.CalledProcessError:
+            success = False
+            print(f"[ERROR] Failed to install {package} automatically")
+    return success
 
 def launch_application():
     """Launch the FPM application"""
