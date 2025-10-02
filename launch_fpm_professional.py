@@ -7,20 +7,34 @@ Handles environment setup and launches the application with proper error handlin
 import sys
 import os
 import subprocess
-import time
+from importlib import util as importlib_util
 
 def check_dependencies():
-    """Check if required dependencies are available"""
-    required_packages = ['PySide6', 'numpy', 'scipy', 'psutil', 'PyYAML', 'mat73', 'torch']
+    """Return a list of pip package names that still need to be installed."""
+    dependencies = {
+        'PySide6': 'PySide6',
+        'numpy': 'numpy',
+        'scipy': 'scipy',
+        'psutil': 'psutil',
+        'yaml': 'PyYAML',  # PyYAML installs the yaml module
+        'mat73': 'mat73',
+        'torch': 'torch',
+    }
     missing_packages = []
-    
-    for package in required_packages:
-        try:
-            __import__(package)
-        except ImportError:
-            missing_packages.append(package)
-    
-    return missing_packages
+
+    for module_name, package_name in dependencies.items():
+        if importlib_util.find_spec(module_name) is None:
+            missing_packages.append(package_name)
+
+    # Remove duplicates while preserving order
+    seen = set()
+    unique_missing = []
+    for package in missing_packages:
+        if package not in seen:
+            seen.add(package)
+            unique_missing.append(package)
+
+    return unique_missing
 
 def install_dependencies(packages):
     """Install missing dependencies"""

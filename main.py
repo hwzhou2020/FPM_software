@@ -1,4 +1,5 @@
 import os
+import sys
 import yaml
 import json
 import webbrowser
@@ -57,12 +58,21 @@ class MainWindow(QMainWindow):
         self.ui.setupUi(self)
         self.setWindowTitle("FPM Software - Fourier Ptychographic Microscopy")
         self.setWindowIcon(QIcon("icons/FPM_icon.png"))
+
+        if sys.platform == "darwin":
+            try:
+                self.ui.menubar.setNativeMenuBar(False)
+            except AttributeError:
+                pass
         
         # Apply professional theme
         self.apply_professional_theme()
         
         # Set up professional UI enhancements
         self.setup_professional_ui()
+
+        # Keep reference to the active parameter dialog
+        self.parameter_dialog = None
         
         doc_candidates = [
             os.path.abspath("Documentation/help.html"),
@@ -108,17 +118,26 @@ class MainWindow(QMainWindow):
         
         # Connect result display actions (if they exist in the UI)
         if hasattr(self.ui, 'actionAmplitude_result'):
-            self.ui.actionAmplitude_result.triggered.connect(lambda: self.display_result("amplitude"))
+            self.ui.actionAmplitude_result.triggered.connect(
+                lambda _checked=False: self.display_result("amplitude")
+            )
         if hasattr(self.ui, 'actionPhase_result'):
-            self.ui.actionPhase_result.triggered.connect(lambda: self.display_result("phase"))
+            self.ui.actionPhase_result.triggered.connect(
+                lambda _checked=False: self.display_result("phase")
+            )
         if hasattr(self.ui, 'actionPupil_function'):
-            self.ui.actionPupil_function.triggered.connect(lambda: self.display_result("pupil"))
+            self.ui.actionPupil_function.triggered.connect(
+                lambda _checked=False: self.display_result("pupil")
+            )
         
         # Connect Help menu actions
         # Add About action to Help menu
         self.ui.actionAbout = QAction("About FPM Software", self)
         self.ui.menuHelp.addAction(self.ui.actionAbout)
         self.ui.actionAbout.triggered.connect(self.show_about_dialog)
+        if hasattr(self.ui, 'actionReferences'):
+            self.ui.menuHelp.removeAction(self.ui.actionReferences)
+            self.ui.actionReferences.setVisible(False)
 
 
         self.default_save_path = self.initialize_default_save_path()
@@ -144,7 +163,7 @@ class MainWindow(QMainWindow):
         self.ui.menuFile.insertAction(self.actionExit, self.actionSetSaveDirectory)
 
         # Connect ROI selection button
-        self.ui.roi_butt.clicked.connect(lambda: select_roi_size(self))
+        self.ui.roi_butt.clicked.connect(lambda _checked=False: select_roi_size(self))
 
         # Ensure algorithm menu items are checkable
         self.ui.actionGerchberg_Saxton.setCheckable(True)
@@ -153,9 +172,35 @@ class MainWindow(QMainWindow):
         self.ui.actionKramers_Kronig.setCheckable(True)
         self.ui.actionAPIC.setCheckable(True)
 
+        # Connect legacy algorithm menu actions to selection handler
+        legacy_actions = {
+            'actionGerchberg_Saxton': 'Gerchberg Saxton',
+            'actionEPRY': 'EPRY',
+            'actionGauss_Newton': 'Gauss Newton',
+            'actionKramers_Kronig': 'Kramers Kronig',
+            'actionAPIC': 'APIC',
+        }
+
+        def _normalize(name: str) -> str:
+            return ''.join(ch.lower() for ch in name if ch.isalnum())
+
+        algorithm_lookup = {_normalize(name): name for name in self.algorithms}
+
+        for attr_name, algorithm_label in legacy_actions.items():
+            action = getattr(self.ui, attr_name, None)
+            if action is None:
+                continue
+            target_algorithm = algorithm_lookup.get(_normalize(algorithm_label))
+            if not target_algorithm:
+                continue
+            action.triggered.connect(
+                lambda _checked=False, alg=target_algorithm: self.select_algorithm(alg)
+            )
+
         # Dynamically populate the algorithm menu
         self.algorithm_actions = {}
         self.populate_algorithm_menu()
+        self.ui.menuAlgorithm_specs.triggered.connect(self._on_algorithm_action_triggered)
         
         # Setup keyboard shortcuts and status bar
         self.setup_keyboard_shortcuts()
@@ -324,7 +369,6 @@ class MainWindow(QMainWindow):
             shortened_name = algorithm.split(" ")[0]
             action = QAction(shortened_name, self)
             action.setCheckable(True)
-            action.triggered.connect(lambda checked, alg=algorithm: self.select_algorithm(alg))
             self.algorithm_actions[algorithm] = action
             menu_algorithms.addAction(action)
         if self.algorithms:
@@ -344,8 +388,43 @@ class MainWindow(QMainWindow):
             self.system_specs_window.update_algorithm_selection(algorithm_name)
         config_path = os.path.join("Algorithms", algorithm_name, "config.yml")
         if os.path.exists(config_path):
-            dialog = ParameterDialog(algorithm_name, parent=self)
-            dialog.show()
+            if self.parameter_dialog is not None:
+                try:
+                    self.parameter_dialog.close()
+                except Exception:
+                    pass
+            self.parameter_dialog = ParameterDialog(algorithm_name, parent=self)
+            try:
+                self.ui.Msg_window.appendPlainText(f"Opening parameter dialog for {algorithm_name}...")
+            except Exception:
+                pass
+            QTimer.singleShot(0, self._open_parameter_dialog)
+        else:
+            self.ui.Msg_window.appendPlainText(
+                f"[WARNING] No parameter configuration found for {algorithm_name}."
+            )
+
+    def _open_parameter_dialog(self):
+        dialog = getattr(self, "parameter_dialog", None)
+        if not dialog:
+            return
+        dialog.show()
+        try:
+            dialog.raise_()
+            dialog.activateWindow()
+            dialog.setFocus()
+        except Exception:
+            pass
+
+    def _on_algorithm_action_triggered(self, action):
+        for algorithm_name, algorithm_action in self.algorithm_actions.items():
+            if action is algorithm_action:
+                self.select_algorithm(algorithm_name)
+                return
+
+    def show_references(self):
+        """Backward compatibility hook for removed References menu."""
+        QMessageBox.information(self, "References", "This menu item has been removed.")
 
     def load_algorithm_config(self, algorithm_name):
         config_path = os.path.join("Algorithms", algorithm_name, "config.yml")
@@ -810,7 +889,6 @@ class MainWindow(QMainWindow):
 
 
 if __name__ == "__main__":
-    import sys
     app = QApplication(sys.argv)
     apply_dark_palette(app)
     
@@ -857,6 +935,3 @@ if __name__ == "__main__":
         pass
         
     sys.exit(app.exec())
-
-
-

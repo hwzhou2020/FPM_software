@@ -1,18 +1,19 @@
 import os
 import yaml
 from PySide6.QtWidgets import (
-    QWidget, QGroupBox, QLabel, QLineEdit, QPushButton,
+    QDialog, QGroupBox, QLabel, QLineEdit, QPushButton,
     QVBoxLayout, QHBoxLayout, QMessageBox, QApplication
 )
 from PySide6.QtCore import Qt
 
 
-class ParameterDialog(QWidget):
+class ParameterDialog(QDialog):
     def __init__(self, algorithm_name, parent=None):
         super().__init__(parent)
         self.setWindowTitle(f"{algorithm_name} Parameters")
-        self.setWindowFlag(Qt.Window)  # Make it a floating window
+        self.setModal(True)
         self.setFixedSize(400, 300)
+        self.setAttribute(Qt.WA_DeleteOnClose, True)
 
         self.algorithm_name = algorithm_name
         self.config = self.load_config()
@@ -84,4 +85,11 @@ class ParameterDialog(QWidget):
                 return
 
         self.parent().algorithm_parameters = params
-        self.close()
+        self.accept()
+
+    def closeEvent(self, event):
+        parent = self.parent()
+        if parent is not None and hasattr(parent, "parameter_dialog"):
+            if parent.parameter_dialog is self:
+                parent.parameter_dialog = None
+        super().closeEvent(event)
