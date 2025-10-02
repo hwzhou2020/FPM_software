@@ -1,5 +1,5 @@
 from PySide6.QtWidgets import (
-    QGraphicsScene, QInputDialog, QGraphicsRectItem, QDialog, QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QPushButton
+    QApplication, QGraphicsScene, QInputDialog, QGraphicsRectItem, QDialog, QVBoxLayout, QHBoxLayout, QLabel, QSpinBox, QPushButton
 )
 from PySide6.QtGui import QColor, QPen, QBrush, QImage, QPixmap
 from PySide6.QtCore import Qt
@@ -40,13 +40,22 @@ def select_roi_size(main_window):
     imlow = main_window.mat_data["imlow"]
     max_size = min(imlow.shape[0], imlow.shape[1])
 
-    size, ok = QInputDialog.getInt(
-        main_window, "Set ROI Size",
-        f"Enter ROI size (64 to {max_size} pixels):",
-        64, 64, max_size, 1
-    )
+    dialog = QInputDialog(main_window)
+    dialog.setWindowTitle("Set ROI Size")
+    dialog.setLabelText(f"Enter ROI size (64 to {max_size} pixels):")
+    dialog.setInputMode(QInputDialog.IntInput)
+    dialog.setIntRange(64, max_size)
+    dialog.setIntStep(1)
+    dialog.setIntValue(64)
 
-    if ok:
+    app = QApplication.instance()
+    if app is not None:
+        dialog.setPalette(app.palette())
+        if app.styleSheet():
+            dialog.setStyleSheet(app.styleSheet())
+
+    if dialog.exec():
+        size = dialog.intValue()
         main_window.roi_size = size
         log_message(main_window.ui, f"ROI size set to {size} pixels.")
         display_image_with_roi(main_window)
@@ -103,6 +112,12 @@ def modify_roi_dialog(main_window, roi_box, x_offset, y_offset, size):
 
     dialog = QDialog(main_window)
     dialog.setWindowTitle("Modify ROI Parameters")
+
+    app = QApplication.instance()
+    if app is not None:
+        dialog.setPalette(app.palette())
+        if app.styleSheet():
+            dialog.setStyleSheet(app.styleSheet())
 
     layout = QHBoxLayout()
 

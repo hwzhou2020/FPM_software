@@ -147,3 +147,4 @@ class SystemSpecsWindow(QWidget):
         app = QApplication.instance()
         if app is not None:
             self.setStyleSheet(app.styleSheet())
+            self.setPalette(app.palette())

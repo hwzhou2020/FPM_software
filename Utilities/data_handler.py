@@ -2,7 +2,7 @@ import scipy.io
 import mat73
 import os
 
-from PySide6.QtWidgets import QFileDialog
+from PySide6.QtWidgets import QFileDialog, QApplication
 
 
 def load_mat_file(parent):
@@ -12,9 +12,21 @@ def load_mat_file(parent):
     start_dir = os.path.join(os.getcwd(), 'data')
     if not os.path.isdir(start_dir):
         start_dir = os.getcwd()
-    file_path, _ = QFileDialog.getOpenFileName(parent, "Select a .mat file", start_dir, "MAT Files (*.mat);;All Files (*.*)", options=options)
 
-    if not file_path:
+    dialog = QFileDialog(parent, "Select a .mat file", start_dir, "MAT Files (*.mat);;All Files (*.*)")
+    dialog.setOptions(options)
+    dialog.setFileMode(QFileDialog.ExistingFile)
+    dialog.setAcceptMode(QFileDialog.AcceptOpen)
+
+    app = QApplication.instance()
+    if app is not None:
+        dialog.setPalette(app.palette())
+        if app.styleSheet():
+            dialog.setStyleSheet(app.styleSheet())
+
+    if dialog.exec() == QFileDialog.Accepted:
+        file_path = dialog.selectedFiles()[0]
+    else:
         parent.ui.Msg_window.appendPlainText("No file selected.")
         return None
 

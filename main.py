@@ -721,8 +721,6 @@ class MainWindow(QMainWindow):
                     padding: 8px;
                 }
             """)
-            self._apply_save_path_style()
-
             # Add professional welcome message
             welcome_msg = """
 ================================================================================
