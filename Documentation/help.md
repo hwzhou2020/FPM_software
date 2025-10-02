@@ -1,46 +1,70 @@
-# HELP Guide for FPM software
+﻿# FPM Software Help Guide (v2.0 Professional)
 
-## Introduction
-This tutorial will guide you through installation, demo and background knowledge for Fourier ptychographic microscopy.
-
----
-
-## Prerequisites
-Ensure you have:
-- Python 3.6+
-- `pip` and `setuptools` installed
-- Basic knowledge of Python
-- A desktop GPU is recommended but not necessary
+## Overview
+This guide summarizes the most common tasks in the Professional Edition of the FPM Software: installing the app, loading data, running reconstructions, and saving or reloading results.
 
 ---
 
-## 1. Project Structure
+## Quick Start
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/hwzhou2020/FPM_software.git
+   cd FPM_software
+   ```
+2. **Launch the professional UI**
+   ```bash
+   python launch_fpm_professional.py
+   ```
+   If the splash screen causes a `QPaintDevice` warning, run `python launch_fpm_no_splash.py` instead.
 
-```
-FPM_software/
-│── main.py
-│── File_ui.py
-│── File.ui
-│── Utilities/
-│   │── __init__.py
-│   │── data_handler.py        # UI field updates for .mat file variables
-│   │── file_handling.py       # Handles file loading & dialogs
-│   │── image_display.py       # Image rendering & display functions
-│   │── interactive_view.py    # Custom graphics view for zooming & panning
-|   │── logging_utils.py       # Manages message logging
-│   │── roi_display.py         # Handles ROI selection & movement 
-│   │── scalable_text.py       # Manages dynamic text scaling
-│── Documentation/
-│   |── HELP.md
-│── Algorithms/                # Contains all different algorithm modules
-│   |── APIC Angular Pychographic Imaging with Closed-form method/
-│   |── EPRY Embedded pupil function recovery/
-│   |── Gauss-Newton/
-│   |── Gerchberg-Saxton/
-│   |── KK Kramers-Kronig/
-|── ReadMe.md
-│── .gitignore            # Ignore unnecessary files
-│── .gitattributes
-```
+---
 
-## 2. Data Format
+## Loading Data
+- Click **Load** (or press `Ctrl+O`).
+- The dialog now opens in the bundled `data/` folder by default.
+- Select a `.mat` data set. The app validates the required fields (`imlow`, `NA_list`, etc.) and reports issues in the message window.
+
+### Recent Files
+Successfully loaded files are tracked in the recent file list and can be reopened quickly via the **Specs → Load Specs** menu.
+
+---
+
+## Running a Reconstruction
+1. Load data as described above.
+2. Choose an algorithm from **Specs → Algorithm specs**.
+3. (Optional) Adjust algorithm parameters when prompted.
+4. Click **Run** or press `Ctrl+R`.
+5. Monitor progress in the status bar; logs stream into the message window.
+6. The amplitude result displays automatically when processing finishes.
+
+### Viewing Other Outputs
+Use **Display → …** or the Help menu actions to view raw frames, spectra, amplitude, phase, or pupil results after a reconstruction completes.
+
+---
+
+## Saving & Reloading Results
+- After a successful run, the **Save** button and **File → Save Results** become available.
+- Results are written to the `Results/` folder inside the repository (created automatically). The save file contains amplitude, phase, pupil arrays, algorithm parameters, ROI info, and the source data name.
+- To open a saved result later, choose **File → Load Results** and select the `.mat` or `.npy` archive. The reconstruction data and metadata are restored and ready for display.
+
+---
+
+## Keyboard Shortcuts
+- `Ctrl+O` – Load data
+- `Ctrl+R` – Run selected algorithm
+- `Ctrl+Shift+S` – Set save directory
+- `Ctrl+Q` – Exit the application
+- `F1` – Open documentation
+
+---
+
+## Troubleshooting
+- **No output after loading** – Ensure the `.mat` file contains the required `imlow` (3D) and `NA_list` (2D) arrays.
+- **Memory errors** – Reduce ROI size or algorithm upsampling parameters.
+- **Torch not installed** – Rerun `python install_fpm.py` on macOS; the installer now handles Apple Silicon wheels automatically.
+- **GUI issues** – Launch with `launch_fpm_no_splash.py` to bypass animated splash screens.
+
+For full API documentation and detailed UI notes see:
+- `INSTALL.md`
+- `PROFESSIONAL_UI_IMPROVEMENTS.md`
+- `docs_package/build/html/index.html`

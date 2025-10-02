@@ -143,7 +143,7 @@ Caltech Biophotonics Lab</string>
    </widget>
    <widget class="QMenu" name="menuDisplay">
     <property name="title">
-     <string>\</string>
+     <string> </string>
     </property>
    </widget>
    <widget class="QMenu" name="menuSpecs">

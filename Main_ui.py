@@ -250,7 +250,7 @@ class Ui_FPMSoftware(object):
 "Caltech Biophotonics Lab", None))
         self.Msg_window.setPlainText(QCoreApplication.translate("FPMSoftware", u"Welcome to Fourier Ptychographic Microscopy reconstruction algorithm software!", None))
         self.menuFile.setTitle(QCoreApplication.translate("FPMSoftware", u"File", None))
-        self.menuDisplay.setTitle(QCoreApplication.translate("FPMSoftware", u"\\", None))
+        self.menuDisplay.setTitle("")
         self.menuSpecs.setTitle(QCoreApplication.translate("FPMSoftware", u"Specs", None))
         self.menuAlgorithm_specs.setTitle(QCoreApplication.translate("FPMSoftware", u"Algorithm specs", None))
         self.menuHelp.setTitle(QCoreApplication.translate("FPMSoftware", u"Help", None))

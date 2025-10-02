@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>FPM Software Help Guide</title>
+  <style>
+    body { font-family: "Segoe UI", Arial, sans-serif; margin: 0; background: #0f141a; color: #e6f1ff; }
+    header { background: linear-gradient(135deg, #1c2530, #274058); padding: 36px 48px; }
+    header h1 { margin: 0; font-size: 32px; }
+    header p { margin: 6px 0 0; color: #a8d0ff; }
+    main { padding: 40px 48px; line-height: 1.6; }
+    h2 { color: #7cc4ff; margin-top: 48px; border-bottom: 1px solid #1f2b38; padding-bottom: 8px; }
+    h3 { color: #94d9ff; margin-top: 32px; }
+    code, pre { background: #161f29; color: #fffbef; border-radius: 4px; }
+    pre { padding: 14px; overflow-x: auto; }
+    code { padding: 2px 6px; }
+    ul { margin-left: 22px; }
+    li { margin-bottom: 6px; }
+    .shortcut { display: inline-block; background: #1b2836; border: 1px solid #324156; border-radius: 4px; padding: 2px 8px; font-family: "Consolas", monospace; }
+    footer { margin: 60px 0 20px; text-align: center; color: #5f7084; }
+    a { color: #7cc4ff; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>FPM Software — Professional Help Guide</h1>
+    <p>Everything you need to install, run, and use the Professional Edition.</p>
+  </header>
+  <main>
+    <h2>Quick Start</h2>
+    <ol>
+      <li>Clone the repository
+        <pre><code>git clone https://github.com/hwzhou2020/FPM_software.git
+cd FPM_software</code></pre>
+      </li>
+      <li>Launch the Professional UI
+        <pre><code>python launch_fpm_professional.py</code></pre>
+        <p>If the splash screen produces a <code>QPaintDevice</code> warning, run <code>python launch_fpm_no_splash.py</code>.</p>
+      </li>
+    </ol>
+
+    <h2>Loading Data</h2>
+    <ul>
+      <li>Click <strong>Load</strong> (or press <span class="shortcut">Ctrl+O</span>).</li>
+      <li>The dialog opens in the bundled <code>data/</code> folder by default.</li>
+      <li>Select a <code>.mat</code> dataset; required fields (e.g., <code>imlow</code>, <code>NA_list</code>) are validated automatically.</li>
+    </ul>
+    <p><strong>Tip:</strong> recent files are available via <em>Specs → Load Specs</em>.</p>
+
+    <h2>Running a Reconstruction</h2>
+    <ol>
+      <li>Load data.</li>
+      <li>Select an algorithm in <em>Specs → Algorithm specs</em>.</li>
+      <li>Adjust parameters if prompted.</li>
+      <li>Click <strong>Run</strong> or press <span class="shortcut">Ctrl+R</span>.</li>
+      <li>Track progress in the status bar and message window.</li>
+      <li>The amplitude image displays automatically when finished.</li>
+    </ol>
+
+    <h2>Saving &amp; Reloading Results</h2>
+    <ul>
+      <li>After a successful run, use <strong>Save</strong> or <em>File → Save Results</em>.</li>
+      <li>Outputs are stored in the project <code>Results/</code> folder (auto-created) with amplitude, phase, pupil arrays, algorithm parameters, ROI info, and source data name.</li>
+      <li>To reload later, choose <em>File → Load Results</em> and open the saved <code>.mat</code> or <code>.npy</code> archive.</li>
+    </ul>
+
+    <h2>Keyboard Shortcuts</h2>
+    <ul>
+      <li><span class="shortcut">Ctrl+O</span> — Load data</li>
+      <li><span class="shortcut">Ctrl+R</span> — Run selected algorithm</li>
+      <li><span class="shortcut">Ctrl+Shift+S</span> — Set save directory</li>
+      <li><span class="shortcut">Ctrl+Q</span> — Exit application</li>
+      <li><span class="shortcut">F1</span> — Open this documentation</li>
+    </ul>
+
+    <h2>Troubleshooting</h2>
+    <ul>
+      <li><strong>No output after loading</strong>: verify <code>imlow</code> and <code>NA_list</code> are present in the <code>.mat</code> file.</li>
+      <li><strong>Memory errors</strong>: reduce ROI size or algorithm upsampling.</li>
+      <li><strong>Missing PyTorch on macOS</strong>: rerun <code>python install_fpm.py</code> (Apple Silicon wheels are handled automatically).</li>
+      <li><strong>GUI issues</strong>: launch with <code>python launch_fpm_no_splash.py</code>.</li>
+    </ul>
+
+    <h2>More Resources</h2>
+    <ul>
+      <li><a href="../INSTALL.md">Installation Guide</a></li>
+      <li><a href="../PROFESSIONAL_UI_IMPROVEMENTS.md">Professional UI Guide</a></li>
+      <li><a href="https://github.com/hwzhou2020/FPM_software" target="_blank" rel="noopener">GitHub Repository</a></li>
+    </ul>
+  </main>
+  <footer>
+    &copy; 2025 Caltech Biophotonics Lab — FPM Software Professional Edition
+  </footer>
+</body>
+</html>

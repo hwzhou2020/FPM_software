@@ -9,7 +9,7 @@ A comprehensive software package for Fourier Ptychographic Microscopy (FPM) reco
 
 ## 🚀 Quick Start
 
-Clone the repository and enter the project directory:
+1. Clone the repository and enter the project directory:
 ```bash
 git clone https://github.com/hwzhou2020/FPM_software.git
 cd FPM_software
@@ -268,9 +268,9 @@ The FPM Software now features a **Professional Edition** with modern, commercial
 
 ## 📚 Documentation
 
+- [Web Help Guide](Documentation/help.html)
+- [Markdown Help Guide](Documentation/help.md)
 - [Installation Guide](INSTALL.md)
 - [Professional UI Guide](PROFESSIONAL_UI_IMPROVEMENTS.md)
-- [User Manual](docs_package/build/html/index.html)
-- [API Reference](docs_package/build/html/modules.html)
 
 ---

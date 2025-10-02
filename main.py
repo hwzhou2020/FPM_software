@@ -64,8 +64,15 @@ class MainWindow(QMainWindow):
         # Set up professional UI enhancements
         self.setup_professional_ui()
         
-        doc_path = os.path.abspath("docs_package/build/html/index.html")
-        self.ui.actionSoftware_Guide.triggered.connect(lambda: webbrowser.open(f"file://{doc_path}"))
+        doc_candidates = [
+            os.path.abspath("Documentation/help.html"),
+            os.path.abspath("Documentation/help.md"),
+        ]
+        self.documentation_path = next((p for p in doc_candidates if os.path.exists(p)), None)
+        if self.documentation_path:
+            self.ui.actionSoftware_Guide.triggered.connect(self.show_help)
+        else:
+            self.ui.actionSoftware_Guide.setEnabled(False)
 
 
         self.mat_data = None  # Initialize data storage
@@ -108,9 +115,6 @@ class MainWindow(QMainWindow):
             self.ui.actionPupil_function.triggered.connect(lambda: self.display_result("pupil"))
         
         # Connect Help menu actions
-        self.ui.actionSoftware_Guide.triggered.connect(self.show_help)
-        self.ui.actionReferences.triggered.connect(self.show_about_dialog)
-        
         # Add About action to Help menu
         self.ui.actionAbout = QAction("About FPM Software", self)
         self.ui.menuHelp.addAction(self.ui.actionAbout)
@@ -202,8 +206,11 @@ class MainWindow(QMainWindow):
             
     def show_help(self):
         """Show help documentation"""
-        doc_path = os.path.abspath("docs_package/build/html/index.html")
-        webbrowser.open(f"file://{doc_path}")
+        doc_path = getattr(self, 'documentation_path', None)
+        if doc_path and os.path.exists(doc_path):
+            webbrowser.open(f"file://{doc_path}")
+        else:
+            QMessageBox.information(self, "Documentation Missing", "Help resources are unavailable on this system.")
 
     def load_data(self):
         """Load data with improved validation and feedback"""
