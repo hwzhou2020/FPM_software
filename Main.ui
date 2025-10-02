@@ -137,7 +137,6 @@ Caltech Biophotonics Lab</string>
      <string>File</string>
     </property>
     <addaction name="actionLoad_Data"/>
-    <addaction name="actionSystem_Spec"/>
     <addaction name="separator"/>
     <addaction name="actionSave_Reults"/>
     <addaction name="actionLoad_Results"/>
@@ -194,7 +193,7 @@ Caltech Biophotonics Lab</string>
   </action>
   <action name="actionSystem_Spec">
    <property name="text">
-    <string>Load Data Batch</string>
+    <string>Exit</string>
    </property>
   </action>
   <action name="actionAlgorithm_Spec">
@@ -299,7 +298,7 @@ Caltech Biophotonics Lab</string>
   </action>
   <action name="actionSave_Messgaes">
    <property name="text">
-    <string>Export Messgaes</string>
+    <string>Export Messages</string>
    </property>
   </action>
   <action name="actionClear_Messages">

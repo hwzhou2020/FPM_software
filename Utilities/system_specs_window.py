@@ -1,6 +1,6 @@
 import os
 import numpy as np
-from PySide6.QtWidgets import QWidget
+from PySide6.QtWidgets import QWidget, QApplication
 from WindowUI.SystemSpecsWindow_ui import Ui_SystemSpecsWindow
 from Utilities.logging_utils import log_message
 
@@ -22,6 +22,7 @@ class SystemSpecsWindow(QWidget):
         super().__init__()
         self.ui = Ui_SystemSpecsWindow()
         self.ui.setupUi(self)
+        self.apply_current_stylesheet()
         self.main_window = main_window  # Reference to the main window
 
         # Connect the confirm button to update data
@@ -141,3 +142,8 @@ class SystemSpecsWindow(QWidget):
 
         log_message(self.main_window.ui, "System specifications updated.")
         self.close()  # Close window after confirmation
+
+    def apply_current_stylesheet(self):
+        app = QApplication.instance()
+        if app is not None:
+            self.setStyleSheet(app.styleSheet())

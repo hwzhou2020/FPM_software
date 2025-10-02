@@ -1,9 +1,15 @@
 import os
 import yaml
+import json
 import webbrowser
 import numpy as np
-from PySide6.QtWidgets import QApplication, QMainWindow, QStatusBar, QProgressBar
-from PySide6.QtGui import QColor, QAction, QIcon, QKeySequence, QShortcut
+import scipy.io as sio
+from datetime import datetime
+from PySide6.QtWidgets import (
+    QApplication, QMainWindow, QStatusBar, QProgressBar,
+    QFileDialog, QMessageBox
+)
+from PySide6.QtGui import QColor, QAction, QIcon, QKeySequence, QShortcut, QPalette
 from PySide6.QtCore import Qt, QTimer
 from Main_ui import Ui_FPMSoftware
 from Utilities.data_handler import load_mat_file
@@ -24,6 +30,25 @@ from Utilities.parameter_dialog import ParameterDialog
 from WindowUI.DisplayOptionsWindow import DisplayOptionsWindow
 from Utilities.status_bar_enhancement import ProfessionalStatusBar
 from Utilities.about_dialog import show_about_dialog
+
+def apply_dark_palette(app):
+    """Force a consistent dark Fusion palette across all widgets."""
+    app.setStyle("Fusion")
+    palette = QPalette()
+    palette.setColor(QPalette.Window, QColor(30, 30, 30))
+    palette.setColor(QPalette.WindowText, QColor(220, 220, 220))
+    palette.setColor(QPalette.Base, QColor(18, 18, 18))
+    palette.setColor(QPalette.AlternateBase, QColor(45, 45, 45))
+    palette.setColor(QPalette.ToolTipBase, QColor(45, 45, 45))
+    palette.setColor(QPalette.ToolTipText, QColor(220, 220, 220))
+    palette.setColor(QPalette.Text, QColor(220, 220, 220))
+    palette.setColor(QPalette.Button, QColor(45, 45, 45))
+    palette.setColor(QPalette.ButtonText, QColor(220, 220, 220))
+    palette.setColor(QPalette.Highlight, QColor(0, 170, 255))
+    palette.setColor(QPalette.HighlightedText, QColor(0, 0, 0))
+    palette.setColor(QPalette.Link, QColor(0, 170, 255))
+    palette.setColor(QPalette.BrightText, QColor(255, 85, 85))
+    app.setPalette(palette)
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -92,6 +117,28 @@ class MainWindow(QMainWindow):
         self.ui.actionAbout.triggered.connect(self.show_about_dialog)
 
 
+        self.default_save_path = self.initialize_default_save_path()
+        self.last_save_directory = self.default_save_path
+
+        self.ui.save_butt.setEnabled(False)
+        self.ui.save_butt.setToolTip("Save reconstruction results to disk")
+        self.ui.save_butt.clicked.connect(self.save_results)
+        self.ui.actionSave_Reults.setEnabled(False)
+        self.ui.actionSave_Reults.triggered.connect(self.save_results)
+        self.ui.actionLoad_Results.triggered.connect(self.load_saved_results)
+
+        # Add Exit action to File menu
+        self.actionExit = QAction("Exit", self)
+        self.actionExit.setShortcut(QKeySequence("Ctrl+Q"))
+        self.actionExit.triggered.connect(self.close)
+        self.ui.menuFile.addSeparator()
+        self.ui.menuFile.addAction(self.actionExit)
+
+        self.actionSetSaveDirectory = QAction("Set Save Directory", self)
+        self.actionSetSaveDirectory.setShortcut(QKeySequence("Ctrl+Shift+S"))
+        self.actionSetSaveDirectory.triggered.connect(self.choose_save_path)
+        self.ui.menuFile.insertAction(self.actionExit, self.actionSetSaveDirectory)
+
         # Connect ROI selection button
         self.ui.roi_butt.clicked.connect(lambda: select_roi_size(self))
 
@@ -120,7 +167,6 @@ class MainWindow(QMainWindow):
         QShortcut(QKeySequence("Ctrl+O"), self, self.load_data)
         QShortcut(QKeySequence("Ctrl+R"), self, self.run_selected_algorithm)
         QShortcut(QKeySequence("F1"), self, self.show_help)
-        QShortcut(QKeySequence("Ctrl+Q"), self, self.close)
         
     def setup_status_bar(self):
         """Setup status bar with progress indicator"""
@@ -140,7 +186,13 @@ class MainWindow(QMainWindow):
         self.ui.run_butt.setEnabled(has_data and has_algorithm)
         self.ui.roi_butt.setEnabled(has_data)
         self.ui.display_butt.setEnabled(has_data)
-        
+
+        has_results = bool(getattr(self, 'reconstruction_result', {}))
+        if hasattr(self.ui, 'save_butt'):
+            self.ui.save_butt.setEnabled(has_results)
+        if hasattr(self.ui, 'actionSave_Reults'):
+            self.ui.actionSave_Reults.setEnabled(has_results)
+
         # Update status
         if has_data:
             frames = self.mat_data.get('imlow', np.array([])).shape[2] if 'imlow' in self.mat_data else 0
@@ -165,6 +217,7 @@ class MainWindow(QMainWindow):
                 # Validate data structure
                 if self.validate_mat_data(new_data):
                     self.mat_data = new_data
+                    self.reconstruction_result = {}
                     self.add_to_recent_files(getattr(self, 'current_file_path', ''))
                     self.ui.Msg_window.appendPlainText("[OK] Data loaded successfully.")
                     self.update_ui_state()
@@ -373,6 +426,215 @@ class MainWindow(QMainWindow):
         except Exception as e:
             self.ui.Msg_window.appendPlainText(f"[ERROR] Error displaying amplitude result: {e}")
     
+
+    def load_saved_results(self):
+        """Load previously saved reconstruction results from .mat or .npy file."""
+        start_dir = self.last_save_directory or self.default_save_path or os.path.expanduser("~")
+        file_path, _ = QFileDialog.getOpenFileName(
+            self,
+            "Load Reconstruction Results",
+            start_dir,
+            "Results Files (*.mat *.npy);;MAT Files (*.mat);;NumPy Binary (*.npy)"
+        )
+
+        if not file_path:
+            self.ui.Msg_window.appendPlainText("Load cancelled.")
+            return
+
+        try:
+            if file_path.lower().endswith('.mat'):
+                loaded = sio.loadmat(file_path)
+                payload = {key: loaded.get(key) for key in ('amplitude', 'phase', 'pupil', 'metadata')}
+            else:
+                loaded = np.load(file_path, allow_pickle=True)
+                if isinstance(loaded, np.lib.npyio.NpzFile):
+                    payload = {key: loaded.get(key) for key in ('amplitude', 'phase', 'pupil', 'metadata')}
+                else:
+                    payload = loaded.item() if isinstance(loaded, np.ndarray) else loaded
+
+            amplitude = payload.get('amplitude')
+            phase = payload.get('phase')
+            pupil = payload.get('pupil')
+            metadata_json = payload.get('metadata')
+
+            if any(component is None for component in (amplitude, phase, pupil)):
+                raise ValueError('Missing amplitude, phase, or pupil data in file.')
+
+            metadata = {}
+            if metadata_json is not None:
+                if isinstance(metadata_json, (bytes, bytearray)):
+                    metadata_json = metadata_json.decode('utf-8', errors='ignore')
+                try:
+                    metadata = json.loads(metadata_json)
+                except (TypeError, json.JSONDecodeError):
+                    if isinstance(metadata_json, dict):
+                        metadata = metadata_json
+
+            self.reconstruction_result = {
+                'amplitude': amplitude,
+                'phase': phase,
+                'pupil': pupil,
+            }
+
+            if metadata:
+                self.algorithm_parameters = metadata.get('parameters', getattr(self, 'algorithm_parameters', {}))
+                self.roi_params = metadata.get('roi_params', getattr(self, 'roi_params', {}))
+                self.selected_algorithm = metadata.get('algorithm', getattr(self, 'selected_algorithm', ''))
+                if 'data_name' in metadata:
+                    self.loaded_data_name = metadata['data_name']
+                if 'source_file' in metadata:
+                    self.current_file_path = metadata['source_file']
+
+            self.last_save_directory = os.path.dirname(file_path)
+            self.update_save_path_display(self.last_save_directory)
+            self.status_bar.showMessage(f"Results loaded: {os.path.basename(file_path)}", 5000)
+            self.ui.Msg_window.appendPlainText(f"[OK] Results loaded from {file_path}")
+            self.update_ui_state()
+        except Exception as exc:
+            QMessageBox.critical(self, "Load Error", f"Failed to load results: {exc}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Failed to load results: {exc}")
+
+    def initialize_default_save_path(self):
+        """Use the application Results directory, creating it if needed."""
+        default_dir = os.path.join(os.getcwd(), "Results")
+        if not self._make_directory(default_dir):
+            fallback_dir = os.path.join(os.path.expanduser("~"), "FPM_Results")
+            if self._make_directory(fallback_dir):
+                default_dir = fallback_dir
+            else:
+                default_dir = os.getcwd()
+        return default_dir
+
+    def _make_directory(self, path):
+        """Attempt to create a directory; return True on success."""
+        try:
+            os.makedirs(path, exist_ok=True)
+            return True
+        except OSError as exc:
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Unable to access directory '{path}': {exc}")
+            return False
+
+    def update_save_path_display(self, directory):
+        """Reflect the current save directory in the UI."""
+        if hasattr(self, "save_path_display"):
+            self.save_path_display.setText(directory or "")
+
+    def choose_save_path(self):
+        """Prompt the user to select a directory for saved results."""
+        start_dir = self.last_save_directory or self.default_save_path or os.path.expanduser("~")
+        options = QFileDialog.Options()
+        options |= QFileDialog.ShowDirsOnly
+        directory = QFileDialog.getExistingDirectory(self, "Select Save Directory", start_dir, options)
+        if directory:
+            if self._make_directory(directory):
+                self.default_save_path = directory
+                self.last_save_directory = directory
+                self.update_save_path_display(directory)
+                self.ui.Msg_window.appendPlainText(f"[OK] Default save directory set to: {directory}")
+                return directory
+            QMessageBox.warning(self, "Directory Error", "Unable to use the selected directory. Please choose another location.")
+        return None
+
+    def ensure_save_directory(self):
+        """Ensure a valid directory exists for saving; prompt if necessary."""
+        directory = getattr(self, "default_save_path", None)
+        if directory and os.path.isdir(directory):
+            return directory
+        if directory and self._make_directory(directory):
+            return directory
+        QMessageBox.warning(self, "Invalid Save Directory", "The current save directory is not accessible. Please choose a new location.")
+        return self.choose_save_path()
+
+    def save_results(self):
+        """Persist reconstruction outputs and metadata to disk."""
+        if not hasattr(self, "reconstruction_result") or not self.reconstruction_result:
+            self.ui.Msg_window.appendPlainText("[ERROR] No reconstruction results available to save.")
+            return
+
+        directory = self.ensure_save_directory()
+        if not directory:
+            self.ui.Msg_window.appendPlainText("[ERROR] Save cancelled: no valid directory selected.")
+            return
+
+        algorithm_name = getattr(self, "selected_algorithm", "result") or "result"
+        safe_name = algorithm_name.replace(" ", "_")
+        data_source = getattr(self, "current_file_path", "") or "data"
+        data_name = os.path.splitext(os.path.basename(data_source))[0] or "data"
+        safe_data_name = data_name.replace(" ", "_")
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        default_filename = f"{safe_name}_{safe_data_name}_{timestamp}.mat"
+        start_dir = self.last_save_directory or directory
+        initial_path = os.path.join(start_dir, default_filename)
+
+        file_path, selected_filter = QFileDialog.getSaveFileName(
+            self,
+            "Save Reconstruction Results",
+            initial_path,
+            "MAT Files (*.mat);;NumPy Binary (*.npy)"
+        )
+
+        if not file_path:
+            self.ui.Msg_window.appendPlainText("Save cancelled.")
+            return
+
+        ext = os.path.splitext(file_path)[1].lower()
+        if ext not in (".mat", ".npy"):
+            if selected_filter.startswith("MAT"):
+                file_path += ".mat"
+                ext = ".mat"
+            else:
+                file_path += ".npy"
+                ext = ".npy"
+
+        amplitude = self.reconstruction_result.get("amplitude")
+        phase = self.reconstruction_result.get("phase")
+        pupil = self.reconstruction_result.get("pupil")
+
+        components = (("amplitude", amplitude), ("phase", phase), ("pupil", pupil))
+        missing_components = [name for name, value in components if value is None]
+        if missing_components:
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Missing reconstruction data: {', '.join(missing_components)}")
+            return
+
+        amplitude = np.asarray(amplitude)
+        phase = np.asarray(phase)
+        pupil = np.asarray(pupil)
+
+        metadata = {
+            "algorithm": algorithm_name,
+            "parameters": getattr(self, "algorithm_parameters", {}),
+            "roi_params": getattr(self, "roi_params", {}),
+            "source_file": getattr(self, "current_file_path", ""),
+            "data_name": data_name,
+            "timestamp": datetime.now().isoformat()
+        }
+        config = self.load_algorithm_config(algorithm_name) if algorithm_name else None
+        if config:
+            metadata["algorithm_config"] = config
+        metadata_json = json.dumps(metadata, default=str)
+
+        save_payload = {
+            "amplitude": amplitude,
+            "phase": phase,
+            "pupil": pupil,
+            "metadata": metadata_json
+        }
+
+        try:
+            if ext == ".mat":
+                sio.savemat(file_path, save_payload)
+            else:
+                np.save(file_path, save_payload, allow_pickle=True)
+
+            self.last_save_directory = os.path.dirname(file_path)
+            self.default_save_path = self.last_save_directory
+            self.update_save_path_display(self.default_save_path)
+            self.status_bar.showMessage(f"Results saved: {os.path.basename(file_path)}", 5000)
+            self.ui.Msg_window.appendPlainText(f"[OK] Results saved to {file_path}")
+        except Exception as exc:
+            QMessageBox.critical(self, "Save Error", f"An error occurred while saving results: {exc}")
+            self.ui.Msg_window.appendPlainText(f"[ERROR] Failed to save results: {exc}")
+
     def display_result(self, result_type):
         """Display a specific reconstruction result (amplitude, phase, or pupil)"""
         if not hasattr(self, 'reconstruction_result') or not self.reconstruction_result:
@@ -386,6 +648,12 @@ class MainWindow(QMainWindow):
         except Exception as e:
             self.ui.Msg_window.appendPlainText(f"[ERROR] Error displaying {result_type} result: {e}")
 
+    def _apply_global_stylesheet(self, style):
+        app = QApplication.instance()
+        if app is not None:
+            app.setStyleSheet(style)
+        self.setStyleSheet(style)
+
     def apply_professional_theme(self):
         """Apply the professional theme to the application"""
         try:
@@ -394,7 +662,7 @@ class MainWindow(QMainWindow):
             if os.path.exists(clean_theme_path):
                 with open(clean_theme_path, 'r', encoding='utf-8') as f:
                     style = f.read()
-                self.setStyleSheet(style)
+                self._apply_global_stylesheet(style)
                 self.ui.Msg_window.appendPlainText("[OK] Professional theme applied successfully.")
                 return
             
@@ -403,7 +671,7 @@ class MainWindow(QMainWindow):
             if os.path.exists(theme_path):
                 with open(theme_path, 'r', encoding='utf-8') as f:
                     style = f.read()
-                self.setStyleSheet(style)
+                self._apply_global_stylesheet(style)
                 self.ui.Msg_window.appendPlainText("[OK] Professional theme applied (with CSS warnings).")
                 return
                 
@@ -412,7 +680,7 @@ class MainWindow(QMainWindow):
             if os.path.exists(fallback_theme):
                 with open(fallback_theme, 'r', encoding='utf-8') as f:
                     style = f.read()
-                self.setStyleSheet(style)
+                self._apply_global_stylesheet(style)
                 self.ui.Msg_window.appendPlainText("[OK] Fallback theme applied.")
         except Exception as e:
             self.ui.Msg_window.appendPlainText(f"[ERROR] Error applying theme: {e}")
@@ -441,12 +709,13 @@ class MainWindow(QMainWindow):
                     border: 2px solid #2a4a3a;
                     border-radius: 6px;
                     font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-                    font-size: 9pt;
+                    font-size: 12pt;
                     font-weight: 500;
                     padding: 8px;
                 }
             """)
-            
+            self._apply_save_path_style()
+
             # Add professional welcome message
             welcome_msg = """
 ================================================================================
@@ -538,6 +807,7 @@ class MainWindow(QMainWindow):
 if __name__ == "__main__":
     import sys
     app = QApplication(sys.argv)
+    apply_dark_palette(app)
     
     # Set application properties for professional appearance
     app.setApplicationName("FPM Software")
@@ -582,3 +852,6 @@ if __name__ == "__main__":
         pass
         
     sys.exit(app.exec())
+
+
+

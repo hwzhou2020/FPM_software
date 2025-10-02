@@ -134,3 +134,32 @@ python -m pytest tests/
 ## License
 
 This software is provided under the MIT License. See LICENSE file for details.
+
+## macOS Troubleshooting
+
+If you are running on macOS and the installer reports missing packages such as 	orch or mat73, try the following:
+
+1. Make sure you are using Python 3.9+ that ships with the latest pip (python3 --version).
+2. Run the auto-installer again:
+   `ash
+   python3 install_fpm.py
+   `
+3. If PyTorch is still missing on Apple Silicon (M1/M2):
+   `ash
+   python3 -m pip install torch --index-url https://download.pytorch.org/whl/metal
+   `
+   For Intel-based Macs use:
+   `ash
+   python3 -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+   `
+4. Re-install mat73 explicitly if needed:
+   `ash
+   python3 -m pip install mat73
+   `
+5. Verify the install:
+   `ash
+   python3 -m pip check
+   python3 -m pip show torch mat73
+   `
+
+After these steps, re-run the launcher (python3 launch_fpm_professional.py) to confirm the application starts without missing-module errors.

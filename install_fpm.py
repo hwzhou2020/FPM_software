@@ -44,6 +44,60 @@ def install_requirements():
         print(f"[ERROR] Failed to install dependencies: {e}")
         return False
 
+def install_package(package, extra_args=None):
+    """Install a single package via pip."""
+    cmd = [sys.executable, "-m", "pip", "install", package]
+    if extra_args:
+        cmd.extend(extra_args)
+    try:
+        subprocess.check_call(cmd)
+        return True
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] Failed to install {package}: {e}")
+        return False
+
+
+def install_torch_mac():
+    """Install PyTorch on macOS using the appropriate wheel index."""
+    machine = platform.machine().lower()
+    if machine in ("arm64", "arm64e"):
+        index_url = "https://download.pytorch.org/whl/metal"
+        print("[INFO] Installing PyTorch for Apple Silicon (metal acceleration)...")
+    else:
+        index_url = "https://download.pytorch.org/whl/cpu"
+        print("[INFO] Installing PyTorch CPU wheels for macOS...")
+    return install_package("torch", ["--index-url", index_url])
+
+
+def install_mat73():
+    """Install mat73 separately to surface errors clearly."""
+    print("[INFO] Installing mat73...")
+    return install_package("mat73")
+
+
+def install_missing_packages(missing_packages):
+    """Attempt targeted installation for any packages still missing."""
+    handled = False
+    system = platform.system().lower()
+
+    if "torch" in missing_packages:
+        if system == "darwin":
+            handled = install_torch_mac() or handled
+        else:
+            print("[INFO] Installing PyTorch...")
+            handled = install_package("torch") or handled
+
+    if "mat73" in missing_packages:
+        handled = install_mat73() or handled
+
+    remaining = [pkg for pkg in missing_packages if pkg not in {"torch", "mat73"}]
+    if remaining:
+        print("[INFO] Attempting to install remaining packages individually: " + " ".join(remaining))
+        for pkg in remaining:
+            handled = install_package(pkg) or handled
+
+    return handled
+
 def check_dependencies():
     """Check if all required packages are installed"""
     # Map package names to their import names
@@ -133,7 +187,13 @@ def main():
     # Check dependencies
     print("\n[INFO] Checking dependencies...")
     all_installed, missing = check_dependencies()
-    
+
+    if not all_installed and not test_mode:
+        print("\n[INFO] Attempting targeted installs for missing packages...")
+        if install_missing_packages(missing):
+            print("[INFO] Rechecking dependencies after targeted installs...")
+            all_installed, missing = check_dependencies()
+
     if not all_installed:
         if test_mode:
             print(f"\n[WARNING] Test mode: {len(missing)} packages would need to be installed")
@@ -142,6 +202,8 @@ def main():
             print(f"\n[ERROR] Missing packages: {', '.join(missing)}")
             print("   Please install them manually:")
             print(f"   pip install {' '.join(missing)}")
+            if platform.system().lower() == 'darwin' and 'torch' in missing:
+                print("   (For macOS on Apple Silicon: pip install torch --index-url https://download.pytorch.org/whl/metal)")
             return False
     
     if test_mode:

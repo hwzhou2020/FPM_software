@@ -9,12 +9,14 @@ A comprehensive software package for Fourier Ptychographic Microscopy (FPM) reco
 
 ## 🚀 Quick Start
 
-### Option 1: Professional Launcher (Recommended)
+Clone the repository and enter the project directory:
 ```bash
-# Clone the repository
 git clone https://github.com/hwzhou2020/FPM_software.git
 cd FPM_software
+```
 
+### Option 1: Auto-Launcher (Recommended)
+```bash
 # Run the professional launcher (handles dependencies automatically)
 python launch_fpm_professional.py
 
@@ -67,12 +69,12 @@ python main.py
 
 - **Python**: 3.8 or higher
 - **Operating System**: Windows, macOS, or Linux
-- **Memory**: 8GB RAM minimum (16GB recommended for large datasets)
+- **Memory**: 8GB RAM minimum (16GB+ recommended for large datasets)
 - **GPU**: Optional but recommended for faster processing (CUDA-compatible)
 
 ## 🎯 Features
 
-### 🎨 Professional User Interface
+### 🎨 User Interface
 - **Modern Design**: Professional dark theme with blue accents and gradients
 - **Enhanced Status Bar**: Real-time system monitoring (RAM usage, time)
 - **Professional Splash Screen**: Animated loading with progress indicators

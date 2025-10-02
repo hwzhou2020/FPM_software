@@ -1,4 +1,4 @@
-from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton
+from PySide6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QApplication
 from Utilities.display_handler import (
     display_single_raw_frame,
     display_all_raw_frames,
@@ -37,3 +37,6 @@ class DisplayOptionsWindow(QWidget):
             layout.addWidget(btn)
 
         self.setLayout(layout)
+        app = QApplication.instance()
+        if app is not None:
+            self.setStyleSheet(app.styleSheet())

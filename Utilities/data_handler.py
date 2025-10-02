@@ -7,7 +7,12 @@ from PySide6.QtWidgets import QFileDialog
 
 def load_mat_file(parent):
     """Opens a file dialog to select and load a .mat file, then displays messages in Msg_window."""
-    file_path, _ = QFileDialog.getOpenFileName(parent, "Select a .mat file", "", "MAT Files (*.mat);;All Files (*.*)")
+    options = QFileDialog.Options()
+    options |= QFileDialog.DontUseNativeDialog
+    start_dir = os.path.join(os.getcwd(), 'data')
+    if not os.path.isdir(start_dir):
+        start_dir = os.getcwd()
+    file_path, _ = QFileDialog.getOpenFileName(parent, "Select a .mat file", start_dir, "MAT Files (*.mat);;All Files (*.*)", options=options)
 
     if not file_path:
         parent.ui.Msg_window.appendPlainText("No file selected.")

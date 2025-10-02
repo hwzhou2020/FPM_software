@@ -2,7 +2,7 @@ import os
 import yaml
 from PySide6.QtWidgets import (
     QWidget, QGroupBox, QLabel, QLineEdit, QPushButton,
-    QVBoxLayout, QHBoxLayout, QMessageBox
+    QVBoxLayout, QHBoxLayout, QMessageBox, QApplication
 )
 from PySide6.QtCore import Qt
 
@@ -19,6 +19,7 @@ class ParameterDialog(QWidget):
         self.param_inputs = {}  # Store QLineEdit widgets for each param
 
         self.setup_ui()
+        self._apply_current_stylesheet()
 
     def load_config(self):
         config_path = os.path.join("Algorithms", self.algorithm_name, "config.yml")
@@ -57,6 +58,11 @@ class ParameterDialog(QWidget):
         confirm_button = QPushButton("Confirm")
         confirm_button.clicked.connect(self.confirm)
         layout.addWidget(confirm_button)
+
+    def _apply_current_stylesheet(self):
+        app = QApplication.instance()
+        if app is not None:
+            self.setStyleSheet(app.styleSheet())
 
     def confirm(self):
         params = {}
