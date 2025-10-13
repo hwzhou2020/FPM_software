@@ -22,22 +22,51 @@ def _version_tuple(version_str):
     return tuple(parts)
 
 
+def _compare_versions(lhs, rhs):
+    """Return -1, 0, or 1 depending on the comparison outcome."""
+    left_tuple = _version_tuple(lhs)
+    right_tuple = _version_tuple(rhs)
+    length = max(len(left_tuple), len(right_tuple))
+    left_tuple += (0,) * (length - len(left_tuple))
+    right_tuple += (0,) * (length - len(right_tuple))
+    if left_tuple < right_tuple:
+        return -1
+    if left_tuple > right_tuple:
+        return 1
+    return 0
+
+
 def _is_version_sufficient(installed, minimum):
-    """Compare two version strings represented as tuples."""
-    installed_tuple = _version_tuple(installed)
-    minimum_tuple = _version_tuple(minimum)
-    length = max(len(installed_tuple), len(minimum_tuple))
-    installed_tuple += (0,) * (length - len(installed_tuple))
-    minimum_tuple += (0,) * (length - len(minimum_tuple))
-    return installed_tuple >= minimum_tuple
+    """Return True if the installed version is >= the minimum."""
+    return _compare_versions(installed, minimum) >= 0
+
+
+def _is_version_within_range(installed, minimum=None, maximum=None):
+    """Return True if installed version satisfies the optional minimum/maximum bounds."""
+    if minimum and _compare_versions(installed, minimum) < 0:
+        return False
+    if maximum and _compare_versions(installed, maximum) >= 0:
+        return False
+    return True
+
+
+def _format_requirement(package_name, min_version=None, max_version=None):
+    """Return a pip-style version specifier."""
+    if min_version and max_version:
+        return f"{package_name}>={min_version},<{max_version}"
+    if min_version:
+        return f"{package_name}>={min_version}"
+    if max_version:
+        return f"{package_name}<{max_version}"
+    return package_name
 
 
 def check_dependencies():
     """Return a list of pip package names (with version specs) that still need to be installed."""
     dependencies = [
         {'module': 'PySide6', 'package': 'PySide6'},
-        {'module': 'numpy', 'package': 'numpy', 'min_version': '2.0.0'},
-        {'module': 'scipy', 'package': 'scipy', 'min_version': '1.15.0'},
+        {'module': 'numpy', 'package': 'numpy', 'min_version': '1.20.0', 'max_version': '1.26.0'},
+        {'module': 'scipy', 'package': 'scipy', 'min_version': '1.10.0', 'max_version': '1.11.0'},
         {'module': 'psutil', 'package': 'psutil'},
         {'module': 'yaml', 'package': 'PyYAML'},  # PyYAML installs the yaml module
         {'module': 'mat73', 'package': 'mat73'},
@@ -50,21 +79,22 @@ def check_dependencies():
         module_name = dependency['module']
         package_name = dependency['package']
         min_version = dependency.get('min_version')
+        max_version = dependency.get('max_version')
+        requirement = _format_requirement(package_name, min_version, max_version)
 
         if importlib_util.find_spec(module_name) is None:
-            requirement = f"{package_name}>={min_version}" if min_version else package_name
             missing_packages.append(requirement)
             continue
 
-        if min_version:
+        if min_version or max_version:
             try:
                 installed_version = importlib_metadata.version(package_name)
             except importlib_metadata.PackageNotFoundError:
-                missing_packages.append(f"{package_name}>={min_version}")
+                missing_packages.append(requirement)
                 continue
 
-            if not _is_version_sufficient(installed_version, min_version):
-                missing_packages.append(f"{package_name}>={min_version}")
+            if not _is_version_within_range(installed_version, min_version, max_version):
+                missing_packages.append(requirement)
 
     # Remove duplicates while preserving order
     seen = set()
