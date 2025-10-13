@@ -6,25 +6,65 @@ Handles environment setup and launches the application with proper error handlin
 
 import sys
 import os
+import re
 import subprocess
 from importlib import util as importlib_util
+from importlib import metadata as importlib_metadata
+
+def _version_tuple(version_str):
+    """Convert a version string into a comparable tuple of integers."""
+    parts = []
+    for component in version_str.split('.'):
+        match = re.match(r'(\d+)', component)
+        if not match:
+            break
+        parts.append(int(match.group(1)))
+    return tuple(parts)
+
+
+def _is_version_sufficient(installed, minimum):
+    """Compare two version strings represented as tuples."""
+    installed_tuple = _version_tuple(installed)
+    minimum_tuple = _version_tuple(minimum)
+    length = max(len(installed_tuple), len(minimum_tuple))
+    installed_tuple += (0,) * (length - len(installed_tuple))
+    minimum_tuple += (0,) * (length - len(minimum_tuple))
+    return installed_tuple >= minimum_tuple
+
 
 def check_dependencies():
-    """Return a list of pip package names that still need to be installed."""
-    dependencies = {
-        'PySide6': 'PySide6',
-        'numpy': 'numpy',
-        'scipy': 'scipy',
-        'psutil': 'psutil',
-        'yaml': 'PyYAML',  # PyYAML installs the yaml module
-        'mat73': 'mat73',
-        'torch': 'torch',
-    }
+    """Return a list of pip package names (with version specs) that still need to be installed."""
+    dependencies = [
+        {'module': 'PySide6', 'package': 'PySide6'},
+        {'module': 'numpy', 'package': 'numpy', 'min_version': '2.0.0'},
+        {'module': 'scipy', 'package': 'scipy', 'min_version': '1.15.0'},
+        {'module': 'psutil', 'package': 'psutil'},
+        {'module': 'yaml', 'package': 'PyYAML'},  # PyYAML installs the yaml module
+        {'module': 'mat73', 'package': 'mat73'},
+        {'module': 'torch', 'package': 'torch'},
+    ]
+
     missing_packages = []
 
-    for module_name, package_name in dependencies.items():
+    for dependency in dependencies:
+        module_name = dependency['module']
+        package_name = dependency['package']
+        min_version = dependency.get('min_version')
+
         if importlib_util.find_spec(module_name) is None:
-            missing_packages.append(package_name)
+            requirement = f"{package_name}>={min_version}" if min_version else package_name
+            missing_packages.append(requirement)
+            continue
+
+        if min_version:
+            try:
+                installed_version = importlib_metadata.version(package_name)
+            except importlib_metadata.PackageNotFoundError:
+                missing_packages.append(f"{package_name}>={min_version}")
+                continue
+
+            if not _is_version_sufficient(installed_version, min_version):
+                missing_packages.append(f"{package_name}>={min_version}")
 
     # Remove duplicates while preserving order
     seen = set()
