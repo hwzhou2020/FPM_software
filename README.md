@@ -27,10 +27,9 @@ cd FPM_software
 ```bash
 # Run the professional launcher (handles dependencies automatically)
 python launch_fpm_professional.py
-
-# If you encounter "QPaintDevice" errors, use the no-splash version:
-python launch_fpm_no_splash.py
 ```
+ <!-- If you encounter "QPaintDevice" errors, use the no-splash version:
+ python launch_fpm_no_splash.py -->
 
 ### Option 2: One-Click Installation
 ```bash
@@ -47,12 +46,11 @@ python main.py
 # Professional launcher (recommended)
 launch_fpm_professional.bat
 
-# No-splash version (if you get paint device errors)
-launch_fpm_no_splash.bat
-
 # Or standard launcher
 run_fpm.bat
 ```
+<!-- # No-splash version (if you get paint device errors)
+launch_fpm_no_splash.bat -->
 
 **Linux/Mac:**
 ```bash
@@ -80,6 +78,56 @@ python main.py
 - **Memory**: 8GB RAM minimum (16GB+ recommended for large datasets)
 - **GPU**: Optional but recommended for faster processing (CUDA-compatible)
 
+## 📦 Dependencies
+
+### Core Dependencies
+- **PySide6**: GUI framework with professional theming
+- **NumPy & SciPy**: Scientific computing
+- **PyTorch**: Deep learning framework for algorithms
+- **mat73**: MATLAB file support
+- **PyYAML**: Configuration management
+- **psutil**: System resource monitoring
+
+### Optional Dependencies
+- **OpenCV**: Enhanced image processing
+- **scikit-image**: Additional image analysis tools
+- **tqdm**: Progress bars
+
+### Additional Dependencies
+- This may depends on the algorithms to be used
+
+
+## 📖 Usage
+
+### Getting Started
+1. **Launch**: Run `python launch_fpm_professional.py` for the best experience
+2. **Load Data**: Click "Load Data" or press Ctrl+O to load .mat files
+![Load Data](Instruction_images/image.png)
+3. **Select ROI**: Use the "🎯 ROI" button to select region of interest and define the size of ROI
+![Select ROI Step 1](Instruction_images/image-1.png)
+Drag the Yellow-shaded Box for ROI, and double click the box to confirm the selection
+![Select ROI Step 2](Instruction_images/image-2.png)
+The "Modify ROI Parameters" window will then pop-up. If any changes of the ROI is needed, please do modifications here.
+![Select ROI Step 3](Instruction_images/image-3.png)
+4. **Set System Specs (Optional)** The system specs will be automatically set when loading the data. If additional modifications are needed, it can be accessed at "Speces → System spces"
+![System specs](Instruction_images/image-4.png)
+5. **Choose Algorithm and Configure Parameters (Optional)**: Go to Specs → Algorithm specs to select algorithm. By default, it will use Gerchberg-Saxton algorithm. Algorithm-specific parameters can also be set up at the pop-up window when clicking this tab.
+![Algorithm](Instruction_images/image-5.png)
+![Algorithm specs](Instruction_images/image-6.png)
+6. **Run Reconstruction**: Click "Run" or press Ctrl+R
+![Run](Instruction_images/image-7.png)
+7. **View Results**: Amplitude results display automatically, additional display options can be found at "Display" button
+![Run donw](Instruction_images/image-8.png)
+![Display](Instruction_images/image-9.png)
+8. **Additional Features** 
+- "MessageBox" tab can log, save or clear text box on the right-handed side of the user interface.
+- "Help" tab have link to documentation and software general info.
+- "File" tab have functions to set default save directory; save and load results
+
+**In progress**
+- "Save specs" are stil in development, will be released in the future version
+- More algorithms and demo data will be included in the future version
+
 ## 📁 Data Format
 
 The repository includes a canonical sample dataset at `data/Demo_data/FPM_SiemensStar_Demo.mat`. Loading it with either MATLAB or `scipy.io.loadmat` reveals the structure the GUI validates against:
@@ -98,24 +146,6 @@ The repository includes a canonical sample dataset at `data/Demo_data/FPM_Siemen
 - Align the ordering of `imlow` slices with the rows of `NA_list`; mismatches break Fourier stitching.
 - Use micrometers for wavelength/pixel size and keep NA coordinates unitless to match the internal models.
 - Additional metadata can be stored in other keys; the loader ignores unknown fields but requires the six listed above.
-
-## 📦 Dependencies
-
-### Core Dependencies
-- **PySide6**: GUI framework with professional theming
-- **NumPy & SciPy**: Scientific computing
-- **PyTorch**: Deep learning framework for algorithms
-- **mat73**: MATLAB file support
-- **PyYAML**: Configuration management
-- **psutil**: System resource monitoring
-
-### Optional Dependencies
-- **OpenCV**: Enhanced image processing
-- **scikit-image**: Additional image analysis tools
-- **tqdm**: Progress bars
-
-### Additional Dependencies
-- This may depends on the algorithms to be used
 
 ## 🛠️ Installation Methods
 
@@ -163,24 +193,6 @@ python test_installation.py
 python launch_fpm_professional.py  # manual sanity check
 ```
 For IDEs, point the interpreter to the same environment so linting and Qt Designer integration use the installed package.
-
-## 📖 Usage
-
-### Getting Started
-1. **Launch**: Run `python launch_fpm_professional.py` for the best experience
-2. **Load Data**: Click "📁 Load Data" or press Ctrl+O to load .mat files
-3. **Select ROI**: Use the "🎯 ROI" button to select region of interest
-4. **Choose Algorithm**: Go to Specs → Algorithm specs to select algorithm
-5. **Configure Parameters**: Set algorithm-specific parameters
-6. **Run Reconstruction**: Click "▶ Run" or press Ctrl+R
-7. **View Results**: Amplitude results display automatically
-
-### Professional Features
-- **System Monitoring**: Watch real-time RAM usage in the status bar
-- **Progress Tracking**: Professional progress bars with gradients
-- **Status Messages**: Color-coded success/error/warning messages
-- **Help System**: Press F1 or use Help menu for assistance
-- **About Dialog**: View software information and credits
 
 
 ## 🐛 Troubleshooting
@@ -248,8 +260,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 - Caltech Schmidt Academy for Software Engineering
 - Caltech Biophotonics Lab
-- PySide6 development team
-- Scientific Python community
 
 ## 📚 Documentation
 
