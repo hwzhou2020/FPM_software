@@ -5,7 +5,15 @@
 [![PySide6](https://img.shields.io/badge/GUI-PySide6-green.svg)](https://pypi.org/project/PySide6/)
 [![Professional UI](https://img.shields.io/badge/UI-Professional%20Edition-purple.svg)](#)
 
-A comprehensive software package for Fourier Ptychographic Microscopy (FPM) reconstruction algorithms with a **professional, modern graphical user interface**.
+## Introduction
+
+A comprehensive software package for Fourier Ptychographic Microscopy (FPM) reconstruction algorithms with a professional, modern graphical user interface.
+
+The FPM software aim to serve as a platform for different image reconstruction algorithm, making algorithm benchmarking and instrument usage easier. 
+
+Users can either format pulic FPM raw data in a speicific way (See Data Format section), or have their own microscope system to collect customized data. 
+
+The software is still developing. if you are interested in contributing to this project, please contact Haowen Zhou (See Author and Contributing Sections). 
 
 ## 🚀 Quick Start
 
@@ -72,37 +80,24 @@ python main.py
 - **Memory**: 8GB RAM minimum (16GB+ recommended for large datasets)
 - **GPU**: Optional but recommended for faster processing (CUDA-compatible)
 
-## 🎯 Features
+## 📁 Data Format
 
-### 🎨 User Interface
-- **Modern Design**: Professional dark theme with blue accents and gradients
-- **Enhanced Status Bar**: Real-time system monitoring (RAM usage, time)
-- **Professional Splash Screen**: Animated loading with progress indicators
-- **About Dialog**: Comprehensive software information and credits
-- **Enhanced Buttons**: Professional icons and helpful tooltips
-- **Responsive Layout**: Optimized for different screen sizes
+The repository includes a canonical sample dataset at `data/Demo_data/FPM_SiemensStar_Demo.mat`. Loading it with either MATLAB or `scipy.io.loadmat` reveals the structure the GUI validates against:
 
-### 🔬 Core Functionality
-- **Multiple Algorithms**: Gerchberg-Saxton, EPRY, Gauss-Newton, Kramers-Kronig, APIC
-- **Interactive GUI**: Modern PySide6 interface with professional styling
-- **Data Loading**: Support for MATLAB .mat files (v7 and v7.3)
-- **ROI Selection**: Interactive region of interest selection
-- **Real-time Display**: Zoom, pan, and navigate through image stacks
+| Field | Shape (rows × cols × frames) | Dtype | Description |
+| --- | --- | --- | --- |
+| `imlow` | `M × M × N` | `uint8`, `uint16` | Stack of low-resolution intensity images; the first two dimensions are spatial coordinates, the third indexes illumination angles. |
+| `NA_list` | `N × 2` | `float16`, `float32`, `float64` | Illumination NA coordinates `(kx, ky)` normalized to the objective NA. Row `n` pairs with `imlow[:, :, n]`. |
+| `NA` | `1 × 1` | `float16`, `float32`, `float64` | Objective numerical aperture (demo value `0.26`). |
+| `dpix_c` | `1 × 1` | `float16`, `float32`, `float64` | Camera pixel pitch in micrometers (`3.45 µm` for the demo sensor). |
+| `lambda` | `1 × 1` | `float16`, `float32`, `float64` | Illumination wavelength in micrometers (`0.5162 µm`, i.e., 516.2 nm). |
+| `mag` | `1 × 1` | `float16`, `float32`, `float64` | System magnification (`10` in the Siemens star example). |
 
-### 🚀 User Experience
-- **Keyboard Shortcuts**: Ctrl+O (Load), Ctrl+R (Run), F1 (Help)
-- **Progress Indicators**: Professional progress bars with gradients
-- **Auto-display**: Amplitude results shown automatically after reconstruction
-- **Error Handling**: Clear, user-friendly error messages with color coding
-- **Data Validation**: Comprehensive .mat file structure validation
-- **System Monitoring**: Live RAM usage and performance tracking
-
-### ⚡ Advanced Features
-- **GPU Acceleration**: PyTorch-based algorithms with CUDA support
-- **Parameter Configuration**: YAML-based algorithm parameter management
-- **Export Functionality**: Save results in multiple formats
-- **Documentation**: Built-in help system and comprehensive guides
-- **Professional Branding**: Consistent branding throughout the application
+**Follow these rules when formatting custom raw data:**
+- Keep scalar metadata as `1x1` arrays so both MATLAB and Python readers treat them as scalars.
+- Align the ordering of `imlow` slices with the rows of `NA_list`; mismatches break Fourier stitching.
+- Use micrometers for wavelength/pixel size and keep NA coordinates unitless to match the internal models.
+- Additional metadata can be stored in other keys; the loader ignores unknown fields but requires the six listed above.
 
 ## 📦 Dependencies
 
@@ -119,27 +114,55 @@ python main.py
 - **scikit-image**: Additional image analysis tools
 - **tqdm**: Progress bars
 
+### Additional Dependencies
+- This may depends on the algorithms to be used
+
 ## 🛠️ Installation Methods
 
 ### Method 1: Conda (Recommended for Scientific Computing)
+Use the curated environment file when you want a reproducible stack that already pins GPU/CUDA-capable packages.
 ```bash
-# Create environment from provided file
+# 1) Create the environment from the spec
 conda env create -f docs_package/environment.yml
+# 2) Activate it whenever you work on FPM
 conda activate fpm_env
-python main.py
+# 3) Launch or run the smoke test
+python main.py            # or python test_installation.py
 ```
+If you upgrade packages inside this env, remember to export an updated `environment.yml` so collaborators can mirror it.
 
-### Method 2: pip Installation
+### Method 2: pip Installation (Virtualenv/venv)
+Choose this when you prefer lightweight installs or are deploying on systems without Conda. Create an isolated virtual environment first:
 ```bash
-pip install -r requirements.txt
-python main.py
-```
+# Windows (PowerShell)
+python -m venv .venv
+.\\.venv\\Scripts\\activate
 
-### Method 3: Development Installation
+# macOS/Linux
+python -m venv .venv
+source .venv/bin/activate
+```
+Then install dependencies and run the app:
 ```bash
-pip install -e .
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -r requirements.txt
 python main.py
 ```
+Run `python launch_fpm_professional.py` instead of `main.py` if you want the dependency auto-checker and splash UI.
+
+### Method 3: Development Installation (Editable mode)
+Use editable installs when you plan to modify the package and import it elsewhere.
+```bash
+# Inside your activated environment
+python -m pip install --upgrade pip setuptools wheel
+python -m pip install -e .
+```
+This links the working tree directly into the interpreter, so changes in the source take effect immediately. Pair it with the test suite before sending patches:
+```bash
+python test_installation.py
+python launch_fpm_professional.py  # manual sanity check
+```
+For IDEs, point the interpreter to the same environment so linting and Qt Designer integration use the installed package.
 
 ## 📖 Usage
 
@@ -159,15 +182,6 @@ python main.py
 - **Help System**: Press F1 or use Help menu for assistance
 - **About Dialog**: View software information and credits
 
-## 📁 Data Format
-
-The software expects .mat files containing:
-- **`imlow`**: 3D array (H×W×N) of low-resolution intensity images
-- **`NA_list`**: Illumination numerical aperture coordinates
-- **`NA`**: System numerical aperture
-- **`dpix_c`**: Camera pixel size
-- **`lambda`**: Wavelength
-- **`mag`**: Magnification
 
 ## 🐛 Troubleshooting
 
@@ -232,39 +246,10 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🙏 Acknowledgments
 
+- Caltech Schmidt Academy for Software Engineering
 - Caltech Biophotonics Lab
 - PySide6 development team
 - Scientific Python community
-
-## 🎨 Professional UI Features
-
-The FPM Software now features a **Professional Edition** with modern, commercial-grade user interface:
-
-### Visual Design
-- **Modern Dark Theme**: Professional color scheme with blue accents (#4a90e2)
-- **Gradient Effects**: Subtle gradients for depth and visual appeal
-- **Enhanced Typography**: Segoe UI font family for clean, modern text
-- **Rounded Corners**: 6px border radius for contemporary appearance
-- **Professional Icons**: Emoji-based icons for better visual recognition
-
-### Enhanced User Experience
-- **Professional Splash Screen**: Animated loading with progress indicators
-- **Real-time Status Bar**: Live system monitoring (RAM usage, time)
-- **Color-coded Messages**: Success (green), error (red), warning (yellow)
-- **Professional Progress Bars**: Gradient progress indicators
-- **Enhanced Tooltips**: Helpful descriptions for all UI elements
-
-### System Integration
-- **Application Metadata**: Professional branding and version information
-- **Window Management**: Automatic centering and optimal sizing
-- **Error Handling**: Graceful fallbacks for all new features
-- **Cross-platform**: Optimized for Windows, macOS, and Linux
-
-### Professional Features
-- **About Dialog**: Comprehensive software information and credits
-- **System Monitoring**: Live RAM usage and performance tracking
-- **Professional Launcher**: Enhanced startup with dependency checking
-- **Clean CSS**: Qt-compatible styling without warnings
 
 ## 📚 Documentation
 

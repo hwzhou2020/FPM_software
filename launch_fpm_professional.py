@@ -65,8 +65,8 @@ def check_dependencies():
     """Return a list of pip package names (with version specs) that still need to be installed."""
     dependencies = [
         {'module': 'PySide6', 'package': 'PySide6'},
-        {'module': 'numpy', 'package': 'numpy', 'min_version': '1.20.0', 'max_version': '1.26.0'},
-        {'module': 'scipy', 'package': 'scipy', 'min_version': '1.10.0', 'max_version': '1.11.0'},
+        {'module': 'numpy', 'package': 'numpy', 'min_version': '1.26.0', 'max_version': '2.0.0'},
+        {'module': 'scipy', 'package': 'scipy', 'min_version': '1.11.0', 'max_version': '1.13.0'},
         {'module': 'psutil', 'package': 'psutil'},
         {'module': 'yaml', 'package': 'PyYAML'},  # PyYAML installs the yaml module
         {'module': 'mat73', 'package': 'mat73'},
