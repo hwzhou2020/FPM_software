@@ -1,6 +1,6 @@
 # FPM Software - Fourier Ptychographic Microscopy
 
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
+[![Python 3.9+](https://img.shields.io/badge/python-3.9+-blue.svg)](https://www.python.org/downloads/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![PySide6](https://img.shields.io/badge/GUI-PySide6-green.svg)](https://pypi.org/project/PySide6/)
 [![Professional UI](https://img.shields.io/badge/UI-Professional%20Edition-purple.svg)](#)
@@ -75,7 +75,7 @@ python main.py
 
 ## 📋 System Requirements
 
-- **Python**: 3.8 or higher
+- **Python**: 3.9 or higher
 - **Operating System**: Windows, macOS, or Linux
 - **Memory**: 8GB RAM minimum (16GB+ recommended for large datasets)
 - **GPU**: Optional but recommended for faster processing (CUDA-compatible)
