@@ -1,7 +1,7 @@
 QMainWindow {
     background-color: #2b2b2b;
     color: #dddddd;
-    font-family: "Segoe UI", "Helvetica", sans-serif;
+    font-family: {{FONT_STACK}};
     font-size: 10pt;
 }
 
@@ -9,7 +9,7 @@ QPlainTextEdit, QTextEdit {
     background-color: #1e1e1e;
     color: #dddddd;
     border: 1px solid #444;
-    font-family: Consolas, monospace;
+    font-family: {{MONO_FONT_STACK}};
     font-size: 10pt;
 }
 

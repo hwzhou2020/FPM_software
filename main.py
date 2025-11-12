@@ -31,6 +31,7 @@ from Utilities.parameter_dialog import ParameterDialog
 from WindowUI.DisplayOptionsWindow import DisplayOptionsWindow
 from Utilities.status_bar_enhancement import ProfessionalStatusBar
 from Utilities.about_dialog import show_about_dialog
+from Utilities.font_utils import get_font_stack_css, get_monospace_font_stack_css
 
 def apply_dark_palette(app):
     """Force a consistent dark Fusion palette across all widgets."""
@@ -740,14 +741,23 @@ class MainWindow(QMainWindow):
             app.setStyleSheet(style)
         self.setStyleSheet(style)
 
+    def _load_stylesheet(self, path):
+        with open(path, 'r', encoding='utf-8') as f:
+            style = f.read()
+        font_stack = get_font_stack_css()
+        mono_stack = get_monospace_font_stack_css()
+        return (
+            style.replace("{{FONT_STACK}}", font_stack)
+            .replace("{{MONO_FONT_STACK}}", mono_stack)
+        )
+
     def apply_professional_theme(self):
         """Apply the professional theme to the application"""
         try:
             # Try clean theme first (no CSS warnings)
             clean_theme_path = os.path.join(os.path.dirname(__file__), "professional_theme_clean.qss")
             if os.path.exists(clean_theme_path):
-                with open(clean_theme_path, 'r', encoding='utf-8') as f:
-                    style = f.read()
+                style = self._load_stylesheet(clean_theme_path)
                 self._apply_global_stylesheet(style)
                 self.ui.Msg_window.appendPlainText("[OK] Professional theme applied successfully.")
                 return
@@ -755,8 +765,7 @@ class MainWindow(QMainWindow):
             # Fallback to original professional theme
             theme_path = os.path.join(os.path.dirname(__file__), "professional_theme.qss")
             if os.path.exists(theme_path):
-                with open(theme_path, 'r', encoding='utf-8') as f:
-                    style = f.read()
+                style = self._load_stylesheet(theme_path)
                 self._apply_global_stylesheet(style)
                 self.ui.Msg_window.appendPlainText("[OK] Professional theme applied (with CSS warnings).")
                 return
@@ -764,8 +773,7 @@ class MainWindow(QMainWindow):
             # Final fallback to existing theme
             fallback_theme = os.path.join(os.path.dirname(__file__), "fancy_dark_theme.qss")
             if os.path.exists(fallback_theme):
-                with open(fallback_theme, 'r', encoding='utf-8') as f:
-                    style = f.read()
+                style = self._load_stylesheet(fallback_theme)
                 self._apply_global_stylesheet(style)
                 self.ui.Msg_window.appendPlainText("[OK] Fallback theme applied.")
         except Exception as e:
@@ -788,18 +796,21 @@ class MainWindow(QMainWindow):
             self.setup_button_icons()
             
             # Enhance the message window with professional styling
-            self.ui.Msg_window.setStyleSheet("""
+            mono_stack = get_monospace_font_stack_css()
+            self.ui.Msg_window.setStyleSheet(
+                """
                 QPlainTextEdit#Msg_window {
                     background: #0f1419;
                     color: #00ff88;
                     border: 2px solid #2a4a3a;
                     border-radius: 6px;
-                    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+                    font-family: {{MONO_FONT_STACK}};
                     font-size: 12pt;
                     font-weight: 500;
                     padding: 8px;
                 }
-            """)
+            """.replace("{{MONO_FONT_STACK}}", mono_stack)
+            )
             # Add professional welcome message
             welcome_msg = """
 ================================================================================
@@ -909,15 +920,7 @@ if __name__ == "__main__":
             # Fallback to animated splash screen
             from Utilities.splash_screen import ProfessionalSplashScreen
             splash = ProfessionalSplashScreen()
-            splash.show()
-            QApplication.processEvents()
-            
-            # Simulate loading time
-            import time
-            start_time = time.time()
-            while time.time() - start_time < 2.0:  # Show for 2 seconds
-                QApplication.processEvents()
-                time.sleep(0.01)
+            splash.show_splash(2000)
         except Exception as e2:
             print(f"Animated splash screen error: {e2}")
             # If both splash screens fail, continue without it
@@ -929,8 +932,12 @@ if __name__ == "__main__":
     
     # Close splash screen if it's still open
     try:
-        if splash and splash.isVisible():
-            splash.close()
+        if splash:
+            try:
+                splash.finish(window)
+            except Exception:
+                if splash.isVisible():
+                    splash.close()
     except Exception:
         pass
         

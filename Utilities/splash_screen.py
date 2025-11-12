@@ -4,10 +4,10 @@ Provides a modern, animated splash screen during application startup
 """
 
 import sys
-import time
 from PySide6.QtWidgets import QSplashScreen, QApplication
 from PySide6.QtGui import QPixmap, QPainter, QFont, QColor, QPen
 from PySide6.QtCore import Qt, QTimer, QRect
+from Utilities.font_utils import build_ui_font
 
 class ProfessionalSplashScreen(QSplashScreen):
     """Professional splash screen with modern design and animations"""
@@ -37,6 +37,10 @@ class ProfessionalSplashScreen(QSplashScreen):
         self.timer.timeout.connect(self.update_animation)
         self.timer.start(50)  # Update every 50ms
         
+        self.auto_close_timer = QTimer(self)
+        self.auto_close_timer.setSingleShot(True)
+        self.auto_close_timer.timeout.connect(self.safe_close)
+        
     def create_splash_content(self):
         """Create the visual content of the splash screen"""
         try:
@@ -56,26 +60,26 @@ class ProfessionalSplashScreen(QSplashScreen):
             painter.fillRect(QRect(0, 0, 600, 400), gradient)
             
             # Title
-            title_font = QFont("Segoe UI", 24, QFont.Bold)
+            title_font = build_ui_font(24, QFont.Bold)
             painter.setFont(title_font)
             painter.setPen(QColor(74, 144, 226))  # Blue color
             painter.drawText(QRect(0, 80, 600, 50), Qt.AlignCenter, "FPM Software")
             
             # Subtitle
-            subtitle_font = QFont("Segoe UI", 12)
+            subtitle_font = build_ui_font(12)
             painter.setFont(subtitle_font)
             painter.setPen(QColor(200, 200, 200))
             painter.drawText(QRect(0, 130, 600, 30), Qt.AlignCenter, 
                             "Fourier Ptychographic Microscopy Reconstruction")
             
             # Version
-            version_font = QFont("Segoe UI", 10)
+            version_font = build_ui_font(10)
             painter.setFont(version_font)
             painter.setPen(QColor(150, 150, 150))
             painter.drawText(QRect(0, 160, 600, 20), Qt.AlignCenter, self.version_text)
             
             # Loading text
-            loading_font = QFont("Segoe UI", 11)
+            loading_font = build_ui_font(11)
             painter.setFont(loading_font)
             painter.setPen(QColor(0, 255, 136))  # Green color
             painter.drawText(QRect(0, 250, 600, 30), Qt.AlignCenter, self.loading_text)
@@ -98,12 +102,12 @@ class ProfessionalSplashScreen(QSplashScreen):
                 painter.drawRoundedRect(progress_rect, 10, 10)
             
             # Progress percentage
-            painter.setFont(QFont("Segoe UI", 9))
+            painter.setFont(build_ui_font(9))
             painter.setPen(QColor(255, 255, 255))
             painter.drawText(QRect(0, 330, 600, 20), Qt.AlignCenter, f"{self.progress}%")
             
             # Footer
-            footer_font = QFont("Segoe UI", 8)
+            footer_font = build_ui_font(8)
             painter.setFont(footer_font)
             painter.setPen(QColor(120, 120, 120))
             painter.drawText(QRect(0, 370, 600, 20), Qt.AlignCenter, 
@@ -155,6 +159,8 @@ class ProfessionalSplashScreen(QSplashScreen):
     def safe_close(self):
         """Safely close the splash screen"""
         try:
+            if self.auto_close_timer.isActive():
+                self.auto_close_timer.stop()
             self.is_closing = True
             self.timer.stop()
             self.hide()
@@ -167,17 +173,15 @@ class ProfessionalSplashScreen(QSplashScreen):
                 pass
             
     def show_splash(self, duration=3000):
-        """Show the splash screen for a specified duration"""
+        """Show the splash screen for a specified duration without blocking"""
         self.show()
         QApplication.processEvents()
-        
-        # Simulate loading time
-        start_time = time.time()
-        while time.time() - start_time < duration / 1000:
-            QApplication.processEvents()
-            time.sleep(0.01)
-            
-        self.close()
+        self.auto_close_timer.start(duration)
+
+    def finish(self, widget):
+        """Stop timers and finish the splash gracefully."""
+        self.safe_close()
+        super().finish(widget)
 
 def show_professional_splash():
     """Show the professional splash screen"""

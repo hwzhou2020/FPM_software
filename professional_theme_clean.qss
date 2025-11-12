@@ -6,7 +6,7 @@
 
 /* Global Font Settings */
 * {
-    font-family: 'Segoe UI', 'SF Pro Display', 'Helvetica Neue', Arial, sans-serif;
+    font-family: {{FONT_STACK}};
     font-size: 10pt;
     color: #e8e8e8;
 }
@@ -193,7 +193,7 @@ QPlainTextEdit, QTextEdit {
     border: 2px solid #3a3a3a;
     border-radius: 6px;
     padding: 8px;
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-family: {{MONO_FONT_STACK}};
     font-size: 9pt;
     line-height: 1.4;
 }
@@ -209,7 +209,7 @@ QPlainTextEdit#Msg_window {
     color: #00ff88;
     border: 2px solid #2a4a3a;
     border-radius: 6px;
-    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    font-family: {{MONO_FONT_STACK}};
     font-size: 9pt;
     font-weight: 500;
 }

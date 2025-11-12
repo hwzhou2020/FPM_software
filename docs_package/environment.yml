@@ -1,7 +1,8 @@
 name: fpm_env
 channels:
-  - defaults
   - conda-forge
+  - pytorch
+  - defaults
 dependencies:
   - python=3.10
   - numpy
@@ -9,6 +10,7 @@ dependencies:
   - pyside6
   - pyyaml
   - pytorch
+  - psutil
   - matplotlib
   - h5py
   - pip

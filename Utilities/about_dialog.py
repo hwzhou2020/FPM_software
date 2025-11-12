@@ -3,10 +3,19 @@ Professional About Dialog for FPM Software
 Provides a modern, informative about dialog with software information
 """
 
-from PySide6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel, 
-                               QPushButton, QTextEdit, QScrollArea, QWidget)
+from PySide6.QtWidgets import (
+    QDialog,
+    QVBoxLayout,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QTextEdit,
+    QScrollArea,
+    QWidget,
+)
 from PySide6.QtCore import Qt, QSize
 from PySide6.QtGui import QFont, QPixmap, QIcon, QPalette, QColor
+from Utilities.font_utils import build_ui_font, get_monospace_font_stack_css
 
 class ProfessionalAboutDialog(QDialog):
     """Professional about dialog with modern design"""
@@ -22,7 +31,7 @@ class ProfessionalAboutDialog(QDialog):
         self.setWindowFlags(Qt.Dialog | Qt.WindowTitleHint | Qt.WindowCloseButtonHint)
         
         # Apply professional styling
-        self.setStyleSheet("""
+        base_style = """
             QDialog {
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:1,
@@ -62,10 +71,13 @@ class ProfessionalAboutDialog(QDialog):
                 border: 1px solid #3a3a3a;
                 border-radius: 6px;
                 padding: 8px;
-                font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+                font-family: {{MONO_FONT_STACK}};
                 font-size: 9pt;
             }
-        """)
+        """
+        self.setStyleSheet(
+            base_style.replace("{{MONO_FONT_STACK}}", get_monospace_font_stack_css())
+        )
         
         # Create main layout
         main_layout = QVBoxLayout(self)
@@ -77,7 +89,7 @@ class ProfessionalAboutDialog(QDialog):
         
         # Software title
         title_label = QLabel("FPM Software")
-        title_font = QFont("Segoe UI", 24, QFont.Bold)
+        title_font = build_ui_font(24, QFont.Bold)
         title_label.setFont(title_font)
         title_label.setStyleSheet("color: #4a90e2; font-weight: bold;")
         title_label.setAlignment(Qt.AlignCenter)
@@ -85,7 +97,7 @@ class ProfessionalAboutDialog(QDialog):
         
         # Subtitle
         subtitle_label = QLabel("Fourier Ptychographic Microscopy Reconstruction")
-        subtitle_font = QFont("Segoe UI", 12)
+        subtitle_font = build_ui_font(12)
         subtitle_label.setFont(subtitle_font)
         subtitle_label.setStyleSheet("color: #b8b8b8;")
         subtitle_label.setAlignment(Qt.AlignCenter)
@@ -93,7 +105,7 @@ class ProfessionalAboutDialog(QDialog):
         
         # Version
         version_label = QLabel("Professional Edition v2.0")
-        version_font = QFont("Segoe UI", 10)
+        version_font = build_ui_font(10)
         version_label.setFont(version_font)
         version_label.setStyleSheet("color: #888888;")
         version_label.setAlignment(Qt.AlignCenter)

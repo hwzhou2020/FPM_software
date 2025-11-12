@@ -4,10 +4,10 @@ A lightweight splash screen that avoids paint device issues
 """
 
 import sys
-import time
 from PySide6.QtWidgets import QSplashScreen, QApplication
 from PySide6.QtGui import QPixmap, QPainter, QFont, QColor, QPen
 from PySide6.QtCore import Qt, QTimer, QRect
+from Utilities.font_utils import build_ui_font
 
 class SimpleSplashScreen(QSplashScreen):
     """Simple splash screen without complex animations"""
@@ -30,32 +30,32 @@ class SimpleSplashScreen(QSplashScreen):
         painter.fillRect(QRect(0, 0, 600, 400), gradient)
         
         # Title
-        title_font = QFont("Segoe UI", 24, QFont.Bold)
+        title_font = build_ui_font(24, QFont.Bold)
         painter.setFont(title_font)
         painter.setPen(QColor(74, 144, 226))  # Blue color
         painter.drawText(QRect(0, 80, 600, 50), Qt.AlignCenter, "FPM Software")
         
         # Subtitle
-        subtitle_font = QFont("Segoe UI", 12)
+        subtitle_font = build_ui_font(12)
         painter.setFont(subtitle_font)
         painter.setPen(QColor(200, 200, 200))
         painter.drawText(QRect(0, 130, 600, 30), Qt.AlignCenter, 
                         "Fourier Ptychographic Microscopy Reconstruction")
         
         # Version
-        version_font = QFont("Segoe UI", 10)
+        version_font = build_ui_font(10)
         painter.setFont(version_font)
         painter.setPen(QColor(150, 150, 150))
         painter.drawText(QRect(0, 160, 600, 20), Qt.AlignCenter, "Professional Edition v2.0")
         
         # Loading text
-        loading_font = QFont("Segoe UI", 11)
+        loading_font = build_ui_font(11)
         painter.setFont(loading_font)
         painter.setPen(QColor(0, 255, 136))  # Green color
         painter.drawText(QRect(0, 250, 600, 30), Qt.AlignCenter, "Loading...")
         
         # Footer
-        footer_font = QFont("Segoe UI", 8)
+        footer_font = build_ui_font(8)
         painter.setFont(footer_font)
         painter.setPen(QColor(120, 120, 120))
         painter.drawText(QRect(0, 370, 600, 20), Qt.AlignCenter, 
@@ -69,18 +69,22 @@ class SimpleSplashScreen(QSplashScreen):
         self.setWindowFlags(Qt.WindowStaysOnTopHint | Qt.FramelessWindowHint)
         self.setAttribute(Qt.WA_TranslucentBackground)
         
+        # Auto-close timer to avoid blocking the event loop
+        self._auto_close_timer = QTimer(self)
+        self._auto_close_timer.setSingleShot(True)
+        self._auto_close_timer.timeout.connect(self.close)
+        
     def show_splash(self, duration=2000):
         """Show the splash screen for a specified duration"""
         self.show()
         QApplication.processEvents()
-        
-        # Simple timer-based display
-        start_time = time.time()
-        while time.time() - start_time < duration / 1000:
-            QApplication.processEvents()
-            time.sleep(0.01)
-            
-        self.close()
+        self._auto_close_timer.start(duration)
+
+    def finish(self, widget):
+        """Ensure the auto-close timer stops when finishing the splash."""
+        if self._auto_close_timer.isActive():
+            self._auto_close_timer.stop()
+        super().finish(widget)
 
 def show_simple_splash():
     """Show the simple splash screen"""
