@@ -7,13 +7,13 @@
 
 ## Introduction
 
-A comprehensive software package for Fourier Ptychographic Microscopy (FPM) reconstruction algorithms with a professional, modern graphical user interface.
+This repository contains a comprehensive software package for Fourier Ptychographic Microscopy (FPM) reconstruction algorithms with a professional, modern graphical user interface.
 
-The FPM software aim to serve as a platform for different image reconstruction algorithm, making algorithm benchmarking and instrument usage easier. 
+The FPM software aims to serve as a platform for different image reconstruction algorithms, making algorithm benchmarking and instrument usage easier. 
 
-Users can either format pulic FPM raw data in a speicific way (See Data Format section), or have their own microscope system to collect customized data. 
+Users can either format public FPM raw data in a specific way (See Data Format section), or use their own microscope system to collect customized data. 
 
-The software is still developing. if you are interested in contributing to this project, please contact Haowen Zhou (See Author and Contributing Sections). 
+The software is still being developed. If you are interested in contributing to this project, please contact Haowen Zhou (See Author and Contributing Sections). 
 
 ## 🚀 Quick Start
 
@@ -101,50 +101,53 @@ python main.py
 
 ### Getting Started
 1. **Launch**: Run `python launch_fpm_professional.py` for the best experience
-2. **Load Data**: Click "Load Data" or press Ctrl+O to load .mat files
+2. **Load Data**: Click "Load Data" or press Ctrl+O to load .mat files.
 ![Load Data](Instruction_images/image.png)
-3. **Select ROI**: Use the "🎯 ROI" button to select region of interest and define the size of ROI
+3. **Select ROI**: Use the "🎯 ROI" button to select region of interest and define the size of the Region of Interest (ROI).
 ![Select ROI Step 1](Instruction_images/image-1.png)
-Drag the Yellow-shaded Box for ROI, and double click the box to confirm the selection
+Drag the Yellow-shaded Box to the desired ROI, and double click the box to confirm the selection.
 ![Select ROI Step 2](Instruction_images/image-2.png)
-The "Modify ROI Parameters" window will then pop-up. If any changes of the ROI is needed, please do modifications here.
+The "Modify ROI Parameters" window will then pop-up. If any changes to the ROI are needed, please do modifications here.
 ![Select ROI Step 3](Instruction_images/image-3.png)
-4. **Set System Specs (Optional)** The system specs will be automatically set when loading the data. If additional modifications are needed, it can be accessed at "Speces → System spces"
+4. **Set System Specs (Optional)** The system specifications will be automatically set when loading the data. If additional modifications are needed, the specifications can be accessed at "Specs → System specs".
 ![System specs](Instruction_images/image-4.png)
-5. **Choose Algorithm and Configure Parameters (Optional)**: Go to Specs → Algorithm specs to select algorithm. By default, it will use Gerchberg-Saxton algorithm. Algorithm-specific parameters can also be set up at the pop-up window when clicking this tab.
+5. **Choose Algorithm and Configure Parameters (Optional)**: Go to Specs → Algorithm specs to select the desired algorithm. By default, it will use the Gerchberg-Saxton algorithm. Algorithm-specific parameters can also be set in the pop-up window when clicking this tab.
 ![Algorithm](Instruction_images/image-5.png)
 ![Algorithm specs](Instruction_images/image-6.png)
-6. **Run Reconstruction**: Click "Run" or press Ctrl+R
+6. **Run Reconstruction**: Click "Run" or press Ctrl+R.
 ![Run](Instruction_images/image-7.png)
-7. **View Results**: Amplitude results display automatically, additional display options can be found at "Display" button
+7. **View Results**: Amplitude results display automatically. Click the "Display" button for additional display options.
 ![Run donw](Instruction_images/image-8.png)
 ![Display](Instruction_images/image-9.png)
 8. **Additional Features** 
-- "MessageBox" tab can log, save or clear text box on the right-handed side of the user interface.
-- "Help" tab have link to documentation and software general info.
-- "File" tab have functions to set default save directory; save and load results
+- The "MessageBox" menu can be used to log, save or clear the contents of the text box on the right-handed side of the user interface.
+- The "Help" menu provides access to documentation and general software info.
+- The "File" menu allows you to save and load results, and set the default save directory.
 
 **In progress**
-- "Save specs" are stil in development, will be released in the future version
-- More algorithms and demo data will be included in the future version
+- The "Save specs" menu is still in development, and will be released in a future version.
+- More algorithms and demo data will be included in future versions.
 
 ## 📁 Data Format
 
-The repository includes a canonical sample dataset at `data/Demo_data/FPM_SiemensStar_Demo.mat`. Loading it with either MATLAB or `scipy.io.loadmat` reveals the structure the GUI validates against:
+The repository includes a canonical sample dataset at `data/Demo_data/FPM_SiemensStar_Demo.mat`. Loading it with either MATLAB or `scipy.io.loadmat` reveals the structure validated by the FPM software.
+The expected field names are described in the following table:
 
 | Field | Shape (rows × cols × frames) | Dtype | Description |
 | --- | --- | --- | --- |
 | `imlow` | `M × M × N` | `uint8`, `uint16` | Stack of low-resolution intensity images; the first two dimensions are spatial coordinates, the third indexes illumination angles. |
-| `NA_list` | `N × 2` | `float16`, `float32`, `float64` | Illumination NA coordinates `(kx, ky)` normalized to the objective NA. Row `n` pairs with `imlow[:, :, n]`. |
+| `NA_list` | `N × 2` | `float16`, `float32`, `float64` | Illumination numerical aperture (NA) coordinates `(kx, ky)` normalized to the objective NA. Row `n` pairs with `imlow[:, :, n]`. |
 | `NA` | `1 × 1` | `float16`, `float32`, `float64` | Objective numerical aperture (demo value `0.26`). |
 | `dpix_c` | `1 × 1` | `float16`, `float32`, `float64` | Camera pixel pitch in micrometers (`3.45 µm` for the demo sensor). |
 | `lambda` | `1 × 1` | `float16`, `float32`, `float64` | Illumination wavelength in micrometers (`0.5162 µm`, i.e., 516.2 nm). |
-| `mag` | `1 × 1` | `float16`, `float32`, `float64` | System magnification (`10` in the Siemens star example). |
+| `mag` | `1 × 1` | `float16`, `float32`, `float64` | System magnification (`10` in the demo example). |
 
 **Follow these rules when formatting custom raw data:**
-- Keep scalar metadata as `1x1` arrays so both MATLAB and Python readers treat them as scalars.
-- Align the ordering of `imlow` slices with the rows of `NA_list`; mismatches break Fourier stitching.
-- Use micrometers for wavelength/pixel size and keep NA coordinates unitless to match the internal models.
+- Represented the data in a `.mat` file. A future release may support additional file types. 
+<!-- - Keep scalar metadata as `1x1` arrays so both MATLAB and Python readers treat them as scalars. -->
+- Align the ordering of `imlow` slices with the rows of `NA_list`. (Mismatches break Fourier stitching.) 
+- Use micrometer units for wavelength and pixel pitch.
+- Keep NA coordinates unitless to match the internal models.
 - Additional metadata can be stored in other keys; the loader ignores unknown fields but requires the six listed above.
 
 ## 🛠️ Installation Methods
@@ -180,7 +183,7 @@ python main.py
 ```
 Run `python launch_fpm_professional.py` instead of `main.py` if you want the dependency auto-checker and splash UI.
 
-### Method 3: Development Installation (Editable mode)
+<!-- ### Method 3: Development Installation (Editable mode)
 Use editable installs when you plan to modify the package and import it elsewhere.
 ```bash
 # Inside your activated environment
@@ -192,7 +195,7 @@ This links the working tree directly into the interpreter, so changes in the sou
 python test_installation.py
 python launch_fpm_professional.py  # manual sanity check
 ```
-For IDEs, point the interpreter to the same environment so linting and Qt Designer integration use the installed package.
+For IDEs, point the interpreter to the same environment so linting and Qt Designer integration uses the installed package. -->
 
 
 ## 🐛 Troubleshooting
@@ -242,6 +245,8 @@ launch_fpm_no_splash.bat
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+<!-- develop your feature or your algorithm -->
+<!-- Use `pip install .`  to run and test (checklist)  considering a contributing.md file -->
 3. Commit your changes (`git commit -m 'Add amazing feature'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
